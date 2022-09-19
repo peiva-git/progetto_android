@@ -2,6 +2,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/loginForm"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -11,9 +12,12 @@
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center">
+        android:gravity="center"
+        android:layout_marginBottom="@dimen/loginFormMargin"
+        android:id="@+id/loginUsernameLayout">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/loginUsernameText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:hint="@string/username"
@@ -25,11 +29,14 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/loginPasswordLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center">
+        android:gravity="center"
+        android:layout_marginBottom="@dimen/loginFormMargin">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/loginPasswordText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:hint="@string/password"
@@ -44,13 +51,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:gravity="center">
+        android:gravity="center"
+        android:id="@+id/loginButtons">
 
         <Button
+            android:id="@+id/loginButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/loginButton" />
+            android:text="@string/loginButton"
+            android:layout_marginEnd="@dimen/loginFormMargin"/>
         <Button
+            android:id="@+id/signInButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/signInButton"/>
