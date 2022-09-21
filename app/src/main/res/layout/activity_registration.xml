@@ -12,7 +12,7 @@
         android:weightSum="1">
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/registrationNameLayout"
+            android:id="@+id/registrationEmailLayout"
             android:layout_weight="0.5"
             android:padding="5dp">
 
@@ -20,13 +20,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:hint="@string/registrationEmail"
-                android:inputType="textEmailAddress">
+                android:inputType="textEmailAddress"
+                android:id="@+id/registrationEmail">
 
             </com.google.android.material.textfield.TextInputEditText>
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/registrationNameConfirmLayout"
+            android:id="@+id/registrationEmailConfirmLayout"
             android:layout_weight="0.5"
             android:padding="5dp">
 
@@ -34,7 +35,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:hint="@string/registrationConfirmEmail"
-                android:inputType="textEmailAddress">
+                android:inputType="textEmailAddress"
+                android:id="@+id/registrationEmailConfirm">
 
             </com.google.android.material.textfield.TextInputEditText>
         </com.google.android.material.textfield.TextInputLayout>
@@ -53,7 +55,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:hint="@string/registrationPassword"
-                android:inputType="textPassword">
+                android:inputType="textPassword"
+                android:id="@+id/registrationPassword">
 
             </com.google.android.material.textfield.TextInputEditText>
         </com.google.android.material.textfield.TextInputLayout>
@@ -67,7 +70,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:hint="@string/registrationPasswordConfirm"
-                android:inputType="textPassword">
+                android:inputType="textPassword"
+                android:id="@+id/registrationPasswordConfirm">
 
             </com.google.android.material.textfield.TextInputEditText>
         </com.google.android.material.textfield.TextInputLayout>

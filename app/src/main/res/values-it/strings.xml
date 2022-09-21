@@ -10,4 +10,8 @@
     <string name="registrationPasswordConfirm">Confermare password</string>
     <string name="registrationButton">Registrazione</string>
     <string name="registrationCancel">Annulla</string>
+    <string name="email_required">Campo obbligatorio</string>
+    <string name="email_mismatch">Le email non coincidono</string>
+    <string name="password_required">Campo obbligatorio</string>
+    <string name="password_mismatch">Le password non coincidono</string>
 </resources>
