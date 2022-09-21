@@ -7,8 +7,8 @@
     tools:context=".RegistrationFragment">
 
     <TableRow
-        android:layout_width="147dp"
-        android:layout_height="239dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:weightSum="1">
 
         <com.google.android.material.textfield.TextInputLayout
@@ -33,6 +33,39 @@
                 android:layout_height="match_parent"
                 android:hint="@string/registrationConfirmEmail"
                 android:inputType="textEmailAddress">
+
+            </com.google.android.material.textfield.TextInputEditText>
+        </com.google.android.material.textfield.TextInputLayout>
+    </TableRow>
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="1">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/registrationPasswordLayout"
+            android:layout_weight="0.5">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="@string/registrationPassword"
+                android:inputType="textPassword">
+
+
+            </com.google.android.material.textfield.TextInputEditText>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/registrationPasswordConfirmLayout"
+            android:layout_weight="0.5">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="@string/registrationPasswordConfirm"
+                android:inputType="textPassword">
+
 
             </com.google.android.material.textfield.TextInputEditText>
         </com.google.android.material.textfield.TextInputLayout>
