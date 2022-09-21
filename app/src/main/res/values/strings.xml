@@ -8,4 +8,6 @@
     <string name="registrationConfirmEmail">Confirm email</string>
     <string name="registrationPassword">Insert password</string>
     <string name="registrationPasswordConfirm">Confirm password</string>
+    <string name="registrationButton">Register</string>
+    <string name="registrationCancel">Cancel</string>
 </resources>

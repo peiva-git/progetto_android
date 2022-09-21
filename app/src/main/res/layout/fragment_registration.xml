@@ -72,7 +72,20 @@
             </com.google.android.material.textfield.TextInputEditText>
         </com.google.android.material.textfield.TextInputLayout>
     </TableRow>
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="1">
 
-
-
+        <Button
+            android:layout_weight="0.5"
+            android:id="@+id/registrationButton"
+            android:text="@string/registrationButton"
+            android:layout_margin="5dp"/>
+        <Button
+            android:layout_weight="0.5"
+            android:id="@+id/cancelRegistrationButton"
+            android:text="@string/registrationCancel"
+            android:layout_margin="5dp"/>
+    </TableRow>
 </TableLayout>
