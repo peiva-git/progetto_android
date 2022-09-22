@@ -30,7 +30,7 @@ public class LoginActivity extends AppCompatActivity {
         userPassword = (EditText) findViewById(R.id.loginPasswordText);
 
         registrationButton.setOnClickListener(view -> {
-            Intent goToRegistrationForm = new Intent(this, RegistrationActivity.class);
+            Intent goToRegistrationForm = new Intent(LoginActivity.this, RegistrationActivity.class);
             startActivity(goToRegistrationForm);
         });
     }
