@@ -1,5 +1,8 @@
 package it.units.simandroid.progetto;
 
+import static it.units.simandroid.progetto.LoginActivity.AUTH_TAG;
+
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -40,11 +43,12 @@ public class RegistrationActivity extends AppCompatActivity {
             firebaseInstance.createUserWithEmailAndPassword(userEmail.getText().toString(), userPassword.getText().toString())
                     .addOnCompleteListener(this, task -> {
                         if (task.isSuccessful()) {
-                            Log.d("AUTH", "create user success");
-                            // updateUI(user)
+                            Log.d(AUTH_TAG, "User created successfully");
+                            Intent goToMainActivity = new Intent(RegistrationActivity.this, MainActivity.class);
+                            startActivity(goToMainActivity);
                         } else {
-                            Log.w("AUTH", "create user failure", task.getException());
-                            Toast.makeText(RegistrationActivity.this, "Authentication falied", Toast.LENGTH_SHORT).show();
+                            Log.w(AUTH_TAG, "Failed to create new user", task.getException());
+                            Toast.makeText(RegistrationActivity.this, "Authentication failed", Toast.LENGTH_SHORT).show();
                             // updateUI(null)
                         }
                     });

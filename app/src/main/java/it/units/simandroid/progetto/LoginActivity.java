@@ -4,13 +4,17 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class LoginActivity extends AppCompatActivity {
+
+    public static final String AUTH_TAG = "AUTH";
 
     private FirebaseAuth firebaseInstance;
     private Button loginButton;
@@ -33,6 +37,17 @@ public class LoginActivity extends AppCompatActivity {
             Intent goToRegistrationForm = new Intent(LoginActivity.this, RegistrationActivity.class);
             startActivity(goToRegistrationForm);
         });
+        loginButton.setOnClickListener(view -> {
+            firebaseInstance.signInWithEmailAndPassword(userEmail.getText().toString(), userPassword.getText().toString())
+                    .addOnCompleteListener(this, task -> {
+                        if (task.isSuccessful()) {
+                            Log.d(AUTH_TAG, "Sign-in successful");
+                        } else {
+                            Log.w(AUTH_TAG, "Sign-in failed", task.getException());
+                            Toast.makeText(LoginActivity.this, "Authentication failed", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        });
     }
 
     @Override
@@ -40,7 +55,8 @@ public class LoginActivity extends AppCompatActivity {
         super.onStart();
         FirebaseUser currentUser = firebaseInstance.getCurrentUser();
         if (currentUser != null) {
-            // reload
+            Intent goToMainActivity = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(goToMainActivity);
         }
     }
 }
