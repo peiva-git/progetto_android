@@ -2,14 +2,14 @@
 <resources>
     <string name="username">Nome utente</string>
     <string name="password">Password</string>
-    <string name="loginButton">Login</string>
-    <string name="signUpButton">Registrazione</string>
-    <string name="registrationEmail">Inserire email</string>
-    <string name="registrationConfirmEmail">Confermare email</string>
-    <string name="registrationPassword">Inserire password</string>
-    <string name="registrationPasswordConfirm">Confermare password</string>
-    <string name="registrationButton">Registrazione</string>
-    <string name="registrationCancel">Annulla</string>
+    <string name="login_button">Login</string>
+    <string name="sign_up_button">Registrazione</string>
+    <string name="registration_email">Inserire email</string>
+    <string name="registration_confirm_email">Confermare email</string>
+    <string name="registration_password">Inserire password</string>
+    <string name="registration_password_confirm">Confermare password</string>
+    <string name="registration_button">Registrazione</string>
+    <string name="registration_cancel">Annulla</string>
     <string name="email_required">Campo obbligatorio</string>
     <string name="email_mismatch">Le email non coincidono</string>
     <string name="password_required">Campo obbligatorio</string>

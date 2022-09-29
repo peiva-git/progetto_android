@@ -2,7 +2,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/loginForm"
+    android:id="@+id/login_form"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -13,11 +13,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:layout_marginBottom="@dimen/loginFormMargin"
-        android:id="@+id/loginUsernameLayout">
+        android:layout_marginBottom="@dimen/login_form_margin"
+        android:id="@+id/login_username_layout">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/loginUsernameText"
+            android:id="@+id/login_username_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:hint="@string/username"
@@ -29,14 +29,14 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/loginPasswordLayout"
+        android:id="@+id/login_password_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:layout_marginBottom="@dimen/loginFormMargin">
+        android:layout_marginBottom="@dimen/login_form_margin">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/loginPasswordText"
+            android:id="@+id/login_password_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:hint="@string/password"
@@ -52,18 +52,18 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center"
-        android:id="@+id/loginButtons">
+        android:id="@+id/login_buttons">
 
         <Button
-            android:id="@+id/loginButton"
+            android:id="@+id/login_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/loginButton"
-            android:layout_marginEnd="@dimen/loginFormMargin" />
+            android:text="@string/login_button"
+            android:layout_marginEnd="@dimen/login_form_margin" />
         <Button
-            android:id="@+id/signUpButton"
+            android:id="@+id/sign_up_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/signUpButton" />
+            android:text="@string/sign_up_button" />
     </LinearLayout>
 </LinearLayout>

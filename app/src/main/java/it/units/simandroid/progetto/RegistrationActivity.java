@@ -28,11 +28,11 @@ public class RegistrationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
 
-        userEmail = (EditText) findViewById(R.id.registrationEmail);
-        userEmailConfirm = (EditText) findViewById(R.id.registrationEmailConfirm);
-        userPassword = (EditText) findViewById(R.id.registrationPassword);
-        userPasswordConfirm = (EditText) findViewById(R.id.registrationPasswordConfirm);
-        registrationButton = (Button) findViewById(R.id.registrationButton);
+        userEmail = findViewById(R.id.registration_email);
+        userEmailConfirm = findViewById(R.id.registration_email_confirm);
+        userPassword = findViewById(R.id.registration_password);
+        userPasswordConfirm = findViewById(R.id.registration_password_confirm);
+        registrationButton = findViewById(R.id.registration_button);
 
         firebaseInstance = FirebaseAuth.getInstance();
 

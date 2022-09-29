@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/registrationForm"
+    android:id="@+id/registration_form"
     tools:context=".RegistrationActivity">
 
     <TableRow
@@ -12,31 +12,31 @@
         android:weightSum="1">
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/registrationEmailLayout"
+            android:id="@+id/registration_email_layout"
             android:layout_weight="0.5"
             android:padding="5dp">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:hint="@string/registrationEmail"
+                android:hint="@string/registration_email"
                 android:inputType="textEmailAddress"
-                android:id="@+id/registrationEmail">
+                android:id="@+id/registration_email">
 
             </com.google.android.material.textfield.TextInputEditText>
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/registrationEmailConfirmLayout"
+            android:id="@+id/registration_email_confirm_layout"
             android:layout_weight="0.5"
             android:padding="5dp">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:hint="@string/registrationConfirmEmail"
+                android:hint="@string/registration_confirm_email"
                 android:inputType="textEmailAddress"
-                android:id="@+id/registrationEmailConfirm">
+                android:id="@+id/registration_email_confirm">
 
             </com.google.android.material.textfield.TextInputEditText>
         </com.google.android.material.textfield.TextInputLayout>
@@ -47,31 +47,31 @@
         android:weightSum="1">
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/registrationPasswordLayout"
+            android:id="@+id/registration_password_layout"
             android:layout_weight="0.5"
             android:padding="5dp">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:hint="@string/registrationPassword"
+                android:hint="@string/registration_password"
                 android:inputType="textPassword"
-                android:id="@+id/registrationPassword">
+                android:id="@+id/registration_password">
 
             </com.google.android.material.textfield.TextInputEditText>
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/registrationPasswordConfirmLayout"
+            android:id="@+id/registration_password_confirm_layout"
             android:layout_weight="0.5"
             android:padding="5dp">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:hint="@string/registrationPasswordConfirm"
+                android:hint="@string/registration_password_confirm"
                 android:inputType="textPassword"
-                android:id="@+id/registrationPasswordConfirm">
+                android:id="@+id/registration_password_confirm">
 
             </com.google.android.material.textfield.TextInputEditText>
         </com.google.android.material.textfield.TextInputLayout>
@@ -83,13 +83,13 @@
 
         <Button
             android:layout_weight="0.5"
-            android:id="@+id/registrationButton"
-            android:text="@string/registrationButton"
+            android:id="@+id/registration_button"
+            android:text="@string/registration_button"
             android:layout_margin="5dp"/>
         <Button
             android:layout_weight="0.5"
-            android:id="@+id/cancelRegistrationButton"
-            android:text="@string/registrationCancel"
+            android:id="@+id/cancel_registration_button"
+            android:text="@string/registration_cancel"
             android:layout_margin="5dp"/>
     </TableRow>
 </TableLayout>

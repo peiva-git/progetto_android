@@ -28,10 +28,10 @@ public class LoginActivity extends AppCompatActivity {
         firebaseInstance = FirebaseAuth.getInstance();
         setContentView(R.layout.activity_login);
 
-        loginButton = (Button) findViewById(R.id.loginButton);
-        registrationButton = (Button) findViewById(R.id.signUpButton);
-        userEmail = (EditText) findViewById(R.id.loginUsernameText);
-        userPassword = (EditText) findViewById(R.id.loginPasswordText);
+        loginButton = findViewById(R.id.login_button);
+        registrationButton = findViewById(R.id.sign_up_button);
+        userEmail = findViewById(R.id.login_username_text);
+        userPassword = findViewById(R.id.login_password_text);
 
         registrationButton.setOnClickListener(view -> {
             Intent goToRegistrationForm = new Intent(LoginActivity.this, RegistrationActivity.class);
