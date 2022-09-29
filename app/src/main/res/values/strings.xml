@@ -15,4 +15,5 @@
     <string name="password_required">Field required</string>
     <string name="password_mismatch">Passwords not matching</string>
     <string name="user_account">Account</string>
+    <string name="settings">Settings</string>
 </resources>

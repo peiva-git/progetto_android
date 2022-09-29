@@ -15,4 +15,5 @@
     <string name="password_required">Campo obbligatorio</string>
     <string name="password_mismatch">Le password non coincidono</string>
     <string name="user_account">Account</string>
+    <string name="settings">Settings</string>
 </resources>
