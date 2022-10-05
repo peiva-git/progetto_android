@@ -17,5 +17,8 @@
     <string name="user_account">Account</string>
     <string name="settings">Settings</string>
     <string name="my_trips">My trips</string>
-    <string name="shared_trips">Shared trips</string>
+    <string name="shared_trips">Shared with me</string>
+    <string name="favorite_trips">Favourites</string>
+    <string name="trip_groups">Trip groups</string>
+    <string name="new_trip_button_description">New trip</string>
 </resources>

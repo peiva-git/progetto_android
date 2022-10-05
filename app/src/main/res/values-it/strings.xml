@@ -17,5 +17,8 @@
     <string name="user_account">Account</string>
     <string name="settings">Impostazioni</string>
     <string name="my_trips">I miei viaggi</string>
-    <string name="shared_trips">Viaggi condivisi</string>
+    <string name="shared_trips">Condivisi con me</string>
+    <string name="favorite_trips">Preferiti</string>
+    <string name="trip_groups">Gruppi</string>
+    <string name="new_trip_button_description">Nuovo viaggio</string>
 </resources>
