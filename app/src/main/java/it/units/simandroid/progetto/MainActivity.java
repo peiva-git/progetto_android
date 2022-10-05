@@ -24,7 +24,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        RecyclerView tripsRecyclerView = findViewById(R.id.trips_recycler_view);
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
         DrawerLayout navigationDrawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.navigation_view);
@@ -39,13 +38,6 @@ public class MainActivity extends AppCompatActivity {
             navigationDrawer.close();
             return true;
         });
-
-        List<Trip> trips = new ArrayList<>();
-        trips.add(new Trip("Trieste trip", R.drawable.ic_baseline_account_circle_24, "This was a trip to Trieste"));
-        TripAdapter tripAdapter = new TripAdapter(this, trips);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        tripsRecyclerView.setLayoutManager(linearLayoutManager);
-        tripsRecyclerView.setAdapter(tripAdapter);
     }
 
     @Override
