@@ -1,6 +1,8 @@
 package it.units.simandroid.progetto;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -11,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.navigation.NavigationView;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -25,10 +28,18 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         RecyclerView tripsRecyclerView = findViewById(R.id.trips_recycler_view);
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
+        DrawerLayout navigationDrawer = findViewById(R.id.drawer_layout);
+        NavigationView navigationView = findViewById(R.id.navigation_view);
         setSupportActionBar(toolbar);
 
         toolbar.setNavigationOnClickListener(view -> {
             Log.d("NAV", "Navigation icon clicked!");
+            navigationDrawer.open();
+        });
+
+        navigationView.setNavigationItemSelectedListener(menuItem -> {
+            navigationDrawer.close();
+            return true;
         });
 
         List<Trip> trips = new ArrayList<>();

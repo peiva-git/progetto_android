@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/my_trips"
+        android:title="@string/my_trips"
+        android:icon="@drawable/ic_baseline_image_24"
+        android:checkable="false" />
+    <item
+        android:id="@+id/shared_trips"
+        android:title="@string/shared_trips"
+        android:icon="@drawable/ic_baseline_people_24"
+        android:checkable="false" />
+</menu>

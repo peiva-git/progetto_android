@@ -16,4 +16,6 @@
     <string name="password_mismatch">Passwords not matching</string>
     <string name="user_account">Account</string>
     <string name="settings">Settings</string>
+    <string name="my_trips">My trips</string>
+    <string name="shared_trips">Shared trips</string>
 </resources>
