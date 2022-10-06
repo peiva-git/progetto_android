@@ -22,4 +22,10 @@
     <string name="trip_groups">Gruppi</string>
     <string name="new_trip_button_description">Nuovo viaggio</string>
     <string name="trip_image">Immagine viaggio</string>
+    <string name="trip_name">Nome viaggio</string>
+    <string name="trip_destination">Destinazione</string>
+    <string name="trip_start_date">Data partenza</string>
+    <string name="trip_end_date">Data fine</string>
+    <string name="trip_description">Descrizione viaggio</string>
+    <string name="new_images_button_description">Aggiungere nuovi viaggio</string>
 </resources>

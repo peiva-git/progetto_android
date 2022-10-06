@@ -8,5 +8,14 @@
         android:id="@+id/tripsFragment"
         android:name="it.units.simandroid.progetto.TripsFragment"
         android:label="fragment_trips"
-        tools:layout="@layout/fragment_trips" />
+        tools:layout="@layout/fragment_trips" >
+        <action
+            android:id="@+id/action_tripsFragment_to_newTripFragment"
+            app:destination="@id/newTripFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/newTripFragment"
+        android:name="it.units.simandroid.progetto.NewTripFragment"
+        android:label="fragment_new_trip"
+        tools:layout="@layout/fragment_new_trip" />
 </navigation>

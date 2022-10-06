@@ -25,15 +25,16 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ViewHolder> {
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_trip, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_trip, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Trip trip = trips.get(position);
-        holder.tripDescription.setText(trip.getDescription());
         holder.tripMainPicture.setImageResource(trip.getMainPicture());
+        holder.tripName.setText(trip.getName());
+        holder.tripDescription.setText(trip.getDescription());
     }
 
     @Override
@@ -43,12 +44,16 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ViewHolder> {
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private final ImageView tripMainPicture;
+        private final TextView tripName;
+        private final TextView tripDestination;
         private final TextView tripDescription;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             tripMainPicture = itemView.findViewById(R.id.main_trip_picture);
             tripDescription = itemView.findViewById(R.id.trip_description);
+            tripName = itemView.findViewById(R.id.trip_name);
+            tripDestination = itemView.findViewById(R.id.trip_location);
         }
     }
 }
