@@ -10,7 +10,8 @@
         android:layout_height="300dp"
         android:src="@drawable/ic_baseline_add_photo_alternate_24"
         android:scaleType="fitCenter"
-        android:contentDescription="@string/new_images_button_description"/>
+        android:contentDescription="@string/new_images_button_description"
+        android:id="@+id/trip_images_button"/>
 
     <TableRow
         android:layout_width="match_parent"
