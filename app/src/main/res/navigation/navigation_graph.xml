@@ -22,4 +22,9 @@
         android:name="it.units.simandroid.progetto.NewTripFragment"
         android:label="fragment_new_trip"
         tools:layout="@layout/fragment_new_trip" />
+    <activity
+        android:id="@+id/loginActivity"
+        android:name="it.units.simandroid.progetto.LoginActivity"
+        android:label="activity_login"
+        tools:layout="@layout/activity_login" />
 </navigation>
