@@ -37,11 +37,11 @@ public class TripsFragment extends Fragment {
         // Inflate the layout for this fragment
         super.onCreateView(inflater, container, savedInstanceState);
         View fragmentView = inflater.inflate(R.layout.fragment_trips, container, false);
-        NavController navController = Navigation.findNavController(fragmentView);
         RecyclerView tripsRecyclerView = fragmentView.findViewById(R.id.trips_recycler_view);
         FloatingActionButton newTripButton = fragmentView.findViewById(R.id.new_trip_button);
 
         newTripButton.setOnClickListener(view -> {
+            NavController navController = Navigation.findNavController(view);
             navController.navigate(TripsFragmentDirections.actionTripsFragmentToNewTripFragment());
         });
 
