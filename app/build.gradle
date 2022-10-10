@@ -1,10 +1,11 @@
 plugins {
     id 'com.android.application'
     id 'com.google.gms.google-services'
+    id 'androidx.navigation.safeargs'
 }
 
 android {
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         applicationId "it.units.simandroid.progetto"

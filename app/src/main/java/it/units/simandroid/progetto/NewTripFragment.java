@@ -1,5 +1,6 @@
 package it.units.simandroid.progetto;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -8,6 +9,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +18,7 @@ import android.widget.ImageButton;
 
 public class NewTripFragment extends Fragment {
 
-    private ActivityResultLauncher<PickVisualMediaRequest> pickTripImages;
+    private ActivityResultLauncher<String> pickTripImages;
     public static final int MAX_NUMBER_OF_IMAGES = 10;
     public static final String IMAGE_PICKER_TAG = "IMG_PICK";
 
@@ -27,7 +29,7 @@ public class NewTripFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        pickTripImages = registerForActivityResult(new ActivityResultContracts.PickMultipleVisualMedia(MAX_NUMBER_OF_IMAGES), uris -> {
+        pickTripImages = registerForActivityResult(new ActivityResultContracts.GetMultipleContents(), uris -> {
             if (!uris.isEmpty()) {
                 Log.d(IMAGE_PICKER_TAG, "Picked " + uris.size() + " items");
             } else {
@@ -44,9 +46,7 @@ public class NewTripFragment extends Fragment {
         ImageButton newImageButton = view.findViewById(R.id.trip_images_button);
 
         newImageButton.setOnClickListener(imageView -> {
-            pickTripImages.launch(new PickVisualMediaRequest.Builder()
-                    .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
-                    .build());
+            pickTripImages.launch("image/*");
         });
 
         return view;

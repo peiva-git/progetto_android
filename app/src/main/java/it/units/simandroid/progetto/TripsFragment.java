@@ -3,12 +3,16 @@ package it.units.simandroid.progetto;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -32,8 +36,14 @@ public class TripsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         super.onCreateView(inflater, container, savedInstanceState);
-        View view = inflater.inflate(R.layout.fragment_trips, container, false);
-        RecyclerView tripsRecyclerView = view.findViewById(R.id.trips_recycler_view);
+        View fragmentView = inflater.inflate(R.layout.fragment_trips, container, false);
+        NavController navController = Navigation.findNavController(fragmentView);
+        RecyclerView tripsRecyclerView = fragmentView.findViewById(R.id.trips_recycler_view);
+        FloatingActionButton newTripButton = fragmentView.findViewById(R.id.new_trip_button);
+
+        newTripButton.setOnClickListener(view -> {
+            navController.navigate(TripsFragmentDirections.actionTripsFragmentToNewTripFragment());
+        });
 
         List<Trip> trips = new ArrayList<>();
         trips.add(new Trip("Trieste trip", R.drawable.ic_baseline_account_circle_24, "This was a trip to Trieste"));
@@ -42,6 +52,6 @@ public class TripsFragment extends Fragment {
         tripsRecyclerView.setLayoutManager(linearLayoutManager);
         tripsRecyclerView.setAdapter(tripAdapter);
 
-        return view;
+        return fragmentView;
     }
 }
