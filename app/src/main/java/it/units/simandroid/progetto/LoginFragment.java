@@ -61,14 +61,4 @@ public class LoginFragment extends Fragment {
 
         return view;
     }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        FirebaseUser currentUser = firebaseInstance.getCurrentUser();
-        if (currentUser != null) {
-            NavHostFragment.findNavController(this)
-                    .navigate(LoginFragmentDirections.actionLoginFragmentToTripsFragment());
-        }
-    }
 }

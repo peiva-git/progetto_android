@@ -9,12 +9,6 @@ import org.jetbrains.annotations.Contract;
 public class LoginFragmentDirections {
     @NonNull
     @Contract(" -> new")
-    public static NavDirections actionLoginFragmentToTripsFragment() {
-        return new ActionOnlyNavDirections(R.id.action_loginFragment_to_tripsFragment);
-    }
-
-    @NonNull
-    @Contract(" -> new")
     public static NavDirections actionLoginFragmentToRegistrationFragment() {
         return new ActionOnlyNavDirections(R.id.action_loginFragment_to_registrationFragment);
     }

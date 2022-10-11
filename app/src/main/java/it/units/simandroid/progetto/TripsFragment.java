@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -13,6 +14,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -22,6 +25,8 @@ import java.util.List;
 
 public class TripsFragment extends Fragment {
 
+    private FirebaseAuth firebaseInstance;
+
     public TripsFragment() {
         // Required empty public constructor
     }
@@ -29,6 +34,7 @@ public class TripsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        firebaseInstance = FirebaseAuth.getInstance();
     }
 
     @Override
@@ -53,5 +59,15 @@ public class TripsFragment extends Fragment {
         tripsRecyclerView.setAdapter(tripAdapter);
 
         return fragmentView;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        FirebaseUser currentUser = firebaseInstance.getCurrentUser();
+        if (currentUser == null) {
+            NavHostFragment.findNavController(this)
+                    .navigate(TripsFragmentDirections.actionTripsFragmentToLoginFragment());
+        }
     }
 }

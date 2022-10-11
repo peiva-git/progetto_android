@@ -12,4 +12,10 @@ public class TripsFragmentDirections {
     public static NavDirections actionTripsFragmentToNewTripFragment() {
         return new ActionOnlyNavDirections(R.id.action_tripsFragment_to_newTripFragment);
     }
+
+    @NonNull
+    @Contract(" -> new")
+    public static NavDirections actionTripsFragmentToLoginFragment() {
+        return new ActionOnlyNavDirections(R.id.action_tripsFragment_to_loginFragment);
+    }
 }
