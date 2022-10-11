@@ -29,6 +29,7 @@ public class NewTripFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // PickMultipleVisualMedia contract seems to be buggy, even when implemented according to docs
         pickTripImages = registerForActivityResult(new ActivityResultContracts.GetMultipleContents(), uris -> {
             if (!uris.isEmpty()) {
                 Log.d(IMAGE_PICKER_TAG, "Picked " + uris.size() + " items");
