@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navigation_graph"
-    app:startDestination="@id/tripsFragment">
+    app:startDestination="@id/loginFragment">
     <fragment
         android:id="@+id/tripsFragment"
         android:name="it.units.simandroid.progetto.TripsFragment"
@@ -22,9 +22,25 @@
         android:name="it.units.simandroid.progetto.NewTripFragment"
         android:label="fragment_new_trip"
         tools:layout="@layout/fragment_new_trip" />
-    <activity
-        android:id="@+id/loginActivity"
-        android:name="it.units.simandroid.progetto.LoginActivity"
-        android:label="activity_login"
-        tools:layout="@layout/activity_login" />
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="it.units.simandroid.progetto.LoginFragment"
+        android:label="fragment_login_content"
+        tools:layout="@layout/fragment_login" >
+        <action
+            android:id="@+id/action_loginFragment_to_tripsFragment"
+            app:destination="@id/tripsFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_registrationFragment"
+            app:destination="@id/registrationFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/registrationFragment"
+        android:name="it.units.simandroid.progetto.RegistrationFragment"
+        android:label="fragment_registration"
+        tools:layout="@layout/fragment_registration" >
+        <action
+            android:id="@+id/action_registrationFragment_to_tripsFragment"
+            app:destination="@id/tripsFragment" />
+    </fragment>
 </navigation>
