@@ -28,4 +28,8 @@
     <string name="trip_end_date">End date</string>
     <string name="trip_description">Trip description</string>
     <string name="new_images_button_description">Add new images</string>
+    <string name="fragment_trips_label">My trips</string>
+    <string name="new_trip_label">New trip</string>
+    <string name="login_label">Login</string>
+    <string name="registration_fragment_label">New user</string>
 </resources>

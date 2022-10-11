@@ -28,4 +28,8 @@
     <string name="trip_end_date">Data fine</string>
     <string name="trip_description">Descrizione viaggio</string>
     <string name="new_images_button_description">Aggiungere nuovi viaggio</string>
+    <string name="fragment_trips_label">I miei viaggi</string>
+    <string name="new_trip_label">Nuovo viaggio</string>
+    <string name="login_label">Login</string>
+    <string name="registration_fragment_label">Nuovo utente</string>
 </resources>

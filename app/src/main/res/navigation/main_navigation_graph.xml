@@ -7,7 +7,7 @@
     <fragment
         android:id="@+id/tripsFragment"
         android:name="it.units.simandroid.progetto.TripsFragment"
-        android:label="fragment_trips"
+        android:label="@string/fragment_trips_label"
         tools:layout="@layout/fragment_trips" >
         <action
             android:id="@+id/action_tripsFragment_to_newTripFragment"
@@ -20,12 +20,12 @@
     <fragment
         android:id="@+id/newTripFragment"
         android:name="it.units.simandroid.progetto.NewTripFragment"
-        android:label="fragment_new_trip"
+        android:label="@string/new_trip_label"
         tools:layout="@layout/fragment_new_trip" />
     <fragment
         android:id="@+id/loginFragment"
         android:name="it.units.simandroid.progetto.LoginFragment"
-        android:label="fragment_login_content"
+        android:label="@string/login_label"
         tools:layout="@layout/fragment_login" >
         <action
             android:id="@+id/action_loginFragment_to_tripsFragment"
@@ -37,7 +37,7 @@
     <fragment
         android:id="@+id/registrationFragment"
         android:name="it.units.simandroid.progetto.RegistrationFragment"
-        android:label="fragment_registration"
+        android:label="@string/registration_fragment_label"
         tools:layout="@layout/fragment_registration" >
         <action
             android:id="@+id/action_registrationFragment_to_tripsFragment"
