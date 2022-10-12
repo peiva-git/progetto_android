@@ -32,4 +32,5 @@
     <string name="new_trip_label">Nuovo viaggio</string>
     <string name="login_label">Login</string>
     <string name="registration_fragment_label">Nuovo utente</string>
+    <string name="save_new_trip_button">Salva viaggio</string>
 </resources>

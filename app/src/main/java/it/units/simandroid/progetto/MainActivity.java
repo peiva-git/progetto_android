@@ -40,7 +40,6 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
         NavController navController = navHostFragment.getNavController();
-        //NavController navigationController = Navigation.findNavController(this, R.id.nav_host_fragment);
         appBarConfiguration = new AppBarConfiguration
                 .Builder(navController.getGraph())
                 .setOpenableLayout(navigationDrawer)
