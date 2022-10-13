@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.navigation.NavigationView;
@@ -49,6 +50,13 @@ public class MainActivity extends AppCompatActivity {
 
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
             // check destination id and handle accordingly
+            if (destination.getId() == R.id.loginFragment) {
+                toolbar.setVisibility(View.GONE);
+                navigationView.setVisibility(View.GONE);
+            } else {
+                toolbar.setVisibility(View.VISIBLE);
+                navigationView.setVisibility(View.VISIBLE);
+            }
         });
 
         navigationView.setNavigationItemSelectedListener(menuItem -> {

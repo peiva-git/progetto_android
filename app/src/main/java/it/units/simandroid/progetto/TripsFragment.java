@@ -25,7 +25,7 @@ import java.util.List;
 
 public class TripsFragment extends Fragment {
 
-    private FirebaseAuth firebaseInstance;
+    private FirebaseAuth authentication;
 
     public TripsFragment() {
         // Required empty public constructor
@@ -34,7 +34,7 @@ public class TripsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        firebaseInstance = FirebaseAuth.getInstance();
+        authentication = FirebaseAuth.getInstance();
     }
 
     @Override
@@ -64,7 +64,7 @@ public class TripsFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        FirebaseUser currentUser = firebaseInstance.getCurrentUser();
+        FirebaseUser currentUser = authentication.getCurrentUser();
         if (currentUser == null) {
             NavHostFragment.findNavController(this)
                     .navigate(TripsFragmentDirections.actionTripsFragmentToLoginFragment());
