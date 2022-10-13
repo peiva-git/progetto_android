@@ -110,6 +110,30 @@ public class NewTripFragment extends Fragment {
                     }).addOnFailureListener(exception -> {
                         Log.e(NEW_TRIP_TAG, "Failed to load trip name: " + exception.getMessage());
                     });
+            newTripReference.child("destination").putBytes(tripDestination.getText().toString().getBytes(StandardCharsets.UTF_8))
+                    .addOnSuccessListener(taskSnapshot -> {
+                        Log.d(NEW_TRIP_TAG, "Trip destination added to firecloud storage");
+                    }).addOnFailureListener(exception -> {
+                        Log.e(NEW_TRIP_TAG, "Failed to add trip destination: " + exception.getMessage());
+                    });
+            newTripReference.child("startDate").putBytes(tripStartDate.getText().toString().getBytes(StandardCharsets.UTF_8))
+                    .addOnSuccessListener(taskSnapshot -> {
+                        Log.d(NEW_TRIP_TAG, "Trip start date added to firecloud storage");
+                    }).addOnFailureListener(exception -> {
+                        Log.e(NEW_TRIP_TAG, "Failed to add trip start date: " + exception.getMessage());
+                    });
+            newTripReference.child("endDate").putBytes(tripEndDate.getText().toString().getBytes(StandardCharsets.UTF_8))
+                    .addOnSuccessListener(taskSnapshot -> {
+                        Log.d(NEW_TRIP_TAG, "Trip end date added to firecloud storage");
+                    }).addOnFailureListener(exception -> {
+                        Log.e(NEW_TRIP_TAG, "Failed to add trip end date: " + exception.getMessage());
+                    });
+            newTripReference.child("description").putBytes(tripDescription.getText().toString().getBytes(StandardCharsets.UTF_8))
+                    .addOnSuccessListener(taskSnapshot -> {
+                        Log.d(NEW_TRIP_TAG, "Trip description added to firecloud storage");
+                    }).addOnFailureListener(exception -> {
+                        Log.e(NEW_TRIP_TAG, "Failed to add trip description: " + exception.getMessage());
+                    });
         });
 
         return fragmentView;
