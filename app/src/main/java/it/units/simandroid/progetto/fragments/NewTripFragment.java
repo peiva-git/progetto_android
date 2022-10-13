@@ -1,4 +1,4 @@
-package it.units.simandroid.progetto;
+package it.units.simandroid.progetto.fragments;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -20,28 +20,24 @@ import android.widget.ImageButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageException;
 import com.google.firebase.storage.StorageReference;
 
-import java.io.DataInputStream;
-import java.io.DataOutput;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FilterOutputStream;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
+
+import it.units.simandroid.progetto.R;
 
 public class NewTripFragment extends Fragment {
 
     public static final String NEW_TRIP_TAG = "TRIP_PUT";
     public static final String LOCAL_STORAGE_TAG = "TRIPS_NUM";
     public static final String NUMBER_OF_TRIPS_FILE_KEY = "it.units.simandroid.progetto.NUMBER_OF_TRIPS";
+    public static final String NAME_STORAGE_REFERENCE = "name";
+    public static final String DESTINATION_STORAGE_REFERENCE = "destination";
+    public static final String START_DATE_STORAGE_REFERENCE = "startDate";
+    public static final String END_DATE_STORAGE_REFERENCE = "endDate";
+    public static final String DESCRIPTION_STORAGE_REFERENCE = "description";
     private ActivityResultLauncher<String> pickTripImages;
     public static final int MAX_NUMBER_OF_IMAGES = 10;
     public static final String IMAGE_PICKER_DEBUG_TAG = "IMG_PICK";
@@ -146,31 +142,31 @@ public class NewTripFragment extends Fragment {
                 Log.e(NEW_TRIP_TAG, "Failed to load image: " + exception.getMessage());
             });
         }
-        newTripReference.child("name").putBytes(tripName.getText().toString().getBytes(StandardCharsets.UTF_8))
+        newTripReference.child(NAME_STORAGE_REFERENCE).putBytes(tripName.getText().toString().getBytes(StandardCharsets.UTF_8))
                 .addOnSuccessListener(taskSnapshot -> {
                     Log.d(NEW_TRIP_TAG, "Trip name added to firecould storage");
                 }).addOnFailureListener(exception -> {
                     Log.e(NEW_TRIP_TAG, "Failed to load trip name: " + exception.getMessage());
                 });
-        newTripReference.child("destination").putBytes(tripDestination.getText().toString().getBytes(StandardCharsets.UTF_8))
+        newTripReference.child(DESTINATION_STORAGE_REFERENCE).putBytes(tripDestination.getText().toString().getBytes(StandardCharsets.UTF_8))
                 .addOnSuccessListener(taskSnapshot -> {
                     Log.d(NEW_TRIP_TAG, "Trip destination added to firecloud storage");
                 }).addOnFailureListener(exception -> {
                     Log.e(NEW_TRIP_TAG, "Failed to add trip destination: " + exception.getMessage());
                 });
-        newTripReference.child("startDate").putBytes(tripStartDate.getText().toString().getBytes(StandardCharsets.UTF_8))
+        newTripReference.child(START_DATE_STORAGE_REFERENCE).putBytes(tripStartDate.getText().toString().getBytes(StandardCharsets.UTF_8))
                 .addOnSuccessListener(taskSnapshot -> {
                     Log.d(NEW_TRIP_TAG, "Trip start date added to firecloud storage");
                 }).addOnFailureListener(exception -> {
                     Log.e(NEW_TRIP_TAG, "Failed to add trip start date: " + exception.getMessage());
                 });
-        newTripReference.child("endDate").putBytes(tripEndDate.getText().toString().getBytes(StandardCharsets.UTF_8))
+        newTripReference.child(END_DATE_STORAGE_REFERENCE).putBytes(tripEndDate.getText().toString().getBytes(StandardCharsets.UTF_8))
                 .addOnSuccessListener(taskSnapshot -> {
                     Log.d(NEW_TRIP_TAG, "Trip end date added to firecloud storage");
                 }).addOnFailureListener(exception -> {
                     Log.e(NEW_TRIP_TAG, "Failed to add trip end date: " + exception.getMessage());
                 });
-        newTripReference.child("description").putBytes(tripDescription.getText().toString().getBytes(StandardCharsets.UTF_8))
+        newTripReference.child(DESCRIPTION_STORAGE_REFERENCE).putBytes(tripDescription.getText().toString().getBytes(StandardCharsets.UTF_8))
                 .addOnSuccessListener(taskSnapshot -> {
                     Log.d(NEW_TRIP_TAG, "Trip description added to firecloud storage");
                 }).addOnFailureListener(exception -> {

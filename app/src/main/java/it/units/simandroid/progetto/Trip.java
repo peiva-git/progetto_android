@@ -5,23 +5,36 @@ import java.time.LocalDate;
 public class Trip {
 
     private String name;
-    private int mainPicture;
-    private LocalDate startDate;
-    private LocalDate endDate;
+    private int mainPictureId;
+    private String startDate;
+    private String endDate;
     private String description;
+    private String destination;
 
-    public Trip(String name, int mainPicture, LocalDate startDate, LocalDate endDate, String description) {
+    public Trip(String name, int mainPictureId, String startDate, String endDate, String description) {
         this.name = name;
-        this.mainPicture = mainPicture;
+        this.mainPictureId = mainPictureId;
         this.startDate = startDate;
         this.endDate = endDate;
         this.description = description;
     }
 
-    public Trip(String name, int mainPicture, String description) {
+    public Trip(String name, int mainPictureId, String description) {
         this.name = name;
-        this.mainPicture = mainPicture;
+        this.mainPictureId = mainPictureId;
         this.description = description;
+    }
+
+    public Trip() {
+
+    }
+
+    public String getDestination() {
+        return destination;
+    }
+
+    public void setDestination(String destination) {
+        this.destination = destination;
     }
 
     public String getName() {
@@ -32,27 +45,27 @@ public class Trip {
         this.name = name;
     }
 
-    public int getMainPicture() {
-        return mainPicture;
+    public int getMainPictureId() {
+        return mainPictureId;
     }
 
-    public void setMainPicture(int mainPicture) {
-        this.mainPicture = mainPicture;
+    public void setMainPictureId(int mainPictureId) {
+        this.mainPictureId = mainPictureId;
     }
 
-    public LocalDate getStartDate() {
+    public String getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(LocalDate startDate) {
+    public void setStartDate(String startDate) {
         this.startDate = startDate;
     }
 
-    public LocalDate getEndDate() {
+    public String getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(LocalDate endDate) {
+    public void setEndDate(String endDate) {
         this.endDate = endDate;
     }
 

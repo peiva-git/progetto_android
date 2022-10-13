@@ -1,11 +1,10 @@
-package it.units.simandroid.progetto;
+package it.units.simandroid.progetto.fragments;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
-import android.app.ActionBar;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,7 +15,9 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+
+import it.units.simandroid.progetto.fragments.directions.LoginFragmentDirections;
+import it.units.simandroid.progetto.R;
 
 public class LoginFragment extends Fragment {
 

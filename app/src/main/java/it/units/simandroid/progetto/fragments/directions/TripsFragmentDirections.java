@@ -1,10 +1,12 @@
-package it.units.simandroid.progetto;
+package it.units.simandroid.progetto.fragments.directions;
 
 import androidx.annotation.NonNull;
 import androidx.navigation.ActionOnlyNavDirections;
 import androidx.navigation.NavDirections;
 
 import org.jetbrains.annotations.Contract;
+
+import it.units.simandroid.progetto.R;
 
 public class TripsFragmentDirections {
     @NonNull

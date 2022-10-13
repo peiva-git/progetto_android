@@ -6,7 +6,7 @@
     app:startDestination="@id/tripsFragment">
     <fragment
         android:id="@+id/tripsFragment"
-        android:name="it.units.simandroid.progetto.TripsFragment"
+        android:name="it.units.simandroid.progetto.fragments.TripsFragment"
         android:label="@string/fragment_trips_label"
         tools:layout="@layout/fragment_trips" >
         <action
@@ -22,12 +22,12 @@
     </fragment>
     <fragment
         android:id="@+id/newTripFragment"
-        android:name="it.units.simandroid.progetto.NewTripFragment"
+        android:name="it.units.simandroid.progetto.fragments.NewTripFragment"
         android:label="@string/new_trip_label"
         tools:layout="@layout/fragment_new_trip" />
     <fragment
         android:id="@+id/loginFragment"
-        android:name="it.units.simandroid.progetto.LoginFragment"
+        android:name="it.units.simandroid.progetto.fragments.LoginFragment"
         android:label="@string/login_label"
         tools:layout="@layout/fragment_login" >
         <action
@@ -36,7 +36,7 @@
     </fragment>
     <fragment
         android:id="@+id/registrationFragment"
-        android:name="it.units.simandroid.progetto.RegistrationFragment"
+        android:name="it.units.simandroid.progetto.fragments.RegistrationFragment"
         android:label="@string/registration_fragment_label"
         tools:layout="@layout/fragment_registration" >
         <action

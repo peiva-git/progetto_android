@@ -1,6 +1,6 @@
-package it.units.simandroid.progetto;
+package it.units.simandroid.progetto.fragments;
 
-import static it.units.simandroid.progetto.LoginFragment.AUTH_TAG;
+import static it.units.simandroid.progetto.fragments.LoginFragment.AUTH_TAG;
 
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -18,6 +18,9 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.firebase.auth.FirebaseAuth;
+
+import it.units.simandroid.progetto.R;
+import it.units.simandroid.progetto.fragments.directions.RegistrationFragmentDirections;
 
 public class RegistrationFragment extends Fragment {
 
