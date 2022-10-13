@@ -1,5 +1,7 @@
 package it.units.simandroid.progetto;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -18,9 +20,17 @@ import android.widget.ImageButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageException;
 import com.google.firebase.storage.StorageReference;
 
 import java.io.DataInputStream;
+import java.io.DataOutput;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
@@ -30,6 +40,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class NewTripFragment extends Fragment {
 
     public static final String NEW_TRIP_TAG = "TRIP_PUT";
+    public static final String LOCAL_STORAGE_TAG = "TRIPS_NUM";
+    public static final String NUMBER_OF_TRIPS_FILE_KEY = "it.units.simandroid.progetto.NUMBER_OF_TRIPS";
     private ActivityResultLauncher<String> pickTripImages;
     public static final int MAX_NUMBER_OF_IMAGES = 10;
     public static final String IMAGE_PICKER_DEBUG_TAG = "IMG_PICK";
@@ -64,19 +76,34 @@ public class NewTripFragment extends Fragment {
                 Log.d(IMAGE_PICKER_DEBUG_TAG, "No media selected");
             }
         });
+
+        if (getNumberOfTripsForCurrentUser() == -1) {
+            // unable to find locally stored number of trips, app was previously uninstalled
+            // get number of trips from remote storage
+            StorageReference tripsReference = storage.getReference().child("users/" + authentication.getUid() + "/trips");
+            tripsReference.listAll().addOnSuccessListener(taskSnapshot -> {
+                setNumberOfTripsForCurrentUser(taskSnapshot.getPrefixes().size());
+                Log.d(LOCAL_STORAGE_TAG, "Number of user trips fetched remotely: " + taskSnapshot.getPrefixes().size());
+            }).addOnFailureListener(exception -> {
+                setNumberOfTripsForCurrentUser(0);
+                Log.e(LOCAL_STORAGE_TAG, "Failed to fetch number of trips remotely: " + exception.getMessage() + "\nSet the number back to 0");
+            });
+        }
     }
 
     private int getNumberOfTripsForCurrentUser() {
-        AtomicInteger numberOfTrips = new AtomicInteger();
-        StorageReference tripsReference = storage.getReference()
-                .child("users/" + authentication.getUid() + "/trips");
-        tripsReference.listAll().addOnSuccessListener(taskSnapshot -> {
-            numberOfTrips.set(taskSnapshot.getItems().size());
-            Log.d(NEW_TRIP_TAG, "Detected " + numberOfTrips.get() + " trips for current user");
-        }).addOnFailureListener(exception -> {
-            Log.e(NEW_TRIP_TAG, "Failed to retrieve number of trips for current user: " + exception.getMessage());
-        });
-        return numberOfTrips.get();
+        SharedPreferences sharedPreferences = requireContext().getSharedPreferences(NUMBER_OF_TRIPS_FILE_KEY, Context.MODE_PRIVATE);
+        int numberOfTrips = sharedPreferences.getInt(String.valueOf(authentication.getUid()), -1);
+        Log.d(LOCAL_STORAGE_TAG, "Current number of user trips is: " + numberOfTrips);
+        return numberOfTrips;
+    }
+
+    private void setNumberOfTripsForCurrentUser(int numberOfTrips) {
+        SharedPreferences sharedPreferences = requireContext().getSharedPreferences(NUMBER_OF_TRIPS_FILE_KEY, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt(authentication.getUid(), numberOfTrips);
+        editor.apply();
+        Log.d(LOCAL_STORAGE_TAG, "Set new number of user trips");
     }
 
     @Override
@@ -103,8 +130,8 @@ public class NewTripFragment extends Fragment {
 
             int numberOfTrips = getNumberOfTripsForCurrentUser();
             StorageReference newTripReference = tripsReference.child("trip_" + numberOfTrips);
-
             uploadNewTripData(newTripReference);
+            setNumberOfTripsForCurrentUser(++numberOfTrips);
         });
 
         return fragmentView;
