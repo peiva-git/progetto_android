@@ -43,16 +43,8 @@ import it.units.simandroid.progetto.Trip;
 public class NewTripFragment extends Fragment {
 
     public static final String NEW_TRIP_TAG = "TRIP_PUT";
-    public static final String LOCAL_STORAGE_TAG = "TRIPS_NUM";
-    public static final String NUMBER_OF_TRIPS_FILE_KEY = "it.units.simandroid.progetto.NUMBER_OF_TRIPS";
-    public static final String NAME_STORAGE_REFERENCE = "name";
-    public static final String DESTINATION_STORAGE_REFERENCE = "destination";
-    public static final String START_DATE_STORAGE_REFERENCE = "startDate";
-    public static final String END_DATE_STORAGE_REFERENCE = "endDate";
-    public static final String DESCRIPTION_STORAGE_REFERENCE = "description";
-    public static final String IMAGES_STORAGE_REFERENCE =  "images";
+    public static final String NEW_TRIP_DB_TAG = "TRIP_PUT_DB";
     private ActivityResultLauncher<String> pickTripImages;
-    public static final int MAX_NUMBER_OF_IMAGES = 10;
     public static final String IMAGE_PICKER_DEBUG_TAG = "IMG_PICK";
     private FirebaseStorage storage;
     private int numberOfTrips;
@@ -88,40 +80,11 @@ public class NewTripFragment extends Fragment {
                 Log.d(IMAGE_PICKER_DEBUG_TAG, "No media selected");
             }
         });
-
-        if (getNumberOfTripsForCurrentUser() == -1) {
-            // unable to find locally stored number of trips, app was previously uninstalled
-            // get number of trips from remote storage
-            StorageReference tripsReference = storage.getReference().child("users/" + authentication.getUid() + "/trips");
-            tripsReference.listAll().addOnSuccessListener(taskSnapshot -> {
-                setNumberOfTripsForCurrentUser(taskSnapshot.getPrefixes().size());
-                Log.d(LOCAL_STORAGE_TAG, "Number of user trips fetched remotely: " + taskSnapshot.getPrefixes().size());
-            }).addOnFailureListener(exception -> {
-                setNumberOfTripsForCurrentUser(0);
-                Log.e(LOCAL_STORAGE_TAG, "Failed to fetch number of trips remotely: " + exception.getMessage() + "\nSet the number back to 0");
-            });
-        }
-    }
-
-    private int getNumberOfTripsForCurrentUser() {
-        SharedPreferences sharedPreferences = requireContext().getSharedPreferences(NUMBER_OF_TRIPS_FILE_KEY, Context.MODE_PRIVATE);
-        int numberOfTrips = sharedPreferences.getInt(String.valueOf(authentication.getUid()), -1);
-        Log.d(LOCAL_STORAGE_TAG, "Current number of user trips is: " + numberOfTrips);
-        return numberOfTrips;
-    }
-
-    private void setNumberOfTripsForCurrentUser(int numberOfTrips) {
-        SharedPreferences sharedPreferences = requireContext().getSharedPreferences(NUMBER_OF_TRIPS_FILE_KEY, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putInt(authentication.getUid(), numberOfTrips);
-        editor.apply();
-        Log.d(LOCAL_STORAGE_TAG, "Set new number of user trips");
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View fragmentView = inflater.inflate(R.layout.fragment_new_trip, container, false);
         newImageButton = fragmentView.findViewById(R.id.trip_images_button);
         saveNewTripButton = fragmentView.findViewById(R.id.save_new_trip_button);
@@ -151,12 +114,12 @@ public class NewTripFragment extends Fragment {
                 } else {
                     numberOfTrips = snapshot.getValue(type).size();
                 }
-                Log.d(NEW_TRIP_TAG, "Number of trips currently in database: " + numberOfTrips);
+                Log.d(NEW_TRIP_DB_TAG, "Number of trips currently in database: " + numberOfTrips);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.e(NEW_TRIP_TAG, "Failed to update number of trips");
+                Log.e(NEW_TRIP_DB_TAG, "Failed to update number of trips");
             }
         });
 
@@ -189,9 +152,9 @@ public class NewTripFragment extends Fragment {
         }
         Trip newTrip = new Trip(newTripImageUris, newTripName, newTripStartDate, newTripEndDate, newTripDescription, newTripDestination);
         tripsDbReference.setValue(newTrip).addOnSuccessListener(task -> {
-            Log.d(NEW_TRIP_TAG, "Added new trip data to realtime DB");
+            Log.d(NEW_TRIP_DB_TAG, "Added new trip data to realtime DB");
         }).addOnFailureListener(exception -> {
-            Log.e(NEW_TRIP_TAG, "Failed to add new trip data: " + exception.getMessage());
+            Log.e(NEW_TRIP_DB_TAG, "Failed to add new trip data: " + exception.getMessage());
         });
     }
 }

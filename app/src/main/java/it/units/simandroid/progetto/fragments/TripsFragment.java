@@ -20,7 +20,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
@@ -44,12 +43,8 @@ import it.units.simandroid.progetto.fragments.directions.TripsFragmentDirections
 
 public class TripsFragment extends Fragment {
 
-    public static final String TRIP_GET_TAG = "TRIP_GET";
-    public static final int NUMBER_OF_TRIP_PROPERTIES = 5;
-    public static final String NUMBER_OF_IMAGES_FILE_KEY = "it.units.simandroid.progetto.fragments.NUMBER_OF_IMAGES";
-    public static final String IMAGES_NUMBER_TAG = "IMG_NUM";
     public static final String DB_ERROR = "DB_ERROR";
-    public static final String GET_NEW_TRIP = "GET_TRIP";
+    public static final String GET_DB_TRIPS = "GET_DB_TRIPS";
     private FirebaseAuth authentication;
     private FirebaseStorage storage;
     private FirebaseDatabase database;
@@ -66,15 +61,9 @@ public class TripsFragment extends Fragment {
         database = FirebaseDatabase.getInstance("https://progetto-android-653cd-default-rtdb.europe-west1.firebasedatabase.app/");
     }
 
-    private void setNumberOfTripImages(int tripId, int numberOfImages) {
-        DatabaseReference numberOfImagesByTrips = database.getReference().child("trips");
-        numberOfImagesByTrips.child(String.valueOf(tripId)).setValue(numberOfImages);
-    }
-
     @Override
     public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         super.onCreateView(inflater, container, savedInstanceState);
         View fragmentView = inflater.inflate(R.layout.fragment_trips, container, false);
         RecyclerView tripsRecyclerView = fragmentView.findViewById(R.id.trips_recycler_view);
@@ -96,7 +85,7 @@ public class TripsFragment extends Fragment {
                         DataSnapshot tripSnapshot = snapshot.child(String.valueOf(tripId));
                         Trip trip = tripSnapshot.getValue(Trip.class);
                         trips.add(trip);
-                        Log.d(GET_NEW_TRIP, "Trip with id " + tripId + " added to list");
+                        Log.d(GET_DB_TRIPS, "Trip with id " + tripId + " added to list");
                     }
                     TripAdapter tripAdapter = new TripAdapter(getContext(), trips);
                     LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
@@ -110,90 +99,7 @@ public class TripsFragment extends Fragment {
                 Log.w(DB_ERROR, "Trips' value update canceled: " + error.getMessage());
             }
         });
-
-        // downloadStoredTrips();
-
         return fragmentView;
-    }
-
-    /*
-    private void downloadStoredTrips() {
-        StorageReference tripsIMagesReference = storage.getReference().child("users/" + authentication.getUid() + "/trips");
-        tripsReference.listAll().addOnSuccessListener(taskSnapshot -> {
-            for (StorageReference tripReference : taskSnapshot.getPrefixes()) {
-                Trip retrievedTrip = new Trip();
-                tripReference.child(NewTripFragment.NAME_STORAGE_REFERENCE).getStream()
-                        .addOnSuccessListener(nameTask -> {
-                            try {
-                                String value = getRemoteUTF_8StoredValueFromStream(nameTask.getStream());
-                                retrievedTrip.setName(value);
-                            } catch (IOException e) {
-                                Log.e(TRIP_GET_TAG, "Failed to read from trip name stream: " + e.getMessage());
-                            }
-                        }).addOnFailureListener(exception -> {
-                            Log.e(TRIP_GET_TAG, "Failed to retrieve " + tripReference + " name: " + exception.getMessage());
-                        });
-                tripReference.child(NewTripFragment.DESTINATION_STORAGE_REFERENCE).getStream()
-                        .addOnSuccessListener(destinationTask -> {
-                            try {
-                                String value = getRemoteUTF_8StoredValueFromStream(destinationTask.getStream());
-                                retrievedTrip.setDestination(value);
-                            } catch (IOException e) {
-                                Log.e(TRIP_GET_TAG, "Failed to read from trip destination stream: " + e.getMessage());
-                            }
-                        }).addOnFailureListener(exception -> {
-                            Log.e(TRIP_GET_TAG, "Failed to retrieve " + tripReference + " destination: " + exception.getMessage());
-                        });
-                tripReference.child(NewTripFragment.START_DATE_STORAGE_REFERENCE).getStream()
-                        .addOnSuccessListener(startDateTask -> {
-                            try {
-                                String value = getRemoteUTF_8StoredValueFromStream(startDateTask.getStream());
-                                retrievedTrip.setStartDate(value);
-                            } catch (IOException e) {
-                                Log.e(TRIP_GET_TAG, "Failed to read from trip start date stream: " + e.getMessage());
-                            }
-                        }).addOnFailureListener(exception -> {
-                            Log.e(TRIP_GET_TAG, "Failed to retrieve " + tripReference + " start date: " + exception.getMessage());
-                        });
-                tripReference.child(NewTripFragment.END_DATE_STORAGE_REFERENCE).getStream()
-                        .addOnSuccessListener(endDateTask -> {
-                            try {
-                                String value = getRemoteUTF_8StoredValueFromStream(endDateTask.getStream());
-                                retrievedTrip.setEndDate(value);
-                            } catch (IOException e) {
-                                Log.e(TRIP_GET_TAG, "Failed to read from trip end date stream: " + e.getMessage());
-                            }
-                        }).addOnFailureListener(exception -> {
-                            Log.e(TRIP_GET_TAG, "Failed to retrieve " + tripReference + " end date: " + exception.getMessage());
-                        });
-                tripReference.child(NewTripFragment.DESCRIPTION_STORAGE_REFERENCE).getStream()
-                        .addOnSuccessListener(descriptionTask -> {
-                            try {
-                                String value = getRemoteUTF_8StoredValueFromStream(descriptionTask.getStream());
-                                retrievedTrip.setDescription(value);
-                            } catch (IOException e) {
-                                Log.e(TRIP_GET_TAG, "Failed to read from trip description stream: " + e.getMessage());
-                            }
-                        }).addOnFailureListener(exception -> {
-                            Log.e(TRIP_GET_TAG, "Failed to retrieve " + tripReference + " description: " + exception.getMessage());
-                        });
-                trips.add(retrievedTrip);
-            }
-        }).addOnFailureListener(exception -> {
-            Log.e(TRIP_GET_TAG, "Failed to list trip references: " + exception.getMessage());
-        });
-    }
-    */
-
-    private String getRemoteUTF_8StoredValueFromStream(InputStream stream) throws IOException {
-        int bufferSize = 1024;
-        char[] buffer = new char[bufferSize];
-        StringBuilder output = new StringBuilder();
-        Reader in = new InputStreamReader(stream, StandardCharsets.UTF_8);
-        for (int numRead; (numRead = in.read(buffer, 0, buffer.length)) > 0; ) {
-            output.append(buffer, 0, numRead);
-        }
-        return output.toString();
     }
 
     @Override
