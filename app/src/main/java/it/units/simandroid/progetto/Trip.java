@@ -1,28 +1,35 @@
 package it.units.simandroid.progetto;
 
+import android.net.Uri;
+
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Objects;
 
 public class Trip {
 
+    private List<String> imagesUris;
     private String name;
-    private int mainPictureId;
     private String startDate;
     private String endDate;
     private String description;
     private String destination;
 
-    public Trip(String name, int mainPictureId, String startDate, String endDate, String description) {
+    public Trip(String name, String startDate, String endDate, String description, String destination) {
         this.name = name;
-        this.mainPictureId = mainPictureId;
         this.startDate = startDate;
         this.endDate = endDate;
         this.description = description;
+        this.destination = destination;
     }
 
-    public Trip(String name, int mainPictureId, String description) {
+    public Trip(List<String> imagesUris, String name, String startDate, String endDate, String description, String destination) {
+        this.imagesUris = imagesUris;
         this.name = name;
-        this.mainPictureId = mainPictureId;
+        this.startDate = startDate;
+        this.endDate = endDate;
         this.description = description;
+        this.destination = destination;
     }
 
     public Trip() {
@@ -41,16 +48,16 @@ public class Trip {
         return name;
     }
 
+    public List<String> getImagesUris() {
+        return imagesUris;
+    }
+
+    public void setImagesUris(List<String> imagesUris) {
+        this.imagesUris = imagesUris;
+    }
+
     public void setName(String name) {
         this.name = name;
-    }
-
-    public int getMainPictureId() {
-        return mainPictureId;
-    }
-
-    public void setMainPictureId(int mainPictureId) {
-        this.mainPictureId = mainPictureId;
     }
 
     public String getStartDate() {
@@ -75,5 +82,18 @@ public class Trip {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Trip trip = (Trip) o;
+        return Objects.equals(imagesUris, trip.imagesUris) && Objects.equals(name, trip.name) && Objects.equals(startDate, trip.startDate) && Objects.equals(endDate, trip.endDate) && Objects.equals(description, trip.description) && Objects.equals(destination, trip.destination);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(imagesUris, name, startDate, endDate, description, destination);
     }
 }

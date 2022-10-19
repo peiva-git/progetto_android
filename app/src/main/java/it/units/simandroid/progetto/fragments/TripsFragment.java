@@ -18,13 +18,16 @@ import android.view.ViewGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.StreamDownloadTask;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -42,9 +45,14 @@ import it.units.simandroid.progetto.fragments.directions.TripsFragmentDirections
 public class TripsFragment extends Fragment {
 
     public static final String TRIP_GET_TAG = "TRIP_GET";
+    public static final int NUMBER_OF_TRIP_PROPERTIES = 5;
+    public static final String NUMBER_OF_IMAGES_FILE_KEY = "it.units.simandroid.progetto.fragments.NUMBER_OF_IMAGES";
+    public static final String IMAGES_NUMBER_TAG = "IMG_NUM";
+    public static final String DB_ERROR = "DB_ERROR";
+    public static final String GET_NEW_TRIP = "GET_TRIP";
     private FirebaseAuth authentication;
     private FirebaseStorage storage;
-    private List<Trip> trips;
+    private FirebaseDatabase database;
 
     public TripsFragment() {
         // Required empty public constructor
@@ -55,7 +63,12 @@ public class TripsFragment extends Fragment {
         super.onCreate(savedInstanceState);
         authentication = FirebaseAuth.getInstance();
         storage = FirebaseStorage.getInstance();
-        trips = new ArrayList<>();
+        database = FirebaseDatabase.getInstance("https://progetto-android-653cd-default-rtdb.europe-west1.firebasedatabase.app/");
+    }
+
+    private void setNumberOfTripImages(int tripId, int numberOfImages) {
+        DatabaseReference numberOfImagesByTrips = database.getReference().child("trips");
+        numberOfImagesByTrips.child(String.valueOf(tripId)).setValue(numberOfImages);
     }
 
     @Override
@@ -72,18 +85,40 @@ public class TripsFragment extends Fragment {
             navController.navigate(TripsFragmentDirections.actionTripsFragmentToNewTripFragment());
         });
 
-        downloadStoredTrips();
-        TripAdapter tripAdapter = new TripAdapter(getContext(), trips);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
-        tripsRecyclerView.setLayoutManager(linearLayoutManager);
-        tripsRecyclerView.setAdapter(tripAdapter);
+        database.getReference("trips").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                GenericTypeIndicator<List<Object>> type = new GenericTypeIndicator<List<Object>>() {};
+                snapshot.getValue(type);
+                if (snapshot.getValue(type) != null) {
+                    List<Trip> trips = new ArrayList<>();
+                    for (int tripId = 0; tripId < snapshot.getValue(type).size(); tripId++) {
+                        DataSnapshot tripSnapshot = snapshot.child(String.valueOf(tripId));
+                        Trip trip = tripSnapshot.getValue(Trip.class);
+                        trips.add(trip);
+                        Log.d(GET_NEW_TRIP, "Trip with id " + tripId + " added to list");
+                    }
+                    TripAdapter tripAdapter = new TripAdapter(getContext(), trips);
+                    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+                    tripsRecyclerView.setLayoutManager(linearLayoutManager);
+                    tripsRecyclerView.setAdapter(tripAdapter);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.w(DB_ERROR, "Trips' value update canceled: " + error.getMessage());
+            }
+        });
+
+        // downloadStoredTrips();
 
         return fragmentView;
     }
 
-    @NonNull
+    /*
     private void downloadStoredTrips() {
-        StorageReference tripsReference = storage.getReference().child("users/" + authentication.getUid() + "/trips");
+        StorageReference tripsIMagesReference = storage.getReference().child("users/" + authentication.getUid() + "/trips");
         tripsReference.listAll().addOnSuccessListener(taskSnapshot -> {
             for (StorageReference tripReference : taskSnapshot.getPrefixes()) {
                 Trip retrievedTrip = new Trip();
@@ -148,6 +183,7 @@ public class TripsFragment extends Fragment {
             Log.e(TRIP_GET_TAG, "Failed to list trip references: " + exception.getMessage());
         });
     }
+    */
 
     private String getRemoteUTF_8StoredValueFromStream(InputStream stream) throws IOException {
         int bufferSize = 1024;

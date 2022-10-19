@@ -7,6 +7,11 @@
     android:orientation="vertical"
     tools:context=".fragments.NewTripFragment">
 
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/new_trip_progress_indicator" />
+
     <ImageButton
         android:id="@+id/trip_images_button"
         android:layout_width="match_parent"

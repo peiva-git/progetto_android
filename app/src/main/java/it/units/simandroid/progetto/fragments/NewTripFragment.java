@@ -10,6 +10,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,15 +19,26 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import it.units.simandroid.progetto.R;
+import it.units.simandroid.progetto.Trip;
 
 public class NewTripFragment extends Fragment {
 
@@ -38,6 +50,7 @@ public class NewTripFragment extends Fragment {
     public static final String START_DATE_STORAGE_REFERENCE = "startDate";
     public static final String END_DATE_STORAGE_REFERENCE = "endDate";
     public static final String DESCRIPTION_STORAGE_REFERENCE = "description";
+    public static final String IMAGES_STORAGE_REFERENCE =  "images";
     private ActivityResultLauncher<String> pickTripImages;
     public static final int MAX_NUMBER_OF_IMAGES = 10;
     public static final String IMAGE_PICKER_DEBUG_TAG = "IMG_PICK";
@@ -52,6 +65,8 @@ public class NewTripFragment extends Fragment {
     private EditText tripStartDate;
     private EditText tripEndDate;
     private EditText tripDescription;
+    private FirebaseDatabase database;
+    private LinearProgressIndicator progressIndicator;
 
     public NewTripFragment() {
         // Required empty public constructor
@@ -62,6 +77,7 @@ public class NewTripFragment extends Fragment {
         super.onCreate(savedInstanceState);
         storage = FirebaseStorage.getInstance();
         authentication = FirebaseAuth.getInstance();
+        database = FirebaseDatabase.getInstance("https://progetto-android-653cd-default-rtdb.europe-west1.firebasedatabase.app/");
 
         // PickMultipleVisualMedia contract seems to be buggy, even when implemented according to docs
         pickTripImages = registerForActivityResult(new ActivityResultContracts.GetMultipleContents(), uris -> {
@@ -114,63 +130,68 @@ public class NewTripFragment extends Fragment {
         tripStartDate = fragmentView.findViewById(R.id.trip_start_date);
         tripEndDate = fragmentView.findViewById(R.id.trip_end_date);
         tripDescription = fragmentView.findViewById(R.id.trip_description);
+        progressIndicator = fragmentView.findViewById(R.id.new_trip_progress_indicator);
 
         newImageButton.setOnClickListener(view -> {
             pickTripImages.launch("image/*");
         });
 
         saveNewTripButton.setOnClickListener(view -> {
-            String userId = authentication.getUid();
-            StorageReference userStorageReference = storage.getReference().child("users/" + userId);
-            StorageReference tripsReference = userStorageReference.child("trips");
+            progressIndicator.setVisibility(View.VISIBLE);
+            uploadNewTripImages();
+            uploadNewTripData();
+        });
 
-            int numberOfTrips = getNumberOfTripsForCurrentUser();
-            StorageReference newTripReference = tripsReference.child("trip_" + numberOfTrips);
-            uploadNewTripData(newTripReference);
-            setNumberOfTripsForCurrentUser(++numberOfTrips);
+        database.getReference("trips").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                GenericTypeIndicator<List<Object>> type = new GenericTypeIndicator<List<Object>>() {};
+                if (snapshot.getValue(type) == null) {
+                    numberOfTrips = 0;
+                } else {
+                    numberOfTrips = snapshot.getValue(type).size();
+                }
+                Log.d(NEW_TRIP_TAG, "Number of trips currently in database: " + numberOfTrips);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e(NEW_TRIP_TAG, "Failed to update number of trips");
+            }
         });
 
         return fragmentView;
     }
 
-    private void uploadNewTripData(StorageReference newTripReference) {
+    private void uploadNewTripImages() {
         for (Uri tripImage : pickedImages) {
-            StorageReference newTripImageReference = newTripReference.child(tripImage.getLastPathSegment());
-            newTripImageReference.putFile(tripImage).addOnSuccessListener(taskSnapshot -> {
+            StorageReference newTripImagesReference = storage.getReference().child("users/" + authentication.getUid() + "/" + numberOfTrips + "/" + tripImage.getLastPathSegment());
+            newTripImagesReference.putFile(tripImage).addOnSuccessListener(taskSnapshot -> {
                 Log.d(NEW_TRIP_TAG, "Image added to firecloud storage");
+                progressIndicator.setVisibility(View.INVISIBLE);
             }).addOnFailureListener(exception -> {
                 Log.e(NEW_TRIP_TAG, "Failed to load image: " + exception.getMessage());
+                progressIndicator.setVisibility(View.INVISIBLE);
             });
         }
-        newTripReference.child(NAME_STORAGE_REFERENCE).putBytes(tripName.getText().toString().getBytes(StandardCharsets.UTF_8))
-                .addOnSuccessListener(taskSnapshot -> {
-                    Log.d(NEW_TRIP_TAG, "Trip name added to firecould storage");
-                }).addOnFailureListener(exception -> {
-                    Log.e(NEW_TRIP_TAG, "Failed to load trip name: " + exception.getMessage());
-                });
-        newTripReference.child(DESTINATION_STORAGE_REFERENCE).putBytes(tripDestination.getText().toString().getBytes(StandardCharsets.UTF_8))
-                .addOnSuccessListener(taskSnapshot -> {
-                    Log.d(NEW_TRIP_TAG, "Trip destination added to firecloud storage");
-                }).addOnFailureListener(exception -> {
-                    Log.e(NEW_TRIP_TAG, "Failed to add trip destination: " + exception.getMessage());
-                });
-        newTripReference.child(START_DATE_STORAGE_REFERENCE).putBytes(tripStartDate.getText().toString().getBytes(StandardCharsets.UTF_8))
-                .addOnSuccessListener(taskSnapshot -> {
-                    Log.d(NEW_TRIP_TAG, "Trip start date added to firecloud storage");
-                }).addOnFailureListener(exception -> {
-                    Log.e(NEW_TRIP_TAG, "Failed to add trip start date: " + exception.getMessage());
-                });
-        newTripReference.child(END_DATE_STORAGE_REFERENCE).putBytes(tripEndDate.getText().toString().getBytes(StandardCharsets.UTF_8))
-                .addOnSuccessListener(taskSnapshot -> {
-                    Log.d(NEW_TRIP_TAG, "Trip end date added to firecloud storage");
-                }).addOnFailureListener(exception -> {
-                    Log.e(NEW_TRIP_TAG, "Failed to add trip end date: " + exception.getMessage());
-                });
-        newTripReference.child(DESCRIPTION_STORAGE_REFERENCE).putBytes(tripDescription.getText().toString().getBytes(StandardCharsets.UTF_8))
-                .addOnSuccessListener(taskSnapshot -> {
-                    Log.d(NEW_TRIP_TAG, "Trip description added to firecloud storage");
-                }).addOnFailureListener(exception -> {
-                    Log.e(NEW_TRIP_TAG, "Failed to add trip description: " + exception.getMessage());
-                });
+    }
+
+    private void uploadNewTripData() {
+        DatabaseReference tripsDbReference = database.getReference("trips").child(String.valueOf(numberOfTrips));
+        String newTripName = tripName.getText().toString();
+        String newTripDestination = tripDestination.getText().toString();
+        String newTripStartDate = tripStartDate.getText().toString();
+        String newTripEndDate = tripEndDate.getText().toString();
+        String newTripDescription = tripDescription.getText().toString();
+        List<String> newTripImageUris = new ArrayList<>();
+        for (Uri pickedImageUri : pickedImages) {
+            newTripImageUris.add(pickedImageUri.toString());
+        }
+        Trip newTrip = new Trip(newTripImageUris, newTripName, newTripStartDate, newTripEndDate, newTripDescription, newTripDestination);
+        tripsDbReference.setValue(newTrip).addOnSuccessListener(task -> {
+            Log.d(NEW_TRIP_TAG, "Added new trip data to realtime DB");
+        }).addOnFailureListener(exception -> {
+            Log.e(NEW_TRIP_TAG, "Failed to add new trip data: " + exception.getMessage());
+        });
     }
 }
