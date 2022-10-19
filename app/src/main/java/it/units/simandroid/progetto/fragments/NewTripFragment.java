@@ -1,5 +1,8 @@
 package it.units.simandroid.progetto.fragments;
 
+import static it.units.simandroid.progetto.RealtimeDatabase.DB_URL;
+import static it.units.simandroid.progetto.RealtimeDatabase.NEW_TRIP_DB_TAG;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -43,7 +46,6 @@ import it.units.simandroid.progetto.Trip;
 public class NewTripFragment extends Fragment {
 
     public static final String NEW_TRIP_TAG = "TRIP_PUT";
-    public static final String NEW_TRIP_DB_TAG = "TRIP_PUT_DB";
     private ActivityResultLauncher<String> pickTripImages;
     public static final String IMAGE_PICKER_DEBUG_TAG = "IMG_PICK";
     private FirebaseStorage storage;
@@ -69,7 +71,7 @@ public class NewTripFragment extends Fragment {
         super.onCreate(savedInstanceState);
         storage = FirebaseStorage.getInstance();
         authentication = FirebaseAuth.getInstance();
-        database = FirebaseDatabase.getInstance("https://progetto-android-653cd-default-rtdb.europe-west1.firebasedatabase.app/");
+        database = FirebaseDatabase.getInstance(DB_URL);
 
         // PickMultipleVisualMedia contract seems to be buggy, even when implemented according to docs
         pickTripImages = registerForActivityResult(new ActivityResultContracts.GetMultipleContents(), uris -> {

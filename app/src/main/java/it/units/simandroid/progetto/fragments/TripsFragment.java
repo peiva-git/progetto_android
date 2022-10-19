@@ -1,5 +1,9 @@
 package it.units.simandroid.progetto.fragments;
 
+import static it.units.simandroid.progetto.RealtimeDatabase.DB_ERROR;
+import static it.units.simandroid.progetto.RealtimeDatabase.DB_URL;
+import static it.units.simandroid.progetto.RealtimeDatabase.GET_DB_TRIPS;
+
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -43,8 +47,6 @@ import it.units.simandroid.progetto.fragments.directions.TripsFragmentDirections
 
 public class TripsFragment extends Fragment {
 
-    public static final String DB_ERROR = "DB_ERROR";
-    public static final String GET_DB_TRIPS = "GET_DB_TRIPS";
     private FirebaseAuth authentication;
     private FirebaseStorage storage;
     private FirebaseDatabase database;
@@ -58,7 +60,7 @@ public class TripsFragment extends Fragment {
         super.onCreate(savedInstanceState);
         authentication = FirebaseAuth.getInstance();
         storage = FirebaseStorage.getInstance();
-        database = FirebaseDatabase.getInstance("https://progetto-android-653cd-default-rtdb.europe-west1.firebasedatabase.app/");
+        database = FirebaseDatabase.getInstance(DB_URL);
     }
 
     @Override
