@@ -4,9 +4,14 @@ import static it.units.simandroid.progetto.RealtimeDatabase.DB_ERROR;
 import static it.units.simandroid.progetto.RealtimeDatabase.DB_URL;
 import static it.units.simandroid.progetto.RealtimeDatabase.GET_DB_TRIPS;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -50,6 +55,7 @@ public class TripsFragment extends Fragment {
     private FirebaseAuth authentication;
     private FirebaseStorage storage;
     private FirebaseDatabase database;
+    private ActivityResultLauncher<String> requestPermissionLauncher;
 
     public TripsFragment() {
         // Required empty public constructor
@@ -61,6 +67,14 @@ public class TripsFragment extends Fragment {
         authentication = FirebaseAuth.getInstance();
         storage = FirebaseStorage.getInstance();
         database = FirebaseDatabase.getInstance(DB_URL);
+
+        requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted ->  {
+            if (isGranted) {
+
+            } else {
+
+            }
+        });
     }
 
     @Override
@@ -89,10 +103,18 @@ public class TripsFragment extends Fragment {
                         trips.add(trip);
                         Log.d(GET_DB_TRIPS, "Trip with id " + tripId + " added to list");
                     }
-                    TripAdapter tripAdapter = new TripAdapter(getContext(), trips);
-                    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
-                    tripsRecyclerView.setLayoutManager(linearLayoutManager);
-                    tripsRecyclerView.setAdapter(tripAdapter);
+                    try {
+                        TripAdapter tripAdapter = new TripAdapter(getContext(), trips);
+                        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+                        tripsRecyclerView.setLayoutManager(linearLayoutManager);
+                        tripsRecyclerView.setAdapter(tripAdapter);
+                    } catch (SecurityException e) {
+                        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED) {
+
+                        } else {
+                            requestPermissionLauncher.launch(Manifest.permission.READ_MEDIA_IMAGES);
+                        }
+                    }
                 }
             }
 
