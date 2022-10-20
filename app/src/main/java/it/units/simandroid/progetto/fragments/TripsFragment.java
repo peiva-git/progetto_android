@@ -11,6 +11,7 @@ import android.os.Bundle;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
@@ -25,6 +26,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -52,10 +54,14 @@ import it.units.simandroid.progetto.fragments.directions.TripsFragmentDirections
 
 public class TripsFragment extends Fragment {
 
+    public static final String PERMISSIONS_TAG = "PERMISSIONS";
     private FirebaseAuth authentication;
     private FirebaseStorage storage;
     private FirebaseDatabase database;
     private ActivityResultLauncher<String> requestPermissionLauncher;
+    private List<Trip> trips;
+    private RecyclerView tripsRecyclerView;
+    private FloatingActionButton newTripButton;
 
     public TripsFragment() {
         // Required empty public constructor
@@ -68,11 +74,18 @@ public class TripsFragment extends Fragment {
         storage = FirebaseStorage.getInstance();
         database = FirebaseDatabase.getInstance(DB_URL);
 
-        requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted ->  {
+        requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
             if (isGranted) {
-
+                Log.d(PERMISSIONS_TAG, "Permission granted");
+                Snackbar.make(requireView(), R.string.read_images_permission_granted, Snackbar.LENGTH_SHORT).show();
+                TripAdapter tripAdapter = new TripAdapter(getContext(), trips);
+                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+                tripsRecyclerView.setLayoutManager(linearLayoutManager);
+                tripsRecyclerView.setAdapter(tripAdapter);
             } else {
-
+                Log.d(PERMISSIONS_TAG, "Permission not granted");
+                Snackbar.make(requireView(), R.string.read_images_permission_not_granted, Snackbar.LENGTH_SHORT).show();
+                requireActivity().finish();
             }
         });
     }
@@ -82,8 +95,8 @@ public class TripsFragment extends Fragment {
                              Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View fragmentView = inflater.inflate(R.layout.fragment_trips, container, false);
-        RecyclerView tripsRecyclerView = fragmentView.findViewById(R.id.trips_recycler_view);
-        FloatingActionButton newTripButton = fragmentView.findViewById(R.id.new_trip_button);
+        tripsRecyclerView = fragmentView.findViewById(R.id.trips_recycler_view);
+        newTripButton = fragmentView.findViewById(R.id.new_trip_button);
 
         newTripButton.setOnClickListener(view -> {
             NavController navController = Navigation.findNavController(view);
@@ -93,27 +106,27 @@ public class TripsFragment extends Fragment {
         database.getReference("trips").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                GenericTypeIndicator<List<Object>> type = new GenericTypeIndicator<List<Object>>() {};
+                GenericTypeIndicator<List<Object>> type = new GenericTypeIndicator<List<Object>>() {
+                };
                 snapshot.getValue(type);
                 if (snapshot.getValue(type) != null) {
-                    List<Trip> trips = new ArrayList<>();
+                    trips = new ArrayList<>();
                     for (int tripId = 0; tripId < snapshot.getValue(type).size(); tripId++) {
                         DataSnapshot tripSnapshot = snapshot.child(String.valueOf(tripId));
                         Trip trip = tripSnapshot.getValue(Trip.class);
                         trips.add(trip);
                         Log.d(GET_DB_TRIPS, "Trip with id " + tripId + " added to list");
                     }
-                    try {
+                    if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                        Log.d(PERMISSIONS_TAG, "Permission to read external storage is already granted");
+                        Snackbar.make(requireView(), R.string.read_images_permission_available, Snackbar.LENGTH_SHORT).show();
                         TripAdapter tripAdapter = new TripAdapter(getContext(), trips);
                         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
                         tripsRecyclerView.setLayoutManager(linearLayoutManager);
                         tripsRecyclerView.setAdapter(tripAdapter);
-                    } catch (SecurityException e) {
-                        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED) {
-
-                        } else {
-                            requestPermissionLauncher.launch(Manifest.permission.READ_MEDIA_IMAGES);
-                        }
+                    } else {
+                        Log.d(PERMISSIONS_TAG, "Permission to read external storage hasn't been granted");
+                        requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
                     }
                 }
             }

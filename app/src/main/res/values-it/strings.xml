@@ -33,4 +33,9 @@
     <string name="login_label">Login</string>
     <string name="registration_fragment_label">Nuovo utente</string>
     <string name="save_new_trip_button">Salva viaggio</string>
+    <string name="read_images_permission_available">Autorizzazione per la lettura delle immagini concessa</string>
+    <string name="read_images_access_required">Autorizzazione richiesta per la lettura delle immagini</string>
+    <string name="ok">Ok</string>
+    <string name="read_images_permission_granted">Autorizzazione per la lettura delle immagini concessa</string>
+    <string name="read_images_permission_not_granted">Autorizzazione non concessa</string>
 </resources>
