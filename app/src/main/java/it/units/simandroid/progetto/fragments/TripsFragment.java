@@ -54,7 +54,6 @@ import it.units.simandroid.progetto.fragments.directions.TripsFragmentDirections
 
 public class TripsFragment extends Fragment {
 
-    public static final String PERMISSIONS_TAG = "PERMISSIONS";
     private FirebaseAuth authentication;
     private FirebaseStorage storage;
     private FirebaseDatabase database;

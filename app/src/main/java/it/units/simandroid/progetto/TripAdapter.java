@@ -34,10 +34,12 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Trip trip = trips.get(position);
-        Uri mainImageUri = Uri.parse(trip.getImagesUris().get(0));
         holder.tripName.setText(trip.getName());
         holder.tripDescription.setText(trip.getDescription());
-        holder.tripMainPicture.setImageURI(mainImageUri);
+        if (trip.getImagesUris() != null) {
+            Uri mainImageUri = Uri.parse(trip.getImagesUris().get(0));
+            holder.tripMainPicture.setImageURI(mainImageUri);
+        }
     }
 
     @Override
