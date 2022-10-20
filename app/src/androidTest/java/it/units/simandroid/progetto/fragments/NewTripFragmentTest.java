@@ -7,7 +7,6 @@ import androidx.fragment.app.testing.FragmentScenario;
 import androidx.test.espresso.Espresso;
 import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.matcher.ViewMatchers;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -17,13 +16,11 @@ import com.google.firebase.database.ValueEventListener;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import it.units.simandroid.progetto.R;
 import it.units.simandroid.progetto.RealtimeDatabase;
 import it.units.simandroid.progetto.Trip;
 
-@RunWith(AndroidJUnit4.class)
 public class NewTripFragmentTest {
 
     public static final String TRIP_NAME = "My trip";
