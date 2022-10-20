@@ -58,7 +58,6 @@ public class TripsFragment extends Fragment {
     private FirebaseAuth authentication;
     private FirebaseStorage storage;
     private FirebaseDatabase database;
-    private ActivityResultLauncher<String> requestPermissionLauncher;
     private List<Trip> trips;
     private RecyclerView tripsRecyclerView;
     private FloatingActionButton newTripButton;
@@ -73,21 +72,6 @@ public class TripsFragment extends Fragment {
         authentication = FirebaseAuth.getInstance();
         storage = FirebaseStorage.getInstance();
         database = FirebaseDatabase.getInstance(DB_URL);
-
-        requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
-            if (isGranted) {
-                Log.d(PERMISSIONS_TAG, "Permission granted");
-                Snackbar.make(requireView(), R.string.read_images_permission_granted, Snackbar.LENGTH_SHORT).show();
-                TripAdapter tripAdapter = new TripAdapter(getContext(), trips);
-                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
-                tripsRecyclerView.setLayoutManager(linearLayoutManager);
-                tripsRecyclerView.setAdapter(tripAdapter);
-            } else {
-                Log.d(PERMISSIONS_TAG, "Permission not granted");
-                Snackbar.make(requireView(), R.string.read_images_permission_not_granted, Snackbar.LENGTH_SHORT).show();
-                requireActivity().finish();
-            }
-        });
     }
 
     @Override
@@ -117,17 +101,10 @@ public class TripsFragment extends Fragment {
                         trips.add(trip);
                         Log.d(GET_DB_TRIPS, "Trip with id " + tripId + " added to list");
                     }
-                    if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                        Log.d(PERMISSIONS_TAG, "Permission to read external storage is already granted");
-                        Snackbar.make(requireView(), R.string.read_images_permission_available, Snackbar.LENGTH_SHORT).show();
-                        TripAdapter tripAdapter = new TripAdapter(getContext(), trips);
-                        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
-                        tripsRecyclerView.setLayoutManager(linearLayoutManager);
-                        tripsRecyclerView.setAdapter(tripAdapter);
-                    } else {
-                        Log.d(PERMISSIONS_TAG, "Permission to read external storage hasn't been granted");
-                        requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
-                    }
+                    TripAdapter tripAdapter = new TripAdapter(getContext(), trips);
+                    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+                    tripsRecyclerView.setLayoutManager(linearLayoutManager);
+                    tripsRecyclerView.setAdapter(tripAdapter);
                 }
             }
 

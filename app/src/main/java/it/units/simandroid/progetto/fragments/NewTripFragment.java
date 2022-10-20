@@ -77,6 +77,7 @@ public class NewTripFragment extends Fragment {
         database = FirebaseDatabase.getInstance(DB_URL);
 
         // PickMultipleVisualMedia contract seems to be buggy, even when implemented according to docs
+        // Using OpenMultipleDocuments instead of GetMultipleContents, to obtain persistable uris
         pickTripImages = registerForActivityResult(new ActivityResultContracts.OpenMultipleDocuments(), uris -> {
             if (!uris.isEmpty()) {
                 Log.d(IMAGE_PICKER_DEBUG_TAG, "Picked " + uris.size() + " images");
