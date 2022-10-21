@@ -3,20 +3,9 @@ package it.units.simandroid.progetto.fragments;
 import static it.units.simandroid.progetto.RealtimeDatabase.DB_URL;
 import static it.units.simandroid.progetto.RealtimeDatabase.NEW_TRIP_DB_TAG;
 
-import android.content.ContentResolver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.PickVisualMediaRequest;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-
-import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,8 +13,14 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -36,12 +31,9 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import it.units.simandroid.progetto.R;
 import it.units.simandroid.progetto.Trip;
@@ -140,6 +132,7 @@ public class NewTripFragment extends Fragment {
             StorageReference newTripImagesReference = storage.getReference().child("users/" + authentication.getUid() + "/" + numberOfTrips + "/" + tripImage.getLastPathSegment());
             newTripImagesReference.putFile(tripImage).addOnSuccessListener(taskSnapshot -> {
                 Log.d(NEW_TRIP_TAG, "Image added to firecloud storage");
+                Snackbar.make(requireView(), R.string.trip_images_uploaded, Snackbar.LENGTH_SHORT).show();
                 progressIndicator.setVisibility(View.INVISIBLE);
             }).addOnFailureListener(exception -> {
                 Log.e(NEW_TRIP_TAG, "Failed to load image: " + exception.getMessage());

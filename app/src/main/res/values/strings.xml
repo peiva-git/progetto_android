@@ -35,7 +35,8 @@
     <string name="save_new_trip_button">Save new trip</string>
     <string name="read_images_permission_available">Permission to read images granted</string>
     <string name="read_images_access_required">Need permission to read images</string>
-    <string name="ok">Ok</string>
+    <string name="ok">OK</string>
     <string name="read_images_permission_granted">Image reading permission granted</string>
     <string name="read_images_permission_not_granted">Unable to grant permission</string>
+    <string name="trip_images_uploaded">Trip images uploaded to remote storage</string>
 </resources>

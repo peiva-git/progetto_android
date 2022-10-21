@@ -38,4 +38,5 @@
     <string name="ok">Ok</string>
     <string name="read_images_permission_granted">Autorizzazione per la lettura delle immagini concessa</string>
     <string name="read_images_permission_not_granted">Autorizzazione non concessa</string>
+    <string name="trip_images_uploaded">Immagini salvate su server remoto</string>
 </resources>
