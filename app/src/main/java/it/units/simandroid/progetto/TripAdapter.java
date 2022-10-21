@@ -36,6 +36,9 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ViewHolder> {
         Trip trip = trips.get(position);
         holder.tripName.setText(trip.getName());
         holder.tripDescription.setText(trip.getDescription());
+        holder.tripDestination.setText(trip.getDestination());
+        StringBuilder sb = new StringBuilder(trip.getStartDate());
+        holder.tripStartEndDate.setText(sb.append(" - ").append(trip.getEndDate()).toString());
         if (trip.getImagesUris() != null) {
             Uri mainImageUri = Uri.parse(trip.getImagesUris().get(0));
             holder.tripMainPicture.setImageURI(mainImageUri);
@@ -52,6 +55,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ViewHolder> {
         private final TextView tripName;
         private final TextView tripDestination;
         private final TextView tripDescription;
+        private final TextView tripStartEndDate;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -59,6 +63,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ViewHolder> {
             tripDescription = itemView.findViewById(R.id.trip_description);
             tripName = itemView.findViewById(R.id.trip_name);
             tripDestination = itemView.findViewById(R.id.trip_location);
+            tripStartEndDate = itemView.findViewById(R.id.trip_start_end_date);
         }
     }
 }
