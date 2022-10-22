@@ -19,6 +19,9 @@
         <action
             android:id="@+id/action_tripsFragment_to_loginFragment"
             app:destination="@id/loginFragment" />
+        <action
+            android:id="@+id/view_trip_details_action"
+            app:destination="@id/tripContentFragment" />
     </fragment>
     <fragment
         android:id="@+id/newTripFragment"
@@ -42,5 +45,15 @@
         <action
             android:id="@+id/action_registrationFragment_to_tripsFragment"
             app:destination="@id/tripsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/tripContentFragment"
+        android:name="it.units.simandroid.progetto.fragments.TripContentFragment"
+        android:label="fragment_trip_content"
+        tools:layout="@layout/fragment_trip_content" >
+        <argument
+            android:name="TripJSONString"
+            app:argType="string"
+            android:defaultValue="@null" />
     </fragment>
 </navigation>
