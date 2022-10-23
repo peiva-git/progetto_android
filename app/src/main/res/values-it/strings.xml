@@ -41,4 +41,6 @@
     <string name="trip_images_uploaded">Immagini salvate su server remoto</string>
     <string name="login_failed">Errore login</string>
     <string name="content_trip_image_description">Immagine singola viaggio</string>
+    <string name="date_picker_start">Selezionare data inizio</string>
+    <string name="date_picker_end">Selezionare data fine</string>
 </resources>

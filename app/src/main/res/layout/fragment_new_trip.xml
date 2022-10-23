@@ -68,7 +68,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:hint="@string/trip_start_date"
-                    android:inputType="date" />
+                    android:inputType="date"
+                    android:focusable="false" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -80,7 +81,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:hint="@string/trip_end_date"
-                    android:inputType="date" />
+                    android:inputType="date"
+                    android:focusable="false" />
             </com.google.android.material.textfield.TextInputLayout>
         </TableRow>
     </TableLayout>

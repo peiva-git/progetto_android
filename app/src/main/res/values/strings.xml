@@ -41,4 +41,6 @@
     <string name="trip_images_uploaded">Trip images uploaded to remote storage</string>
     <string name="login_failed">Login error</string>
     <string name="content_trip_image_description">Single trip image</string>
+    <string name="date_picker_start">Select starting date</string>
+    <string name="date_picker_end">Select ending date</string>
 </resources>

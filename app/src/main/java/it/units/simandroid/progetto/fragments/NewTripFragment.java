@@ -3,6 +3,8 @@ package it.units.simandroid.progetto.fragments;
 import static it.units.simandroid.progetto.RealtimeDatabase.DB_URL;
 import static it.units.simandroid.progetto.RealtimeDatabase.NEW_TRIP_DB_TAG;
 
+import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,17 +13,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.datepicker.MaterialDatePicker;
+import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.android.material.snackbar.Snackbar;
@@ -35,8 +42,12 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.text.DateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import it.units.simandroid.progetto.R;
@@ -45,6 +56,8 @@ import it.units.simandroid.progetto.Trip;
 public class NewTripFragment extends Fragment {
 
     public static final String NEW_TRIP_TAG = "TRIP_PUT";
+    public static final String START_DATE_PICKER_TAG = "START_DATE_PICKER";
+    public static final String END_DATE_PICKER_TAG = "END_DATE_PICKER";
     private ActivityResultLauncher<String[]> pickTripImages;
     public static final String IMAGE_PICKER_DEBUG_TAG = "IMG_PICK";
     private FirebaseStorage storage;
@@ -108,6 +121,30 @@ public class NewTripFragment extends Fragment {
             progressIndicator.setVisibility(View.VISIBLE);
             //uploadNewTripImages();
             uploadNewTripData();
+        });
+
+        tripStartDate.setOnClickListener(view -> {
+            MaterialDatePicker<Long> datePicker = MaterialDatePicker.Builder.datePicker()
+                    .setTitleText(R.string.date_picker_start)
+                    .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
+                    .build();
+            datePicker.addOnPositiveButtonClickListener(selection -> {
+                Date date = new Date(selection);
+                tripStartDate.setText(DateFormat.getDateInstance().format(date));
+            });
+            datePicker.show(requireActivity().getSupportFragmentManager(), START_DATE_PICKER_TAG);
+        });
+
+        tripEndDate.setOnClickListener(view -> {
+            MaterialDatePicker<Long> datePicker = MaterialDatePicker.Builder.datePicker()
+                    .setTitleText(R.string.date_picker_end)
+                    .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
+                    .build();
+            datePicker.addOnPositiveButtonClickListener(selection -> {
+                Date date = new Date(selection);
+                tripEndDate.setText(DateFormat.getDateInstance().format(date));
+            });
+            datePicker.show(requireActivity().getSupportFragmentManager(), END_DATE_PICKER_TAG);
         });
 
         database.getReference("trips").addValueEventListener(new ValueEventListener() {
