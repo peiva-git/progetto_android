@@ -39,4 +39,6 @@
     <string name="read_images_permission_granted">Image reading permission granted</string>
     <string name="read_images_permission_not_granted">Unable to grant permission</string>
     <string name="trip_images_uploaded">Trip images uploaded to remote storage</string>
+    <string name="login_failed">Login error</string>
+    <string name="content_trip_image_description">Single trip image</string>
 </resources>

@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 
 import it.units.simandroid.progetto.fragments.directions.LoginFragmentDirections;
@@ -54,9 +55,10 @@ public class LoginFragment extends Fragment {
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             Log.d(AUTH_TAG, "Sign-in successful");
+                            NavHostFragment.findNavController(this).navigate(LoginFragmentDirections.actionLoginFragmentToTripsFragment());
                         } else {
                             Log.w(AUTH_TAG, "Sign-in failed", task.getException());
-                            Toast.makeText(getContext(), "Authentication failed", Toast.LENGTH_SHORT).show();
+                            Snackbar.make(requireView(), R.string.login_failed, Snackbar.LENGTH_LONG).show();
                         }
                     });
         });
