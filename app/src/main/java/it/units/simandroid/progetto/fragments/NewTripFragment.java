@@ -10,6 +10,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -21,10 +24,13 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.view.MenuProvider;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Lifecycle;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.datepicker.MaterialDatePicker;
@@ -65,7 +71,6 @@ public class NewTripFragment extends Fragment {
     private FirebaseAuth authentication;
     private List<Uri> pickedImages = Collections.emptyList();
     private ImageButton newImageButton;
-    private FloatingActionButton saveNewTripButton;
     private EditText tripName;
     private EditText tripDestination;
     private EditText tripStartDate;
@@ -105,7 +110,6 @@ public class NewTripFragment extends Fragment {
                              Bundle savedInstanceState) {
         View fragmentView = inflater.inflate(R.layout.fragment_new_trip, container, false);
         newImageButton = fragmentView.findViewById(R.id.trip_images_button);
-        saveNewTripButton = fragmentView.findViewById(R.id.save_new_trip_button);
         tripName = fragmentView.findViewById(R.id.trip_name);
         tripDestination = fragmentView.findViewById(R.id.trip_destination);
         tripStartDate = fragmentView.findViewById(R.id.trip_start_date);
@@ -114,14 +118,27 @@ public class NewTripFragment extends Fragment {
         progressIndicator = fragmentView.findViewById(R.id.new_trip_progress_indicator);
 
         newImageButton.setOnClickListener(view -> {
-            pickTripImages.launch(new String[] {"image/*"});
+            pickTripImages.launch(new String[]{"image/*"});
         });
 
-        saveNewTripButton.setOnClickListener(view -> {
-            progressIndicator.setVisibility(View.VISIBLE);
-            //uploadNewTripImages();
-            uploadNewTripData();
-        });
+        requireActivity().addMenuProvider(new MenuProvider() {
+            @Override
+            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
+                MenuItem item = menu.findItem(R.id.user_account);
+                item.setVisible(false);
+                menuInflater.inflate(R.menu.top_app_bar_new_trip, menu);
+            }
+
+            @Override
+            public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
+                if (menuItem.getItemId() == R.id.save_trip) {
+                    progressIndicator.setVisibility(View.VISIBLE);
+                    uploadNewTripData();
+                    return true;
+                }
+                return false;
+            }
+        }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
 
         tripStartDate.setOnClickListener(view -> {
             MaterialDatePicker<Long> datePicker = MaterialDatePicker.Builder.datePicker()
@@ -150,7 +167,8 @@ public class NewTripFragment extends Fragment {
         database.getReference("trips").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                GenericTypeIndicator<List<Object>> type = new GenericTypeIndicator<List<Object>>() {};
+                GenericTypeIndicator<List<Object>> type = new GenericTypeIndicator<List<Object>>() {
+                };
                 if (snapshot.getValue(type) == null) {
                     numberOfTrips = 0;
                 } else {

@@ -43,4 +43,5 @@
     <string name="content_trip_image_description">Immagine singola viaggio</string>
     <string name="date_picker_start">Selezionare data inizio</string>
     <string name="date_picker_end">Selezionare data fine</string>
+    <string name="save_new_trip">Salva</string>
 </resources>
