@@ -29,6 +29,8 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Lifecycle;
 import androidx.navigation.NavController;
+import androidx.navigation.NavDirections;
+import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -58,6 +60,7 @@ import java.util.List;
 
 import it.units.simandroid.progetto.R;
 import it.units.simandroid.progetto.Trip;
+import it.units.simandroid.progetto.fragments.directions.NewTripFragmentDirections;
 
 public class NewTripFragment extends Fragment {
 
@@ -134,6 +137,9 @@ public class NewTripFragment extends Fragment {
                 if (menuItem.getItemId() == R.id.save_trip) {
                     progressIndicator.setVisibility(View.VISIBLE);
                     uploadNewTripData();
+                    NavDirections action = NewTripFragmentDirections.actionNewTripFragmentToTripsFragment();
+                    Navigation.findNavController(fragmentView).navigate(action);
+                    Snackbar.make(fragmentView, R.string.trip_saved, Snackbar.LENGTH_LONG).show();
                     return true;
                 }
                 return false;

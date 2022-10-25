@@ -27,7 +27,11 @@
         android:id="@+id/newTripFragment"
         android:name="it.units.simandroid.progetto.fragments.NewTripFragment"
         android:label="@string/new_trip_label"
-        tools:layout="@layout/fragment_new_trip" />
+        tools:layout="@layout/fragment_new_trip" >
+        <action
+            android:id="@+id/action_newTripFragment_to_tripsFragment"
+            app:destination="@id/tripsFragment" />
+    </fragment>
     <fragment
         android:id="@+id/loginFragment"
         android:name="it.units.simandroid.progetto.fragments.LoginFragment"

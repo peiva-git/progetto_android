@@ -44,4 +44,5 @@
     <string name="date_picker_start">Select starting date</string>
     <string name="date_picker_end">Select ending date</string>
     <string name="save_new_trip">Save</string>
+    <string name="trip_saved">Trip saved successfully!</string>
 </resources>
