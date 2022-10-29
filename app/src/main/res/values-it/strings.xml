@@ -45,4 +45,5 @@
     <string name="date_picker_end">Selezionare data fine</string>
     <string name="save_new_trip">Salva</string>
     <string name="trip_saved">Viaggio salvato con successo!</string>
+    <string name="trip_content_fragment_label">Il mio viaggio</string>
 </resources>

@@ -7,6 +7,7 @@ import androidx.fragment.app.testing.FragmentScenario;
 import androidx.test.espresso.Espresso;
 import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.matcher.ViewMatchers;
+import androidx.test.filters.LargeTest;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -21,6 +22,7 @@ import it.units.simandroid.progetto.R;
 import it.units.simandroid.progetto.RealtimeDatabase;
 import it.units.simandroid.progetto.Trip;
 
+@LargeTest
 public class NewTripFragmentTest {
 
     public static final String TRIP_NAME = "My trip";
@@ -72,7 +74,7 @@ public class NewTripFragmentTest {
         Espresso.onView(ViewMatchers.withId(R.id.trip_description))
                 .perform(ViewActions.typeText(TRIP_DESCRIPTION))
                 .perform(ViewActions.closeSoftKeyboard());
-        Espresso.onView(ViewMatchers.withId(R.id.save_new_trip_button))
+        Espresso.onView(ViewMatchers.withId(R.id.save_trip))
                 .perform(ViewActions.click());
     }
 

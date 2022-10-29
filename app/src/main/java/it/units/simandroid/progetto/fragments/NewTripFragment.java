@@ -3,8 +3,6 @@ package it.units.simandroid.progetto.fragments;
 import static it.units.simandroid.progetto.RealtimeDatabase.DB_URL;
 import static it.units.simandroid.progetto.RealtimeDatabase.NEW_TRIP_DB_TAG;
 
-import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,29 +13,19 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.core.view.MenuProvider;
-import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Lifecycle;
-import androidx.navigation.NavController;
 import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
-import androidx.navigation.fragment.NavHostFragment;
-import androidx.viewpager2.widget.ViewPager2;
 
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.datepicker.MaterialDatePicker;
-import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
@@ -51,9 +39,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.text.DateFormat;
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -68,7 +54,7 @@ public class NewTripFragment extends Fragment {
     public static final String START_DATE_PICKER_TAG = "START_DATE_PICKER";
     public static final String END_DATE_PICKER_TAG = "END_DATE_PICKER";
     private ActivityResultLauncher<String[]> pickTripImages;
-    public static final String IMAGE_PICKER_DEBUG_TAG = "IMG_PICK";
+    public static final String IMAGE_PICKER_TAG = "IMG_PICK";
     private FirebaseStorage storage;
     private int numberOfTrips;
     private FirebaseAuth authentication;
@@ -97,13 +83,13 @@ public class NewTripFragment extends Fragment {
         // Using OpenMultipleDocuments instead of GetMultipleContents, to obtain persistable uris
         pickTripImages = registerForActivityResult(new ActivityResultContracts.OpenMultipleDocuments(), uris -> {
             if (!uris.isEmpty()) {
-                Log.d(IMAGE_PICKER_DEBUG_TAG, "Picked " + uris.size() + " images");
+                Log.d(IMAGE_PICKER_TAG, "Picked " + uris.size() + " images");
                 pickedImages = uris;
                 for (Uri uri : uris) {
                     requireContext().getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 }
             } else {
-                Log.d(IMAGE_PICKER_DEBUG_TAG, "No media selected");
+                Log.d(IMAGE_PICKER_TAG, "No media selected");
             }
         });
     }

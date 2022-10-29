@@ -56,7 +56,7 @@
     <fragment
         android:id="@+id/tripContentFragment"
         android:name="it.units.simandroid.progetto.fragments.TripContentFragment"
-        android:label="fragment_trip_content"
+        android:label="@string/trip_content_fragment_label"
         tools:layout="@layout/fragment_trip_content" >
         <argument
             android:name="TripJSONString"

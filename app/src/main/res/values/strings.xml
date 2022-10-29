@@ -45,4 +45,5 @@
     <string name="date_picker_end">Select ending date</string>
     <string name="save_new_trip">Save</string>
     <string name="trip_saved">Trip saved successfully!</string>
+    <string name="trip_content_fragment_label">My trip</string>
 </resources>
