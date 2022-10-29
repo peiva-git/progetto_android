@@ -21,7 +21,9 @@
             app:destination="@id/loginFragment" />
         <action
             android:id="@+id/view_trip_details_action"
-            app:destination="@id/tripContentFragment" />
+            app:destination="@id/tripContentFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/newTripFragment"
