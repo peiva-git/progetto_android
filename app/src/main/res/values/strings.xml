@@ -49,4 +49,5 @@
     <string name="user_name">Name</string>
     <string name="user_surname">Surname</string>
     <string name="user_settings">User data</string>
+    <string name="user_logout">Logout</string>
 </resources>

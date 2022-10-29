@@ -21,6 +21,7 @@ import android.view.View;
 
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -70,8 +71,13 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NotNull MenuItem item) {
-        // automatic navigation if the item and the fragment item in the graph have the same id
+        // automatic navigation if the menu item and the fragment item in the graph have the same id
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+
+        if (item.getItemId() == R.id.loginFragment) {
+            FirebaseAuth authentication = FirebaseAuth.getInstance();
+            authentication.signOut();
+        }
         return NavigationUI.onNavDestinationSelected(item, navController)
                 || super.onOptionsItemSelected(item);
 

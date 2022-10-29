@@ -7,5 +7,13 @@
         android:id="@+id/user_account"
         android:title="@string/user_account"
         android:icon="@drawable/ic_baseline_account_circle_24"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="ifRoom" >
+        <menu>
+            <item
+                android:id="@+id/loginFragment"
+                android:title="@string/user_logout"
+                android:icon="@drawable/ic_baseline_logout_24"
+                app:showAsAction="never" />
+        </menu>
+    </item>
 </menu>
