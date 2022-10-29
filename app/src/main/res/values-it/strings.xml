@@ -46,4 +46,7 @@
     <string name="save_new_trip">Salva</string>
     <string name="trip_saved">Viaggio salvato con successo!</string>
     <string name="trip_content_fragment_label">Il mio viaggio</string>
+    <string name="user_name">Nome</string>
+    <string name="user_surname">Cognome</string>
+    <string name="user_settings">Dati utente</string>
 </resources>

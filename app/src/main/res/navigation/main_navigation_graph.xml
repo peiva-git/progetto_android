@@ -65,4 +65,8 @@
             app:argType="string"
             android:defaultValue="@null" />
     </fragment>
+    <fragment
+        android:id="@+id/settings"
+        android:name="it.units.simandroid.progetto.fragments.SettingsFragment"
+        android:label="@string/settings" />
 </navigation>

@@ -27,6 +27,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+import it.units.simandroid.progetto.fragments.SettingsFragment;
+
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration appBarConfiguration;
@@ -58,12 +60,6 @@ public class MainActivity extends AppCompatActivity {
                 navigationView.setVisibility(View.VISIBLE);
             }
         });
-
-        navigationView.setNavigationItemSelectedListener(menuItem -> {
-            navigationDrawer.close();
-            return true;
-        });
-
     }
 
     @Override
@@ -74,14 +70,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NotNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.user_account:
-                return true;
-            case R.id.settings:
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
+        // automatic navigation if the item and the fragment item in the graph have the same id
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        return NavigationUI.onNavDestinationSelected(item, navController)
+                || super.onOptionsItemSelected(item);
+
     }
 
     @Override

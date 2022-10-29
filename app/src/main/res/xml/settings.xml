@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory
+        app:key="user_category"
+        app:title="@string/user_settings">
+
+        <EditTextPreference
+            app:key="user_name"
+            app:title="@string/user_name" />
+        <EditTextPreference
+            app:key="user_surname"
+            app:title="@string/user_surname" />
+    </PreferenceCategory>
+</PreferenceScreen>
