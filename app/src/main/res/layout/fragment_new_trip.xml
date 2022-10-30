@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     tools:context=".fragments.NewTripFragment">
 
@@ -42,7 +43,9 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_weight="0.5"
-                android:padding="5dp">
+                android:padding="5dp"
+                app:startIconDrawable="@drawable/ic_baseline_location_on_24"
+                app:startIconContentDescription="@string/location_icon_description">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/trip_destination"
@@ -60,7 +63,9 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_weight="0.5"
-                android:padding="5dp">
+                android:padding="5dp"
+                app:startIconDrawable="@drawable/ic_baseline_calendar_today_24"
+                app:startIconContentDescription="@string/calendar_icon_description">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/trip_start_date"
@@ -73,7 +78,9 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_weight="0.5"
-                android:padding="5dp">
+                android:padding="5dp"
+                app:startIconDrawable="@drawable/ic_baseline_calendar_today_24"
+                app:startIconContentDescription="@string/calendar_icon_description">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/trip_end_date"

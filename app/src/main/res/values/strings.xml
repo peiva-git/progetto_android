@@ -50,4 +50,6 @@
     <string name="user_surname">Surname</string>
     <string name="user_settings">User data</string>
     <string name="user_logout">Logout</string>
+    <string name="calendar_icon_description">Trip dates</string>
+    <string name="location_icon_description">Trip location</string>
 </resources>

@@ -38,21 +38,38 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_marginTop="8dp">
-                <TextView
-                    android:id="@+id/trip_location"
+                <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?attr/textAppearanceLabelMedium"
-                    android:textColor="?android:attr/textColorSecondary"
-                    app:drawableStartCompat="@drawable/ic_baseline_location_on_24" />
-                <TextView
-                    android:id="@+id/trip_start_end_date"
+                    android:id="@+id/trip_location_layout"
+                    app:startIconDrawable="@drawable/ic_baseline_location_on_24"
+                    app:startIconContentDescription="@string/location_icon_description"
+                    android:enabled="false">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?attr/textAppearanceBodyMedium"
+                        android:textColor="?android:attr/textColorSecondary"
+                        android:id="@+id/trip_location" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?attr/textAppearanceLabelMedium"
-                    android:textColor="?android:attr/textColorSecondary"
-                    app:drawableStartCompat="@drawable/ic_baseline_calendar_today_24"
-                    android:layout_marginStart="8dp" />
+                    android:id="@+id/trip_dates_layout"
+                    app:startIconDrawable="@drawable/ic_baseline_calendar_today_24"
+                    app:startIconContentDescription="@string/calendar_icon_description"
+                    android:enabled="false"
+                    android:layout_marginStart="8dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?attr/textAppearanceBodyMedium"
+                        android:textColor="?android:attr/textColorSecondary"
+                        android:id="@+id/trip_start_end_date" />
+                </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
             <TextView
                 android:layout_width="wrap_content"

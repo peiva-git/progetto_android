@@ -50,4 +50,6 @@
     <string name="user_surname">Cognome</string>
     <string name="user_settings">Dati utente</string>
     <string name="user_logout">Logout</string>
+    <string name="calendar_icon_description">Date del viaggio</string>
+    <string name="location_icon_description">Destinazione viaggio</string>
 </resources>
