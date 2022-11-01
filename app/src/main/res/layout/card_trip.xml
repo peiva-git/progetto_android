@@ -35,15 +35,14 @@
             app:layout_constraintTop_toBottomOf="@+id/main_trip_picture"
             android:layout_marginTop="16dp"/>
 
-        <ImageButton
-            android:id="@+id/imageButton2"
+        <CheckBox
+            android:id="@+id/favorite_trip"
             android:layout_width="24sp"
             android:layout_height="24sp"
-            android:contentDescription="@string/favorite_trip_icon_description"
-            android:src="@drawable/ic_baseline_favorite_border_24"
+            android:button="@drawable/sl_baseline_favorite_24"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/main_trip_picture"
-            android:layout_marginTop="16dp"/>
+            android:layout_marginTop="16dp" />
 
         <TextView
             android:id="@+id/trip_location"
