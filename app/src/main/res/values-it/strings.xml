@@ -52,4 +52,5 @@
     <string name="user_logout">Logout</string>
     <string name="calendar_icon_description">Date del viaggio</string>
     <string name="location_icon_description">Destinazione viaggio</string>
+    <string name="favorite_trip_icon_description">Imposta viaggio come preferito</string>
 </resources>

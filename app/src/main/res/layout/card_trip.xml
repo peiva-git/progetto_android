@@ -20,7 +20,7 @@
             android:layout_height="194dp"
             android:id="@+id/main_trip_picture"
             android:scaleType="centerCrop"
-            android:contentDescription="@string/trip_image"/>
+            android:contentDescription="@string/trip_image" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -28,11 +28,24 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/trip_name"
-                android:textAppearance="?attr/textAppearanceTitleMedium" />
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/trip_name"
+                    android:textAppearance="?attr/textAppearanceTitleMedium"
+                    android:layout_gravity="start" />
+
+                <ImageButton
+                    android:layout_width="24sp"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/favorite_trip_icon_description"
+                    android:src="@drawable/ic_baseline_favorite_border_24"
+                    android:layout_gravity="end" />
+            </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
