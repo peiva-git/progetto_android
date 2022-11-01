@@ -10,88 +10,91 @@
     android:focusable="true"
     style="?attr/materialCardViewFilledStyle">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:padding="16dp">
 
         <ImageView
+            android:id="@+id/main_trip_picture"
             android:layout_width="match_parent"
             android:layout_height="194dp"
-            android:id="@+id/main_trip_picture"
+            android:contentDescription="@string/trip_image"
             android:scaleType="centerCrop"
-            android:contentDescription="@string/trip_image" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/trip_name"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:textAppearance="?attr/textAppearanceTitleMedium"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/main_trip_picture"
+            android:layout_marginTop="16dp"/>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/trip_name"
-                    android:textAppearance="?attr/textAppearanceTitleMedium"
-                    android:layout_gravity="start" />
+        <ImageButton
+            android:id="@+id/imageButton2"
+            android:layout_width="24sp"
+            android:layout_height="24sp"
+            android:contentDescription="@string/favorite_trip_icon_description"
+            android:src="@drawable/ic_baseline_favorite_border_24"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/main_trip_picture"
+            android:layout_marginTop="16dp"/>
 
-                <ImageButton
-                    android:layout_width="24sp"
-                    android:layout_height="match_parent"
-                    android:contentDescription="@string/favorite_trip_icon_description"
-                    android:src="@drawable/ic_baseline_favorite_border_24"
-                    android:layout_gravity="end" />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="8dp">
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/trip_location_layout"
-                    app:startIconDrawable="@drawable/ic_baseline_location_on_24"
-                    app:startIconContentDescription="@string/location_icon_description"
-                    android:enabled="false">
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/trip_location_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:focusable="false"
+            app:layout_constraintTop_toBottomOf="@+id/trip_name"
+            app:layout_constraintStart_toStartOf="parent"
+            app:startIconContentDescription="@string/location_icon_description"
+            app:startIconDrawable="@drawable/ic_baseline_location_on_24">
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?attr/textAppearanceBodyMedium"
-                        android:textColor="?android:attr/textColorSecondary"
-                        android:id="@+id/trip_location" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/trip_dates_layout"
-                    app:startIconDrawable="@drawable/ic_baseline_calendar_today_24"
-                    app:startIconContentDescription="@string/calendar_icon_description"
-                    android:enabled="false"
-                    android:layout_marginStart="8dp">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?attr/textAppearanceBodyMedium"
-                        android:textColor="?android:attr/textColorSecondary"
-                        android:id="@+id/trip_start_end_date" />
-                </com.google.android.material.textfield.TextInputLayout>
-            </LinearLayout>
-            <TextView
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/trip_location"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/trip_description"
-                android:layout_marginTop="16dp"
                 android:textAppearance="?attr/textAppearanceBodyMedium"
-                android:textColor="?android:attr/textColorSecondary" />
-        </LinearLayout>
-    </LinearLayout>
+                android:textColor="?android:attr/textColorSecondary"
+                android:inputType="none"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/trip_dates_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:focusable="false"
+            app:layout_constraintStart_toEndOf="@+id/trip_location_layout"
+            app:layout_constraintTop_toTopOf="@+id/trip_location_layout"
+            app:startIconContentDescription="@string/calendar_icon_description"
+            app:startIconDrawable="@drawable/ic_baseline_calendar_today_24">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/trip_start_end_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?attr/textAppearanceBodyMedium"
+                android:textColor="?android:attr/textColorSecondary"
+                android:inputType="none"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/trip_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceBodyMedium"
+            android:textColor="?android:attr/textColorSecondary"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@+id/trip_location_layout"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </com.google.android.material.card.MaterialCardView>
