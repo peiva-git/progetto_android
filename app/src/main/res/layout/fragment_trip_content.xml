@@ -1,54 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context=".fragments.TripContentFragment">
 
     <androidx.viewpager2.widget.ViewPager2
-        android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:id="@+id/trip_image_pager" />
+        android:id="@+id/trip_image_pager"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/content_trip_name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:id="@+id/content_trip_name"
-        android:paddingHorizontal="16dp"
-        android:layout_marginTop="16dp"
-        android:textAppearance="?attr/textAppearanceTitleLarge" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="16dp"
-        android:layout_marginTop="8dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/content_trip_destination"
-            android:textAppearance="?attr/textAppearanceLabelMedium"
-            app:drawableStartCompat="@drawable/ic_baseline_location_on_24" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/content_trip_dates"
-            android:layout_marginStart="8dp"
-            android:textAppearance="?attr/textAppearanceLabelMedium"
-            app:drawableStartCompat="@drawable/ic_baseline_calendar_today_24" />
-    </LinearLayout>
+        android:layout_marginTop="316dp"
+        android:paddingHorizontal="16dp"
+        android:textAppearance="?attr/textAppearanceTitleLarge"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:layout_width="match_parent"
+        android:id="@+id/content_trip_destination"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/content_trip_description"
-        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
         android:textAppearance="?attr/textAppearanceBodyMedium"
-        android:paddingHorizontal="16dp" />
+        android:textColor="?android:attr/textColorSecondary"
+        android:drawablePadding="2dp"
+        app:drawableStartCompat="@drawable/ic_baseline_location_on_24"
+        app:layout_constraintBaseline_toBaselineOf="@+id/content_trip_dates"
+        app:layout_constraintStart_toStartOf="parent" />
 
-</LinearLayout>
+    <TextView
+        android:id="@+id/content_trip_dates"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="24dp"
+        android:textAppearance="?attr/textAppearanceBodyMedium"
+        android:textColor="?android:attr/textColorSecondary"
+        android:drawablePadding="2dp"
+        app:drawableStartCompat="@drawable/ic_baseline_calendar_today_24"
+        app:layout_constraintStart_toEndOf="@+id/content_trip_destination"
+        app:layout_constraintTop_toBottomOf="@+id/content_trip_name" />
+
+    <TextView
+        android:id="@+id/content_trip_description"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:paddingHorizontal="16dp"
+        android:textAppearance="?attr/textAppearanceBodyMedium"
+        android:textColor="?android:attr/textColorSecondary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/content_trip_destination" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
