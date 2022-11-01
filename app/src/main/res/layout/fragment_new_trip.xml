@@ -1,105 +1,126 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearLayout4"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     tools:context=".fragments.NewTripFragment">
 
     <com.google.android.material.progressindicator.LinearProgressIndicator
         android:id="@+id/new_trip_progress_indicator"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/trip_images_button"
+        app:layout_constraintStart_toStartOf="@+id/trip_images_button"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
         android:id="@+id/trip_images_button"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="0dp"
         android:contentDescription="@string/new_images_button_description"
         android:scaleType="fitCenter"
-        android:src="@drawable/ic_baseline_add_photo_alternate_24" />
+        android:src="@drawable/ic_baseline_add_photo_alternate_24"
+        app:layout_constraintBottom_toTopOf="@+id/textInputLayout6"
+        app:layout_constraintEnd_toEndOf="@+id/textInputLayout5"
+        app:layout_constraintStart_toEndOf="@+id/textInputLayout5"
+        app:layout_constraintTop_toBottomOf="@+id/new_trip_progress_indicator"
+        app:layout_constraintVertical_chainStyle="spread"
+        app:layout_constraintVertical_weight="2.5"/>
 
-    <TableLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayout5"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/textInputLayout6"
+        app:layout_constraintEnd_toStartOf="@+id/textInputLayout6"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintVertical_weight="1">
 
-        <TableRow
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/trip_name"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:weightSum="1">
+            android:layout_height="match_parent"
+            android:hint="@string/trip_name"
+            android:inputType="text" />
+    </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_weight="0.5"
-                android:padding="5dp">
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayout6"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        app:layout_constraintBottom_toTopOf="@+id/textInputLayout8"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textInputLayout5"
+        app:layout_constraintTop_toBottomOf="@+id/trip_images_button"
+        app:startIconContentDescription="@string/location_icon_description"
+        app:startIconDrawable="@drawable/ic_baseline_location_on_24">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/trip_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:hint="@string/trip_name"
-                    android:inputType="text" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_weight="0.5"
-                android:padding="5dp"
-                app:startIconDrawable="@drawable/ic_baseline_location_on_24"
-                app:startIconContentDescription="@string/location_icon_description">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/trip_destination"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:hint="@string/trip_destination"
-                    android:inputType="textAutoComplete" />
-            </com.google.android.material.textfield.TextInputLayout>
-        </TableRow>
-
-        <TableRow
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/trip_destination"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:weightSum="1">
+            android:layout_height="match_parent"
+            android:hint="@string/trip_destination"
+            android:inputType="textAutoComplete" />
+    </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_weight="0.5"
-                android:padding="5dp"
-                app:startIconDrawable="@drawable/ic_baseline_calendar_today_24"
-                app:startIconContentDescription="@string/calendar_icon_description">
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayout7"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/textInputLayout8"
+        app:layout_constraintEnd_toStartOf="@+id/textInputLayout8"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintVertical_weight="1"
+        app:startIconContentDescription="@string/calendar_icon_description"
+        app:startIconDrawable="@drawable/ic_baseline_calendar_today_24">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/trip_start_date"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:focusable="false"
-                    android:hint="@string/trip_start_date"
-                    android:inputType="date" />
-            </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/trip_start_date"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:focusable="false"
+            android:hint="@string/trip_start_date"
+            android:inputType="date" />
+    </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_weight="0.5"
-                android:padding="5dp"
-                app:startIconDrawable="@drawable/ic_baseline_calendar_today_24"
-                app:startIconContentDescription="@string/calendar_icon_description">
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayout8"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        app:layout_constraintBottom_toTopOf="@+id/trip_description"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textInputLayout7"
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayout6"
+        app:startIconContentDescription="@string/calendar_icon_description"
+        app:startIconDrawable="@drawable/ic_baseline_calendar_today_24">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/trip_end_date"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:focusable="false"
-                    android:hint="@string/trip_end_date"
-                    android:inputType="date" />
-            </com.google.android.material.textfield.TextInputLayout>
-        </TableRow>
-    </TableLayout>
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/trip_end_date"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:focusable="false"
+            android:hint="@string/trip_end_date"
+            android:inputType="date" />
+    </com.google.android.material.textfield.TextInputLayout>
 
     <EditText
         android:id="@+id/trip_description"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:autofillHints="none"
         android:gravity="start|top"
         android:hint="@string/trip_description"
-        android:inputType="text" />
+        android:inputType="text"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/textInputLayout7"
+        app:layout_constraintStart_toEndOf="@+id/textInputLayout7"
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayout8"
+        app:layout_constraintVertical_weight="2"/>
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
