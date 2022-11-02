@@ -53,4 +53,6 @@
     <string name="calendar_icon_description">Trip dates</string>
     <string name="location_icon_description">Trip location</string>
     <string name="favorite_trip_icon_description">Set trip as favorite</string>
+    <string name="set_favorite_trip">Set trip as favorite</string>
+    <string name="set_shared_trip">Set trip as shared</string>
 </resources>

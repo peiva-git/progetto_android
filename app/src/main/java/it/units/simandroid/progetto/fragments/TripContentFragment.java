@@ -1,17 +1,27 @@
 package it.units.simandroid.progetto.fragments;
 
+import android.content.res.ColorStateList;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Lifecycle;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.TextView;
+
+import com.google.android.material.checkbox.MaterialCheckBox;
 
 import it.units.simandroid.progetto.R;
 import it.units.simandroid.progetto.SlideshowPagerAdapter;
@@ -52,6 +62,27 @@ public class TripContentFragment extends Fragment {
 
         pagerAdapter = new SlideshowPagerAdapter(this, trip.getImagesUris());
         viewPager.setAdapter(pagerAdapter);
+
+        requireActivity().addMenuProvider(new MenuProvider() {
+            @Override
+            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
+                MenuItem userAccount = menu.findItem(R.id.user_account);
+                userAccount.setVisible(false);
+                menuInflater.inflate(R.menu.top_app_bar_trip_content, menu);
+                MaterialCheckBox isTripFavorite = (MaterialCheckBox) menu.findItem(R.id.favorite_trip).getActionView();
+                isTripFavorite.setButtonIconDrawableResource(R.drawable.sl_baseline_favorite_24);
+                isTripFavorite.setButtonDrawable(R.drawable.ic_baseline_favorite_border_24);
+                isTripFavorite.setButtonIconTintList(ColorStateList.valueOf(com.google.android.material.R.attr.colorOnPrimary));
+            }
+
+            @Override
+            public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
+                if (menuItem.getItemId() == R.id.favorite_trip) {
+                    return true;
+                }
+                return false;
+            }
+        }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
 
         tripName.setText(trip.getName());
         tripDestination.setText(trip.getDestination());
