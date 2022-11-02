@@ -64,6 +64,6 @@
         android:textColor="?android:attr/textColorSecondary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/content_trip_destination" />
+        app:layout_constraintTop_toBottomOf="@id/content_trip_destination" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
