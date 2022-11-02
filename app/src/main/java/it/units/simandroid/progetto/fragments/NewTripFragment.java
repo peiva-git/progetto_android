@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -88,6 +89,8 @@ public class NewTripFragment extends Fragment {
                 for (Uri uri : uris) {
                     requireContext().getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 }
+                newImageButton.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                newImageButton.setImageURI(uris.get(0));
             } else {
                 Log.d(IMAGE_PICKER_TAG, "No media selected");
             }
@@ -154,6 +157,14 @@ public class NewTripFragment extends Fragment {
                 tripEndDate.setText(DateFormat.getDateInstance().format(date));
             });
             datePicker.show(requireActivity().getSupportFragmentManager(), END_DATE_PICKER_TAG);
+        });
+
+        tripDescription.setOnFocusChangeListener((view, hasFocus) -> {
+            if (hasFocus) {
+                newImageButton.setVisibility(View.GONE);
+            } else {
+                newImageButton.setVisibility(View.VISIBLE);
+            }
         });
 
         database.getReference("trips").addValueEventListener(new ValueEventListener() {
