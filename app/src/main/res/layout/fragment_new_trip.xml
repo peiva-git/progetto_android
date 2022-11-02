@@ -22,20 +22,20 @@
         android:contentDescription="@string/new_images_button_description"
         android:scaleType="fitCenter"
         android:src="@drawable/ic_baseline_add_photo_alternate_24"
-        app:layout_constraintBottom_toTopOf="@+id/textInputLayout6"
-        app:layout_constraintEnd_toEndOf="@+id/textInputLayout5"
-        app:layout_constraintStart_toEndOf="@+id/textInputLayout5"
+        app:layout_constraintBottom_toTopOf="@+id/trip_destination_layout"
+        app:layout_constraintEnd_toEndOf="@+id/trip_name_layout"
+        app:layout_constraintStart_toEndOf="@+id/trip_name_layout"
         app:layout_constraintTop_toBottomOf="@+id/new_trip_progress_indicator"
         app:layout_constraintVertical_chainStyle="spread"
         app:layout_constraintVertical_weight="2.5"/>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayout5"
+        android:id="@+id/trip_name_layout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:padding="5dp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/textInputLayout6"
-        app:layout_constraintEnd_toStartOf="@+id/textInputLayout6"
+        android:layout_margin="5dp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/trip_destination_layout"
+        app:layout_constraintEnd_toStartOf="@+id/trip_destination_layout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintVertical_weight="1">
 
@@ -48,13 +48,13 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayout6"
+        android:id="@+id/trip_destination_layout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:padding="5dp"
-        app:layout_constraintBottom_toTopOf="@+id/textInputLayout8"
+        android:layout_margin="5dp"
+        app:layout_constraintBottom_toTopOf="@+id/trip_end_date_layout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/textInputLayout5"
+        app:layout_constraintStart_toEndOf="@+id/trip_name_layout"
         app:layout_constraintTop_toBottomOf="@+id/trip_images_button"
         app:startIconContentDescription="@string/location_icon_description"
         app:startIconDrawable="@drawable/ic_baseline_location_on_24">
@@ -68,12 +68,12 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayout7"
+        android:id="@+id/trip_start_date_layout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:padding="5dp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/textInputLayout8"
-        app:layout_constraintEnd_toStartOf="@+id/textInputLayout8"
+        android:layout_margin="5dp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/trip_end_date_layout"
+        app:layout_constraintEnd_toStartOf="@+id/trip_end_date_layout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintVertical_weight="1"
         app:startIconContentDescription="@string/calendar_icon_description"
@@ -89,14 +89,14 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayout8"
+        android:id="@+id/trip_end_date_layout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:padding="5dp"
+        android:layout_margin="5dp"
         app:layout_constraintBottom_toTopOf="@+id/trip_description"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/textInputLayout7"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout6"
+        app:layout_constraintStart_toEndOf="@+id/trip_start_date_layout"
+        app:layout_constraintTop_toBottomOf="@+id/trip_destination_layout"
         app:startIconContentDescription="@string/calendar_icon_description"
         app:startIconDrawable="@drawable/ic_baseline_calendar_today_24">
 
@@ -118,9 +118,9 @@
         android:hint="@string/trip_description"
         android:inputType="text"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/textInputLayout7"
-        app:layout_constraintStart_toEndOf="@+id/textInputLayout7"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout8"
+        app:layout_constraintEnd_toEndOf="@+id/trip_start_date_layout"
+        app:layout_constraintStart_toEndOf="@+id/trip_start_date_layout"
+        app:layout_constraintTop_toBottomOf="@+id/trip_end_date_layout"
         app:layout_constraintVertical_weight="2"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
