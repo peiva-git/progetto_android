@@ -11,22 +11,23 @@
         android:id="@+id/trip_image_pager"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="16dp"
         app:layout_constraintBottom_toTopOf="@+id/content_trip_name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintHeight_default="percent"
+        app:layout_constraintHeight_percent="0.4" />
 
     <TextView
         android:id="@+id/content_trip_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="316dp"
         android:paddingHorizontal="16dp"
+        android:layout_marginTop="16dp"
         android:textAppearance="?attr/textAppearanceTitleLarge"
+        app:layout_constraintTop_toBottomOf="@+id/trip_image_pager"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/content_trip_destination"
