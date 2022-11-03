@@ -45,6 +45,7 @@ import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import it.units.simandroid.progetto.R;
 import it.units.simandroid.progetto.Trip;
@@ -90,24 +91,23 @@ public class TripsFragment extends Fragment {
         database.getReference("trips").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                GenericTypeIndicator<List<Object>> type = new GenericTypeIndicator<List<Object>>() {
-                };
-                snapshot.getValue(type);
-                if (snapshot.getValue(type) != null) {
+                GenericTypeIndicator<Map<String, Object>> type = new GenericTypeIndicator<Map<String, Object>>() {};
+                Map<String, Object> tripsByKey = snapshot.getValue(type);
+                if (tripsByKey != null) {
                     trips = new ArrayList<>();
-                    for (int tripId = 0; tripId < snapshot.getValue(type).size(); tripId++) {
-                        DataSnapshot tripSnapshot = snapshot.child(String.valueOf(tripId));
+                    for (String key : tripsByKey.keySet()) {
+                        DataSnapshot tripSnapshot = snapshot.child(key);
                         Trip trip = tripSnapshot.getValue(Trip.class);
                         boolean isFavoritesFilteringEnabled = TripsFragmentArgs.fromBundle(requireArguments()).isFilteringActive();
                         boolean isTripFavorite = trip.isFavorite();
                         if (isFavoritesFilteringEnabled) {
                             if (isTripFavorite) {
                                 trips.add(trip);
-                                Log.d(GET_DB_TRIPS, "Trip with id " + tripId + " added to list");
+                                Log.d(GET_DB_TRIPS, "Trip with id " + trip.getId() + " added to list");
                             }
                         } else {
                             trips.add(trip);
-                            Log.d(GET_DB_TRIPS, "Trip with id " + tripId + " added to list");
+                            Log.d(GET_DB_TRIPS, "Trip with id " + trip.getId() + " added to list");
                         }
                     }
                     TripAdapter tripAdapter = new TripAdapter(getContext(), trips);

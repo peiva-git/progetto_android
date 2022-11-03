@@ -1,7 +1,10 @@
 package it.units.simandroid.progetto;
 
+import static it.units.simandroid.progetto.RealtimeDatabase.DB_URL;
+
 import android.content.Context;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +20,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.checkbox.MaterialCheckBox;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
 
 import java.util.List;
@@ -58,7 +63,13 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ItemViewHolder
             action.setTrip(trip);
             Navigation.findNavController(view).navigate(action);
         });
-        holder.isTripFavorite.setOnCheckedChangeListener((compoundButton, isChecked) -> trip.setFavorite(isChecked));
+        holder.isTripFavorite.setOnCheckedChangeListener((compoundButton, isChecked) -> {
+            trip.setFavorite(isChecked);
+            FirebaseDatabase.getInstance(DB_URL)
+                    .getReference("trips")
+                    .child(trip.getId())
+                    .setValue(trip);
+        });
     }
 
     @Override

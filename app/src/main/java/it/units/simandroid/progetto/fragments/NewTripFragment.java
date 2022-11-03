@@ -44,6 +44,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import it.units.simandroid.progetto.R;
 import it.units.simandroid.progetto.Trip;
@@ -57,7 +58,6 @@ public class NewTripFragment extends Fragment {
     private ActivityResultLauncher<String[]> pickTripImages;
     public static final String IMAGE_PICKER_TAG = "IMG_PICK";
     private FirebaseStorage storage;
-    private int numberOfTrips;
     private FirebaseAuth authentication;
     private List<Uri> pickedImages = Collections.emptyList();
     private ImageButton newImageButton;
@@ -109,9 +109,7 @@ public class NewTripFragment extends Fragment {
         tripDescription = fragmentView.findViewById(R.id.trip_description);
         progressIndicator = fragmentView.findViewById(R.id.new_trip_progress_indicator);
 
-        newImageButton.setOnClickListener(view -> {
-            pickTripImages.launch(new String[]{"image/*"});
-        });
+        newImageButton.setOnClickListener(view -> pickTripImages.launch(new String[]{"image/*"}));
 
         requireActivity().addMenuProvider(new MenuProvider() {
             @Override
@@ -167,44 +165,11 @@ public class NewTripFragment extends Fragment {
             }
         });
 
-        database.getReference("trips").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                GenericTypeIndicator<List<Object>> type = new GenericTypeIndicator<List<Object>>() {
-                };
-                if (snapshot.getValue(type) == null) {
-                    numberOfTrips = 0;
-                } else {
-                    numberOfTrips = snapshot.getValue(type).size();
-                }
-                Log.d(NEW_TRIP_DB_TAG, "Number of trips currently in database: " + numberOfTrips);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.e(NEW_TRIP_DB_TAG, "Failed to update number of trips");
-            }
-        });
-
         return fragmentView;
     }
 
-    private void uploadNewTripImages() {
-        for (Uri tripImage : pickedImages) {
-            StorageReference newTripImagesReference = storage.getReference().child("users/" + authentication.getUid() + "/" + numberOfTrips + "/" + tripImage.getLastPathSegment());
-            newTripImagesReference.putFile(tripImage).addOnSuccessListener(taskSnapshot -> {
-                Log.d(NEW_TRIP_TAG, "Image added to firecloud storage");
-                Snackbar.make(requireView(), R.string.trip_images_uploaded, Snackbar.LENGTH_SHORT).show();
-                progressIndicator.setVisibility(View.INVISIBLE);
-            }).addOnFailureListener(exception -> {
-                Log.e(NEW_TRIP_TAG, "Failed to load image: " + exception.getMessage());
-                progressIndicator.setVisibility(View.INVISIBLE);
-            });
-        }
-    }
-
     private void uploadNewTripData() {
-        DatabaseReference tripsDbReference = database.getReference("trips").child(String.valueOf(numberOfTrips));
+        DatabaseReference tripsDbReference = database.getReference("trips").push();
         String newTripName = tripName.getText().toString();
         String newTripDestination = tripDestination.getText().toString();
         String newTripStartDate = tripStartDate.getText().toString();
@@ -215,10 +180,9 @@ public class NewTripFragment extends Fragment {
             newTripImageUris.add(pickedImageUri.toString());
         }
         Trip newTrip = new Trip(newTripImageUris, newTripName, newTripStartDate, newTripEndDate, newTripDescription, newTripDestination);
-        tripsDbReference.setValue(newTrip).addOnSuccessListener(task -> {
-            Log.d(NEW_TRIP_DB_TAG, "Added new trip data to realtime DB");
-        }).addOnFailureListener(exception -> {
-            Log.e(NEW_TRIP_DB_TAG, "Failed to add new trip data: " + exception.getMessage());
-        });
+        newTrip.setId(tripsDbReference.getKey());
+        tripsDbReference.setValue(newTrip)
+                .addOnSuccessListener(task -> Log.d(NEW_TRIP_DB_TAG, "Added new trip data to realtime DB"))
+                .addOnFailureListener(exception -> Log.e(NEW_TRIP_DB_TAG, "Failed to add new trip data: " + exception.getMessage()));
     }
 }

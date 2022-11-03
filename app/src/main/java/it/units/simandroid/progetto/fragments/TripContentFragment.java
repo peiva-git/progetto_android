@@ -1,5 +1,7 @@
 package it.units.simandroid.progetto.fragments;
 
+import static it.units.simandroid.progetto.RealtimeDatabase.DB_URL;
+
 import android.content.res.ColorStateList;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
@@ -23,6 +25,7 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.google.android.material.checkbox.MaterialCheckBox;
+import com.google.firebase.database.FirebaseDatabase;
 
 import it.units.simandroid.progetto.R;
 import it.units.simandroid.progetto.SlideshowPagerAdapter;
@@ -76,7 +79,14 @@ public class TripContentFragment extends Fragment {
                 isTripFavorite.setButtonIconTintList(ColorStateList.valueOf(com.google.android.material.R.attr.colorOnPrimary));
                 isTripFavorite.setChecked(trip.isFavorite());
 
-                isTripFavorite.setOnCheckedChangeListener((compoundButton, isChecked) -> trip.setFavorite(isChecked));
+                isTripFavorite.setOnCheckedChangeListener((compoundButton, isChecked) -> {
+                    trip.setFavorite(isChecked);
+                    String tripId = TripContentFragmentArgs.fromBundle(requireArguments()).getTrip().getId();
+                    FirebaseDatabase.getInstance(DB_URL)
+                            .getReference("trips")
+                            .child(tripId)
+                            .setValue(trip);
+                });
             }
 
             @Override
