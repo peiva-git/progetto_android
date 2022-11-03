@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.google.android.material.checkbox.MaterialCheckBox;
@@ -73,6 +74,9 @@ public class TripContentFragment extends Fragment {
                 isTripFavorite.setButtonIconDrawableResource(R.drawable.sl_baseline_favorite_24);
                 isTripFavorite.setButtonDrawable(R.drawable.ic_baseline_favorite_border_24);
                 isTripFavorite.setButtonIconTintList(ColorStateList.valueOf(com.google.android.material.R.attr.colorOnPrimary));
+                isTripFavorite.setChecked(trip.isFavorite());
+
+                isTripFavorite.setOnCheckedChangeListener((compoundButton, isChecked) -> trip.setFavorite(isChecked));
             }
 
             @Override

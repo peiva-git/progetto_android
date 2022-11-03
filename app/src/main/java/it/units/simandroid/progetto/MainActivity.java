@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDestination;
+import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -29,18 +30,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.units.simandroid.progetto.fragments.SettingsFragment;
+import it.units.simandroid.progetto.fragments.directions.TripsFragmentDirections;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static final String FAVORITE_TRIPS_TAG = "FAV_TRIPS";
     private AppBarConfiguration appBarConfiguration;
+    private MaterialToolbar toolbar;
+    private DrawerLayout navigationDrawer;
+    private NavigationView navigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        MaterialToolbar toolbar = findViewById(R.id.toolbar);
-        DrawerLayout navigationDrawer = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.navigation_view);
+        toolbar = findViewById(R.id.toolbar);
+        navigationDrawer = findViewById(R.id.drawer_layout);
+        navigationView = findViewById(R.id.navigation_view);
         setSupportActionBar(toolbar);
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
         NavController navController = navHostFragment.getNavController();
@@ -61,6 +67,25 @@ public class MainActivity extends AppCompatActivity {
                 navigationView.setVisibility(View.VISIBLE);
             }
         });
+
+        navigationView.setNavigationItemSelectedListener(item -> {
+            if (item.getItemId() == R.id.favorites) {
+                TripsFragmentDirections.FilterByFavoriteTripsAction action = TripsFragmentDirections.actionFilterByFavoriteTrips();
+                action.setFilteringActive(true);
+                Log.d(FAVORITE_TRIPS_TAG, action.isFilteringActive() ? "Filtering active" : "Filtering inactive");
+                navigationDrawer.close();
+                navController.navigate(action);
+                return true;
+            } else if (item.getItemId() == R.id.my_trips) {
+                TripsFragmentDirections.FilterByFavoriteTripsAction action = TripsFragmentDirections.actionFilterByFavoriteTrips();
+                action.setFilteringActive(false);
+                Log.d(FAVORITE_TRIPS_TAG, action.isFilteringActive() ? "Filtering active" : "Filtering inactive");
+                navigationDrawer.close();
+                navController.navigate(action);
+                return true;
+            }
+            return false;
+        });
     }
 
     @Override
@@ -80,7 +105,6 @@ public class MainActivity extends AppCompatActivity {
         }
         return NavigationUI.onNavDestinationSelected(item, navController)
                 || super.onOptionsItemSelected(item);
-
     }
 
     @Override

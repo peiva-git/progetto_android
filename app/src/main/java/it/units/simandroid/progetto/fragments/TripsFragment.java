@@ -49,6 +49,7 @@ import java.util.List;
 import it.units.simandroid.progetto.R;
 import it.units.simandroid.progetto.Trip;
 import it.units.simandroid.progetto.TripAdapter;
+import it.units.simandroid.progetto.fragments.directions.TripsFragmentArgs;
 import it.units.simandroid.progetto.fragments.directions.TripsFragmentDirections;
 
 
@@ -97,8 +98,17 @@ public class TripsFragment extends Fragment {
                     for (int tripId = 0; tripId < snapshot.getValue(type).size(); tripId++) {
                         DataSnapshot tripSnapshot = snapshot.child(String.valueOf(tripId));
                         Trip trip = tripSnapshot.getValue(Trip.class);
-                        trips.add(trip);
-                        Log.d(GET_DB_TRIPS, "Trip with id " + tripId + " added to list");
+                        boolean isFavoritesFilteringEnabled = TripsFragmentArgs.fromBundle(requireArguments()).isFilteringActive();
+                        boolean isTripFavorite = trip.isFavorite();
+                        if (isFavoritesFilteringEnabled) {
+                            if (isTripFavorite) {
+                                trips.add(trip);
+                                Log.d(GET_DB_TRIPS, "Trip with id " + tripId + " added to list");
+                            }
+                        } else {
+                            trips.add(trip);
+                            Log.d(GET_DB_TRIPS, "Trip with id " + tripId + " added to list");
+                        }
                     }
                     TripAdapter tripAdapter = new TripAdapter(getContext(), trips);
                     LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);

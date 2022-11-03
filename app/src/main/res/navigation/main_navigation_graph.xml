@@ -24,6 +24,13 @@
             app:destination="@id/tripContentFragment"
             app:enterAnim="@android:anim/slide_in_left"
             app:exitAnim="@android:anim/slide_out_right" />
+        <argument
+            android:name="isFilteringByFavoriteActive"
+            app:argType="boolean"
+            android:defaultValue="false" />
+        <action
+            android:id="@+id/action_tripsFragment_self"
+            app:destination="@id/tripsFragment" />
     </fragment>
     <fragment
         android:id="@+id/newTripFragment"

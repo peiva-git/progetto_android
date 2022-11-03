@@ -5,6 +5,8 @@ import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -14,6 +16,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.gson.Gson;
 
 import java.util.List;
@@ -45,6 +48,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ItemViewHolder
         holder.tripDestination.setText(trip.getDestination());
         StringBuilder sb = new StringBuilder(trip.getStartDate());
         holder.tripStartEndDate.setText(sb.append(" - ").append(trip.getEndDate()).toString());
+        holder.isTripFavorite.setChecked(trip.isFavorite());
         if (trip.getImagesUris() != null) {
             Uri mainImageUri = Uri.parse(trip.getImagesUris().get(0));
             holder.tripMainPicture.setImageURI(mainImageUri);
@@ -54,6 +58,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ItemViewHolder
             action.setTrip(trip);
             Navigation.findNavController(view).navigate(action);
         });
+        holder.isTripFavorite.setOnCheckedChangeListener((compoundButton, isChecked) -> trip.setFavorite(isChecked));
     }
 
     @Override
@@ -68,6 +73,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ItemViewHolder
         private final TextView tripDescription;
         private final TextView tripStartEndDate;
         private final MaterialCardView cardView;
+        private final CheckBox isTripFavorite;
 
         public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -77,6 +83,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ItemViewHolder
             tripDestination = itemView.findViewById(R.id.trip_location);
             tripStartEndDate = itemView.findViewById(R.id.trip_start_end_date);
             cardView = itemView.findViewById(R.id.trip_card);
+            isTripFavorite = itemView.findViewById(R.id.favorite_trip);
         }
     }
 }

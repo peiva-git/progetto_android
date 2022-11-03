@@ -14,6 +14,7 @@ public class Trip {
     private String endDate;
     private String description;
     private String destination;
+    private boolean isFavorite = false;
 
     public Trip(String name, String startDate, String endDate, String description, String destination) {
         this.name = name;
@@ -82,6 +83,14 @@ public class Trip {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public boolean isFavorite() {
+        return isFavorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        isFavorite = favorite;
     }
 
     @Override
