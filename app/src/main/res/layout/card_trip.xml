@@ -8,6 +8,7 @@
     android:layout_margin="8dp"
     android:clickable="true"
     android:focusable="true"
+    android:checkable="true"
     style="?attr/materialCardViewFilledStyle">
 
     <androidx.constraintlayout.widget.ConstraintLayout

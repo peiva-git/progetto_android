@@ -63,6 +63,10 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ItemViewHolder
             action.setTrip(trip);
             Navigation.findNavController(view).navigate(action);
         });
+        holder.cardView.setOnLongClickListener(view -> {
+            holder.cardView.setChecked(!holder.cardView.isChecked());
+            return true;
+        });
         holder.isTripFavorite.setOnCheckedChangeListener((compoundButton, isChecked) -> {
             trip.setFavorite(isChecked);
             FirebaseDatabase.getInstance(DB_URL)
