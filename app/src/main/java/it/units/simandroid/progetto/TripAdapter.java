@@ -4,25 +4,19 @@ import static it.units.simandroid.progetto.RealtimeDatabase.DB_URL;
 
 import android.content.Context;
 import android.net.Uri;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.navigation.Navigation;
-import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.card.MaterialCardView;
-import com.google.android.material.checkbox.MaterialCheckBox;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.gson.Gson;
 
 import java.util.List;
 
@@ -62,10 +56,6 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ItemViewHolder
             TripsFragmentDirections.ViewTripDetailsAction action = TripsFragmentDirections.actionViewTripDetails();
             action.setTrip(trip);
             Navigation.findNavController(view).navigate(action);
-        });
-        holder.cardView.setOnLongClickListener(view -> {
-            holder.cardView.setChecked(!holder.cardView.isChecked());
-            return true;
         });
         holder.isTripFavorite.setOnCheckedChangeListener((compoundButton, isChecked) -> {
             trip.setFavorite(isChecked);
