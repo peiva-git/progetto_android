@@ -52,7 +52,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
-        app:layout_constraintBottom_toTopOf="@+id/trip_end_date_layout"
+        app:layout_constraintBottom_toTopOf="@+id/trip_end_date"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/trip_name_layout"
         app:layout_constraintTop_toBottomOf="@+id/trip_images_button"
@@ -67,47 +67,29 @@
             android:inputType="textAutoComplete" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/trip_start_date_layout"
-        android:layout_width="0dp"
+    <com.google.android.material.button.MaterialButton
+        style="@style/Widget.Material3.Button.TextButton"
+        android:id="@+id/trip_start_date"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/trip_end_date_layout"
-        app:layout_constraintEnd_toStartOf="@+id/trip_end_date_layout"
+        android:text="@string/trip_start_date"
+        app:icon="@drawable/ic_baseline_calendar_today_24"
+        app:layout_constraintBaseline_toBaselineOf="@+id/trip_end_date"
+        app:layout_constraintEnd_toStartOf="@+id/trip_end_date"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintVertical_weight="1"
-        app:startIconContentDescription="@string/calendar_icon_description"
-        app:startIconDrawable="@drawable/ic_baseline_calendar_today_24">
+        app:layout_constraintVertical_weight="1"/>
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/trip_start_date"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:focusable="false"
-            android:hint="@string/trip_start_date"
-            android:inputType="date" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/trip_end_date_layout"
-        android:layout_width="0dp"
+    <com.google.android.material.button.MaterialButton
+        style="@style/Widget.Material3.Button.TextButton"
+        android:id="@+id/trip_end_date"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
+        android:text="@string/trip_end_date"
+        app:icon="@drawable/ic_baseline_calendar_today_24"
         app:layout_constraintBottom_toTopOf="@+id/trip_description"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/trip_start_date_layout"
-        app:layout_constraintTop_toBottomOf="@+id/trip_destination_layout"
-        app:startIconContentDescription="@string/calendar_icon_description"
-        app:startIconDrawable="@drawable/ic_baseline_calendar_today_24">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/trip_end_date"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:focusable="false"
-            android:hint="@string/trip_end_date"
-            android:inputType="date" />
-    </com.google.android.material.textfield.TextInputLayout>
+        app:layout_constraintStart_toEndOf="@+id/trip_start_date"
+        app:layout_constraintTop_toBottomOf="@+id/trip_destination_layout"/>
 
     <EditText
         android:id="@+id/trip_description"
@@ -118,9 +100,9 @@
         android:hint="@string/trip_description"
         android:inputType="text"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/trip_start_date_layout"
-        app:layout_constraintStart_toEndOf="@+id/trip_start_date_layout"
-        app:layout_constraintTop_toBottomOf="@+id/trip_end_date_layout"
+        app:layout_constraintEnd_toEndOf="@+id/trip_start_date"
+        app:layout_constraintStart_toEndOf="@+id/trip_start_date"
+        app:layout_constraintTop_toBottomOf="@+id/trip_end_date"
         app:layout_constraintVertical_weight="2"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

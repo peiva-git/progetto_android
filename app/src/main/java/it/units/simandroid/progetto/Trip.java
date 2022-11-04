@@ -107,11 +107,11 @@ public class Trip {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Trip trip = (Trip) o;
-        return Objects.equals(imagesUris, trip.imagesUris) && Objects.equals(name, trip.name) && Objects.equals(startDate, trip.startDate) && Objects.equals(endDate, trip.endDate) && Objects.equals(description, trip.description) && Objects.equals(destination, trip.destination);
+        return isFavorite == trip.isFavorite && Objects.equals(imagesUris, trip.imagesUris) && Objects.equals(name, trip.name) && Objects.equals(startDate, trip.startDate) && Objects.equals(endDate, trip.endDate) && Objects.equals(description, trip.description) && Objects.equals(destination, trip.destination);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(imagesUris, name, startDate, endDate, description, destination);
+        return Objects.hash(imagesUris, name, startDate, endDate, description, destination, isFavorite);
     }
 }
