@@ -96,7 +96,7 @@ public class NewTripFragmentTest {
         Espresso.onView(ViewMatchers.withId(R.id.trip_description))
                 .perform(ViewActions.typeText(TRIP_DESCRIPTION))
                 .perform(ViewActions.closeSoftKeyboard());
-        Espresso.onView(ViewMatchers.withId(R.id.save_trip))
+        Espresso.onView(ViewMatchers.withId(R.id.save_new_trip_button))
                 .perform(ViewActions.click());
     }
 

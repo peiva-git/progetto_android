@@ -28,6 +28,7 @@ import androidx.navigation.Navigation;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.datepicker.MaterialDatePicker;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
@@ -63,6 +64,7 @@ public class NewTripFragment extends Fragment {
     private EditText tripDescription;
     private FirebaseDatabase database;
     private LinearProgressIndicator progressIndicator;
+    private FloatingActionButton saveTripButton;
 
     public NewTripFragment() {
         // Required empty public constructor
@@ -103,30 +105,9 @@ public class NewTripFragment extends Fragment {
         tripEndDate = fragmentView.findViewById(R.id.trip_end_date);
         tripDescription = fragmentView.findViewById(R.id.trip_description);
         progressIndicator = fragmentView.findViewById(R.id.new_trip_progress_indicator);
+        saveTripButton = fragmentView.findViewById(R.id.save_new_trip_button);
 
         newImageButton.setOnClickListener(view -> pickTripImages.launch(new String[]{"image/*"}));
-
-        requireActivity().addMenuProvider(new MenuProvider() {
-            @Override
-            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
-                MenuItem item = menu.findItem(R.id.user_account);
-                item.setVisible(false);
-                menuInflater.inflate(R.menu.top_app_bar_new_trip, menu);
-            }
-
-            @Override
-            public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
-                if (menuItem.getItemId() == R.id.save_trip) {
-                    progressIndicator.setVisibility(View.VISIBLE);
-                    uploadNewTripData();
-                    NavDirections action = NewTripFragmentDirections.actionNewTripFragmentToTripsFragment();
-                    Navigation.findNavController(fragmentView).navigate(action);
-                    Snackbar.make(fragmentView, R.string.trip_saved, Snackbar.LENGTH_LONG).show();
-                    return true;
-                }
-                return false;
-            }
-        }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
 
         tripStartDate.setOnClickListener(view -> {
             MaterialDatePicker<Long> datePicker = MaterialDatePicker.Builder.datePicker()
@@ -150,6 +131,14 @@ public class NewTripFragment extends Fragment {
                 tripEndDate.setText(DateFormat.getDateInstance().format(date));
             });
             datePicker.show(requireActivity().getSupportFragmentManager(), END_DATE_PICKER_TAG);
+        });
+
+        saveTripButton.setOnClickListener(view -> {
+            progressIndicator.setVisibility(View.VISIBLE);
+            uploadNewTripData();
+            NavDirections action = NewTripFragmentDirections.actionNewTripFragmentToTripsFragment();
+            Navigation.findNavController(fragmentView).navigate(action);
+            Snackbar.make(fragmentView, R.string.trip_saved, Snackbar.LENGTH_LONG).show();
         });
 
         return fragmentView;
