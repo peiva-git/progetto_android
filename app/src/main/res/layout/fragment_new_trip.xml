@@ -70,8 +70,9 @@
     <com.google.android.material.button.MaterialButton
         style="@style/Widget.Material3.Button.TextButton"
         android:id="@+id/trip_start_date"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_margin="5dp"
         android:text="@string/trip_start_date"
         app:icon="@drawable/ic_baseline_calendar_today_24"
         app:layout_constraintBaseline_toBaselineOf="@+id/trip_end_date"
@@ -82,27 +83,44 @@
     <com.google.android.material.button.MaterialButton
         style="@style/Widget.Material3.Button.TextButton"
         android:id="@+id/trip_end_date"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_margin="5dp"
         android:text="@string/trip_end_date"
         app:icon="@drawable/ic_baseline_calendar_today_24"
-        app:layout_constraintBottom_toTopOf="@+id/trip_description"
+        app:layout_constraintBottom_toTopOf="@+id/trip_description_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/trip_start_date"
         app:layout_constraintTop_toBottomOf="@+id/trip_destination_layout"/>
 
-    <EditText
-        android:id="@+id/trip_description"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/trip_description_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_margin="5dp"
         android:autofillHints="none"
-        android:gravity="start|top"
-        android:hint="@string/trip_description"
-        android:inputType="text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/trip_start_date"
         app:layout_constraintStart_toEndOf="@+id/trip_start_date"
         app:layout_constraintTop_toBottomOf="@+id/trip_end_date"
-        app:layout_constraintVertical_weight="2"/>
+        app:layout_constraintVertical_weight="2">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/trip_description"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:hint="@string/trip_description"
+            android:gravity="start|top"
+            android:inputType="textAutoComplete"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        style="?attr/floatingActionButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        app:srcCompat="@drawable/ic_baseline_save_24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
