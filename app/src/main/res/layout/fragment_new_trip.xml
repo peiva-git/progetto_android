@@ -1,118 +1,133 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/linearLayout4"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/outer_layout"
     tools:context=".fragments.NewTripFragment">
 
     <com.google.android.material.progressindicator.LinearProgressIndicator
         android:id="@+id/new_trip_progress_indicator"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@+id/trip_images_button"
-        app:layout_constraintStart_toStartOf="@+id/trip_images_button"
+        app:layout_constraintBottom_toTopOf="@+id/scroll_view_layout"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageButton
-        android:id="@+id/trip_images_button"
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:contentDescription="@string/new_images_button_description"
-        android:scaleType="fitCenter"
-        android:src="@drawable/ic_baseline_add_photo_alternate_24"
-        app:layout_constraintBottom_toTopOf="@+id/trip_destination_layout"
-        app:layout_constraintEnd_toEndOf="@+id/trip_name_layout"
-        app:layout_constraintStart_toEndOf="@+id/trip_name_layout"
+        android:fillViewport="true"
+        android:id="@+id/scroll_view_layout"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         app:layout_constraintTop_toBottomOf="@+id/new_trip_progress_indicator"
-        app:layout_constraintVertical_chainStyle="spread"
-        app:layout_constraintVertical_weight="2.5"/>
+        app:layout_constraintBottom_toBottomOf="parent">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/trip_name_layout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/trip_destination_layout"
-        app:layout_constraintEnd_toStartOf="@+id/trip_destination_layout"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintVertical_weight="1">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/trip_name"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/inner_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:hint="@string/trip_name"
-            android:inputType="text" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:layout_height="match_parent">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/trip_destination_layout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        app:layout_constraintBottom_toTopOf="@+id/trip_end_date"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/trip_name_layout"
-        app:layout_constraintTop_toBottomOf="@+id/trip_images_button"
-        app:startIconContentDescription="@string/location_icon_description"
-        app:startIconDrawable="@drawable/ic_baseline_location_on_24">
+            <ImageButton
+                android:id="@+id/trip_images_button"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:contentDescription="@string/new_images_button_description"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_baseline_add_photo_alternate_24"
+                app:layout_constraintBottom_toTopOf="@+id/trip_destination_layout"
+                app:layout_constraintEnd_toEndOf="@+id/trip_name_layout"
+                app:layout_constraintStart_toEndOf="@+id/trip_name_layout"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintHeight_min="wrap" />
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/trip_destination"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:hint="@string/trip_destination"
-            android:inputType="textAutoComplete" />
-    </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/trip_name_layout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                app:layout_constraintBaseline_toBaselineOf="@+id/trip_destination_layout"
+                app:layout_constraintEnd_toStartOf="@+id/trip_destination_layout"
+                app:layout_constraintStart_toStartOf="parent">
 
-    <com.google.android.material.button.MaterialButton
-        style="@style/Widget.Material3.Button.TextButton"
-        android:id="@+id/trip_start_date"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:text="@string/trip_start_date"
-        app:icon="@drawable/ic_baseline_calendar_today_24"
-        app:layout_constraintBaseline_toBaselineOf="@+id/trip_end_date"
-        app:layout_constraintEnd_toStartOf="@+id/trip_end_date"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintVertical_weight="1"/>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/trip_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="@string/trip_name"
+                    android:inputType="text" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-    <com.google.android.material.button.MaterialButton
-        style="@style/Widget.Material3.Button.TextButton"
-        android:id="@+id/trip_end_date"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:text="@string/trip_end_date"
-        app:icon="@drawable/ic_baseline_calendar_today_24"
-        app:layout_constraintBottom_toTopOf="@+id/trip_description_layout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/trip_start_date"
-        app:layout_constraintTop_toBottomOf="@+id/trip_destination_layout"/>
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/trip_destination_layout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                app:layout_constraintBottom_toTopOf="@+id/trip_end_date"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/trip_name_layout"
+                app:layout_constraintTop_toBottomOf="@+id/trip_images_button"
+                app:startIconContentDescription="@string/location_icon_description"
+                app:startIconDrawable="@drawable/ic_baseline_location_on_24">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/trip_description_layout"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_margin="5dp"
-        android:autofillHints="none"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/trip_start_date"
-        app:layout_constraintStart_toEndOf="@+id/trip_start_date"
-        app:layout_constraintTop_toBottomOf="@+id/trip_end_date"
-        app:layout_constraintVertical_weight="2">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/trip_destination"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="@string/trip_destination"
+                    android:inputType="textAutoComplete" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/trip_description"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:hint="@string/trip_description"
-            android:gravity="start|top"
-            android:inputType="textAutoComplete"/>
-    </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.button.MaterialButton
+                style="@style/Widget.Material3.Button.TextButton"
+                android:id="@+id/trip_start_date"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:text="@string/trip_start_date"
+                app:icon="@drawable/ic_baseline_calendar_today_24"
+                app:layout_constraintBaseline_toBaselineOf="@+id/trip_end_date"
+                app:layout_constraintEnd_toStartOf="@+id/trip_end_date"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <com.google.android.material.button.MaterialButton
+                style="@style/Widget.Material3.Button.TextButton"
+                android:id="@+id/trip_end_date"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:text="@string/trip_end_date"
+                app:icon="@drawable/ic_baseline_calendar_today_24"
+                app:layout_constraintBottom_toTopOf="@+id/trip_description_layout"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/trip_start_date"
+                app:layout_constraintTop_toBottomOf="@+id/trip_destination_layout"/>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/trip_description_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:autofillHints="none"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/trip_start_date"
+                app:layout_constraintStart_toEndOf="@+id/trip_start_date"
+                app:layout_constraintTop_toBottomOf="@+id/trip_end_date">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/trip_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="@string/trip_description"
+                    android:gravity="start|top"
+                    android:inputType="textAutoComplete|textMultiLine"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         style="?attr/floatingActionButtonStyle"
@@ -121,6 +136,6 @@
         android:layout_margin="16dp"
         app:srcCompat="@drawable/ic_baseline_save_24"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
+        app:layout_constraintEnd_toEndOf="parent"
+        android:contentDescription="@string/save_new_trip_button" />
 </androidx.constraintlayout.widget.ConstraintLayout>
