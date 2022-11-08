@@ -102,12 +102,10 @@ public class TripsFragment extends Fragment {
                         boolean isTripFavorite = trip.isFavorite();
                         if (isFavoritesFilteringEnabled) {
                             if (isTripFavorite) {
-                                trips.add(trip);
-                                Log.d(GET_DB_TRIPS, "Trip with id " + trip.getId() + " added to list");
+                                addTripIfUserAuthorized(trip);
                             }
                         } else {
-                            trips.add(trip);
-                            Log.d(GET_DB_TRIPS, "Trip with id " + trip.getId() + " added to list");
+                            addTripIfUserAuthorized(trip);
                         }
                     }
                     TripAdapter tripAdapter = new TripAdapter(getContext(), trips);
@@ -123,6 +121,13 @@ public class TripsFragment extends Fragment {
             }
         });
         return fragmentView;
+    }
+
+    private void addTripIfUserAuthorized(@NonNull Trip trip) {
+        if (trip.getAuthorizedUsers().contains(authentication.getUid())) {
+            trips.add(trip);
+            Log.d(GET_DB_TRIPS, "Trip with id " + trip.getId() + " added to list");
+        }
     }
 
     @Override

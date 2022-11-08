@@ -16,6 +16,7 @@ public class Trip {
     private String destination;
     private boolean isFavorite = false;
     private String id;
+    private List<String> authorizedUsers;
 
     public Trip(String name, String startDate, String endDate, String description, String destination) {
         this.name = name;
@@ -25,13 +26,14 @@ public class Trip {
         this.destination = destination;
     }
 
-    public Trip(List<String> imagesUris, String name, String startDate, String endDate, String description, String destination) {
+    public Trip(List<String> imagesUris, String name, String startDate, String endDate, String description, String destination, List<String> authorizedUsers) {
         this.imagesUris = imagesUris;
         this.name = name;
         this.startDate = startDate;
         this.endDate = endDate;
         this.description = description;
         this.destination = destination;
+        this.authorizedUsers = authorizedUsers;
     }
 
     public Trip() {
@@ -100,6 +102,14 @@ public class Trip {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public List<String> getAuthorizedUsers() {
+        return authorizedUsers;
+    }
+
+    public void setAuthorizedUsers(List<String> authorizedUsers) {
+        this.authorizedUsers = authorizedUsers;
     }
 
     @Override
