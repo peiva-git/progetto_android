@@ -8,12 +8,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -21,9 +17,7 @@ import android.widget.ImageView;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Lifecycle;
 import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
 
@@ -44,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import it.units.simandroid.progetto.R;
 import it.units.simandroid.progetto.Trip;
@@ -170,9 +165,15 @@ public class NewTripFragment extends Fragment {
     private void uploadNewTripImages(@NonNull DatabaseReference tripReference) {
         String tripId = tripReference.getKey();
         StorageReference userImages = storage.getReference("users/" + authentication.getUid() + "/" + tripId);
+        AtomicReference<Integer> progress = new AtomicReference<>(0);
         for (Uri pickedImageUri : pickedImages) {
             userImages.child(pickedImageUri.getLastPathSegment()).putFile(pickedImageUri)
-                    .addOnSuccessListener(taskSnapshot -> Log.d(NEW_TRIP_DB_TAG, "Added trip image to remote storage"))
+                    .addOnSuccessListener(taskSnapshot -> {
+                        Log.d(NEW_TRIP_DB_TAG, "Added trip image to remote storage");
+                        progress.set(progress.get() + (100 / pickedImages.size()));
+                        LinearProgressIndicator progressIndicator = requireActivity().findViewById(R.id.progress_indicator);
+                        progressIndicator.setProgressCompat(progress.get(), true);
+                    })
                     .addOnFailureListener(exception -> Log.d(NEW_TRIP_DB_TAG, "Failed to add trip image to remote storage: " + exception.getMessage()));
         }
         Tasks.whenAllComplete(userImages.getActiveUploadTasks()).addOnCompleteListener(task -> {
