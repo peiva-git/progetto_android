@@ -31,7 +31,7 @@
         <action
             android:id="@+id/action_tripsFragment_self"
             app:destination="@id/tripsFragment"
-            app:enterAnim="@android:anim/fade_in"
+            app:enterAnim="@android:animator/fade_in"
             app:exitAnim="@android:anim/fade_out" />
     </fragment>
     <fragment

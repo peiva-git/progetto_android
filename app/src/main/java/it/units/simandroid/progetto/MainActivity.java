@@ -22,6 +22,7 @@ import android.view.View;
 
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.firebase.auth.FirebaseAuth;
 
 import org.jetbrains.annotations.NotNull;
@@ -39,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private MaterialToolbar toolbar;
     private DrawerLayout navigationDrawer;
     private NavigationView navigationView;
+    private LinearProgressIndicator progressIndicator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar);
         navigationDrawer = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.navigation_view);
+        progressIndicator = findViewById(R.id.progress_indicator);
         setSupportActionBar(toolbar);
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
         NavController navController = navHostFragment.getNavController();

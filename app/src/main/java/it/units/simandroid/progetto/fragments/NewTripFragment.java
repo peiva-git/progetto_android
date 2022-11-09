@@ -13,6 +13,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -26,6 +27,7 @@ import androidx.lifecycle.Lifecycle;
 import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
 
+import com.google.android.gms.tasks.Tasks;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -35,6 +37,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -63,7 +66,6 @@ public class NewTripFragment extends Fragment {
     private MaterialButton tripEndDate;
     private EditText tripDescription;
     private FirebaseDatabase database;
-    private LinearProgressIndicator progressIndicator;
     private FloatingActionButton saveTripButton;
 
     public NewTripFragment() {
@@ -104,7 +106,6 @@ public class NewTripFragment extends Fragment {
         tripStartDate = fragmentView.findViewById(R.id.trip_start_date);
         tripEndDate = fragmentView.findViewById(R.id.trip_end_date);
         tripDescription = fragmentView.findViewById(R.id.trip_description);
-        progressIndicator = fragmentView.findViewById(R.id.new_trip_progress_indicator);
         saveTripButton = fragmentView.findViewById(R.id.save_new_trip_button);
 
         newImageButton.setOnClickListener(view -> pickTripImages.launch(new String[]{"image/*"}));
@@ -134,7 +135,6 @@ public class NewTripFragment extends Fragment {
         });
 
         saveTripButton.setOnClickListener(view -> {
-            progressIndicator.setVisibility(View.VISIBLE);
             uploadNewTripData();
             NavDirections action = NewTripFragmentDirections.actionNewTripFragmentToTripsFragment();
             Navigation.findNavController(fragmentView).navigate(action);
@@ -145,7 +145,9 @@ public class NewTripFragment extends Fragment {
     }
 
     private void uploadNewTripData() {
-        DatabaseReference tripsDbReference = database.getReference("trips").push();
+        LinearProgressIndicator progressIndicator = requireActivity().findViewById(R.id.progress_indicator);
+        progressIndicator.show();
+        DatabaseReference tripDbReference = database.getReference("trips").push();
         String newTripName = tripName.getText().toString();
         String newTripDestination = tripDestination.getText().toString();
         String newTripStartDate = tripStartDate.getText().toString();
@@ -158,9 +160,25 @@ public class NewTripFragment extends Fragment {
         List<String> tripUsers = new ArrayList<>();
         tripUsers.add(authentication.getUid());
         Trip newTrip = new Trip(newTripImageUris, newTripName, newTripStartDate, newTripEndDate, newTripDescription, newTripDestination, tripUsers);
-        newTrip.setId(tripsDbReference.getKey());
-        tripsDbReference.setValue(newTrip)
+        newTrip.setId(tripDbReference.getKey());
+        tripDbReference.setValue(newTrip)
                 .addOnSuccessListener(task -> Log.d(NEW_TRIP_DB_TAG, "Added new trip data to realtime DB"))
                 .addOnFailureListener(exception -> Log.e(NEW_TRIP_DB_TAG, "Failed to add new trip data: " + exception.getMessage()));
+        uploadNewTripImages(tripDbReference);
+    }
+
+    private void uploadNewTripImages(@NonNull DatabaseReference tripReference) {
+        String tripId = tripReference.getKey();
+        StorageReference userImages = storage.getReference("users/" + authentication.getUid() + "/" + tripId);
+        for (Uri pickedImageUri : pickedImages) {
+            userImages.child(pickedImageUri.getLastPathSegment()).putFile(pickedImageUri)
+                    .addOnSuccessListener(taskSnapshot -> Log.d(NEW_TRIP_DB_TAG, "Added trip image to remote storage"))
+                    .addOnFailureListener(exception -> Log.d(NEW_TRIP_DB_TAG, "Failed to add trip image to remote storage: " + exception.getMessage()));
+        }
+        Tasks.whenAllComplete(userImages.getActiveUploadTasks()).addOnCompleteListener(task -> {
+            Snackbar.make(requireActivity().findViewById(R.id.activity_layout), R.string.trip_images_uploaded, Snackbar.LENGTH_SHORT).show();
+            LinearProgressIndicator progressIndicator = requireActivity().findViewById(R.id.progress_indicator);
+            progressIndicator.hide();
+        });
     }
 }
