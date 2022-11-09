@@ -33,7 +33,9 @@
                 app:layout_constraintEnd_toEndOf="@+id/trip_name_layout"
                 app:layout_constraintStart_toEndOf="@+id/trip_name_layout"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintHeight_min="wrap" />
+                app:layout_constraintHeight_default="percent"
+                app:layout_constraintHeight_percent="0.5"
+                app:layout_constraintVertical_chainStyle="packed"/>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/trip_name_layout"
