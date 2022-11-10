@@ -60,4 +60,5 @@
     <string name="share_trip_cancel">Annulla</string>
     <string name="share_trip_confirm">Condividi</string>
     <string name="search_for_users">Cerca nomi di utenti</string>
+    <string name="new_user_failed">Errore durante la creazione del nuovo utente</string>
 </resources>

@@ -7,6 +7,13 @@ public class User {
     private String surname;
     private String id;
 
+    public User(String email, String name, String surname, String id) {
+        this.email = email;
+        this.name = name;
+        this.surname = surname;
+        this.id = id;
+    }
+
     public String getEmail() {
         return email;
     }
@@ -29,5 +36,13 @@ public class User {
 
     public void setSurname(String surname) {
         this.surname = surname;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }
