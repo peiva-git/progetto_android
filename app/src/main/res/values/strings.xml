@@ -55,4 +55,8 @@
     <string name="favorite_trip_icon_description">Set trip as favorite</string>
     <string name="set_favorite_trip">Set trip as favorite</string>
     <string name="set_shared_trip">Set trip as shared</string>
+    <string name="share_trip_description">Select the users to share the trip with</string>
+    <string name="share_trip_title">Share trip</string>
+    <string name="share_trip_cancel">Cancel</string>
+    <string name="share_trip_confirm">Share</string>
 </resources>

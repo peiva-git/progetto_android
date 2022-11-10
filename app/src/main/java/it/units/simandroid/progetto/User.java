@@ -3,12 +3,9 @@ package it.units.simandroid.progetto;
 public class User {
 
     private String email;
-    private String plaintextPassword;
-
-    public User(String email, String plaintextPassword) {
-        this.email = email;
-        this.plaintextPassword = plaintextPassword;
-    }
+    private String name;
+    private String surname;
+    private String id;
 
     public String getEmail() {
         return email;
@@ -16,13 +13,5 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getPlaintextPassword() {
-        return plaintextPassword;
-    }
-
-    public void setPlaintextPassword(String plaintextPassword) {
-        this.plaintextPassword = plaintextPassword;
     }
 }

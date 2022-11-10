@@ -2,11 +2,12 @@ package it.units.simandroid.progetto.fragments;
 
 import static it.units.simandroid.progetto.RealtimeDatabase.DB_URL;
 
+import android.content.DialogInterface;
 import android.content.res.ColorStateList;
-import android.graphics.PorterDuff;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Lifecycle;
@@ -20,11 +21,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.google.android.material.checkbox.MaterialCheckBox;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.database.FirebaseDatabase;
 
 import it.units.simandroid.progetto.R;
@@ -92,6 +92,16 @@ public class TripContentFragment extends Fragment {
             @Override
             public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
                 if (menuItem.getItemId() == R.id.favorite_trip) {
+                    return true;
+                } else if (menuItem.getItemId() == R.id.share_trip) {
+                     AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext())
+                             .setTitle(R.string.share_trip_title)
+                             .setMessage(R.string.share_trip_description)
+                             .setNeutralButton(R.string.share_trip_cancel, (dialogInterface, i) -> dialogInterface.cancel())
+                             .setPositiveButton(R.string.share_trip_confirm, (dialogInterface, i) -> {
+
+                             })
+                             .setView()
                     return true;
                 }
                 return false;
