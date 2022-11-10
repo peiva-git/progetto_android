@@ -59,4 +59,5 @@
     <string name="share_trip_title">Condividi viaggio</string>
     <string name="share_trip_cancel">Annulla</string>
     <string name="share_trip_confirm">Condividi</string>
+    <string name="search_for_users">Cerca nomi di utenti</string>
 </resources>

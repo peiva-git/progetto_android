@@ -2,7 +2,6 @@ package it.units.simandroid.progetto.fragments;
 
 import static it.units.simandroid.progetto.RealtimeDatabase.DB_URL;
 
-import android.content.DialogInterface;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 
@@ -101,7 +100,8 @@ public class TripContentFragment extends Fragment {
                              .setPositiveButton(R.string.share_trip_confirm, (dialogInterface, i) -> {
 
                              })
-                             .setView()
+                             .setView(R.layout.fragment_share_dialog)
+                             .show();
                     return true;
                 }
                 return false;

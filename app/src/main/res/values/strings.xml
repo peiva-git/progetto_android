@@ -59,4 +59,5 @@
     <string name="share_trip_title">Share trip</string>
     <string name="share_trip_cancel">Cancel</string>
     <string name="share_trip_confirm">Share</string>
+    <string name="search_for_users">Search for user names</string>
 </resources>
