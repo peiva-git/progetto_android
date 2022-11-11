@@ -5,9 +5,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.textview.MaterialTextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +35,9 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ItemViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
-
+        User user = filteredUsers.get(position);
+        holder.userEmail.setText(user.getEmail());
+        holder.userNameSurname.setText(String.format("%s %s", user.getName(), user.getSurname()));
     }
 
     @Override
@@ -65,16 +70,19 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ItemViewHolder
             @Override
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
                 List<User> filteringResult = (List<User>) filterResults.values;
-                if (!filteringResult.equals(users)) {
-                    notifyDataSetChanged();
-                }
+                notifyDataSetChanged();
             }
         };
     }
 
     public static class ItemViewHolder extends RecyclerView.ViewHolder {
+        private final MaterialTextView userNameSurname;
+        private final MaterialTextView userEmail;
+
         public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
+            userNameSurname = itemView.findViewById(R.id.user_name_surname);
+            userEmail = itemView.findViewById(R.id.user_email);
         }
     }
 }
