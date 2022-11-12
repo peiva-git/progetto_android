@@ -55,7 +55,6 @@ public class TripContentFragment extends Fragment {
     private TextView tripDates;
     private TextView tripDestination;
     private TextView tripDescription;
-    private FirebaseDatabase database;
 
     public TripContentFragment() {
         // Required empty public constructor
@@ -64,7 +63,6 @@ public class TripContentFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        database = FirebaseDatabase.getInstance(DB_URL);
     }
 
     @Override
@@ -84,10 +82,6 @@ public class TripContentFragment extends Fragment {
         viewPager.setAdapter(pagerAdapter);
 
         requireActivity().addMenuProvider(new MenuProvider() {
-            private EditText searchField;
-            private RecyclerView recyclerView;
-            private UserAdapter userAdapter;
-
             @Override
             public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
                 MenuItem userAccount = menu.findItem(R.id.user_account);
@@ -114,57 +108,9 @@ public class TripContentFragment extends Fragment {
                 if (menuItem.getItemId() == R.id.favorite_trip) {
                     return true;
                 } else if (menuItem.getItemId() == R.id.share_trip) {
-                    AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext())
-                            .setTitle(R.string.share_trip_title)
-                            .setMessage(R.string.share_trip_description)
-                            .setNeutralButton(R.string.share_trip_cancel, (dialogInterface, i) -> dialogInterface.cancel())
-                            .setPositiveButton(R.string.share_trip_confirm, (dialogInterface, i) -> {
-
-                            })
-                            .setView(R.layout.fragment_share_dialog)
-                            .create();
-                    dialog.show();
-
-                    recyclerView = dialog.findViewById(R.id.users_recycler_view);
-                    searchField = dialog.findViewById(R.id.search_field_text);
-
-                    MaterialDividerItemDecoration divider = new MaterialDividerItemDecoration(recyclerView.getContext(), LinearLayoutManager.VERTICAL);
-                    recyclerView.addItemDecoration(divider);
-                    LinearLayoutManager layoutManager = new LinearLayoutManager(dialog.getContext(), LinearLayoutManager.VERTICAL, false);
-                    recyclerView.setLayoutManager(layoutManager);
-
-                    database.getReference("users").get().addOnSuccessListener(snapshot -> {
-                        GenericTypeIndicator<Map<String, Object>> type = new GenericTypeIndicator<Map<String, Object>>() {};
-                        Map<String, Object> usersById = snapshot.getValue(type);
-                        if (usersById != null) {
-                            List<User> users = new ArrayList<>(usersById.values().size());
-                            for (String key : usersById.keySet()) {
-                                User retrievedUser = snapshot.child(key).getValue(User.class);
-                                users.add(retrievedUser);
-                            }
-                            userAdapter = new UserAdapter(users);
-                            recyclerView.setAdapter(userAdapter);
-                        }
-                    }).addOnFailureListener(exception -> {
-                        Log.w(DB_ERROR, "Unable to retrieve user list: " + exception.getMessage());
-                        Snackbar.make(requireView(), R.string.load_users_failed, Snackbar.LENGTH_SHORT).show();
-                    });
-                    searchField.addTextChangedListener(new TextWatcher() {
-                        @Override
-                        public void beforeTextChanged(CharSequence oldText, int start, int count, int after) {
-
-                        }
-
-                        @Override
-                        public void onTextChanged(CharSequence newText, int start, int before, int count) {
-
-                        }
-
-                        @Override
-                        public void afterTextChanged(Editable editable) {
-                            userAdapter.getFilter().filter(editable.toString());
-                        }
-                    });
+                    new SelectUsersDialogFragment().show(
+                            getChildFragmentManager(), SelectUsersDialogFragment.TAG
+                    );
                     return true;
                 }
                 return false;
