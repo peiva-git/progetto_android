@@ -24,9 +24,10 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ItemViewHolder
         this.filteredUsers = users;
     }
 
-    public void setUsers(List<User> users) {
+    public void updateUsers(List<User> users) {
         this.users = users;
         filteredUsers = users;
+        notifyDataSetChanged();
     }
 
     @NonNull

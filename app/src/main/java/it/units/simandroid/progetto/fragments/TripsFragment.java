@@ -4,15 +4,9 @@ import static it.units.simandroid.progetto.RealtimeDatabase.DB_ERROR;
 import static it.units.simandroid.progetto.RealtimeDatabase.DB_URL;
 import static it.units.simandroid.progetto.RealtimeDatabase.GET_DB_TRIPS;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -26,7 +20,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -38,12 +31,8 @@ import com.google.firebase.storage.FirebaseStorage;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -62,6 +51,7 @@ public class TripsFragment extends Fragment {
     private List<Trip> trips;
     private RecyclerView tripsRecyclerView;
     private FloatingActionButton newTripButton;
+    private TripAdapter tripAdapter;
 
     public TripsFragment() {
         // Required empty public constructor
@@ -82,6 +72,11 @@ public class TripsFragment extends Fragment {
         View fragmentView = inflater.inflate(R.layout.fragment_trips, container, false);
         tripsRecyclerView = fragmentView.findViewById(R.id.trips_recycler_view);
         newTripButton = fragmentView.findViewById(R.id.new_trip_button);
+
+        tripAdapter = new TripAdapter(getContext(), Collections.emptyList());
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+        tripsRecyclerView.setLayoutManager(linearLayoutManager);
+        tripsRecyclerView.setAdapter(tripAdapter);
 
         newTripButton.setOnClickListener(view -> {
             NavController navController = Navigation.findNavController(view);
@@ -108,10 +103,7 @@ public class TripsFragment extends Fragment {
                             addTripIfUserAuthorized(trip);
                         }
                     }
-                    TripAdapter tripAdapter = new TripAdapter(getContext(), trips);
-                    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
-                    tripsRecyclerView.setLayoutManager(linearLayoutManager);
-                    tripsRecyclerView.setAdapter(tripAdapter);
+                    tripAdapter.updateTrips(trips);
                 }
             }
 

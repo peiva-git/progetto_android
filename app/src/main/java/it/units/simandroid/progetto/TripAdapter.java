@@ -8,8 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.Filter;
-import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -27,11 +25,16 @@ import it.units.simandroid.progetto.fragments.directions.TripsFragmentDirections
 public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ItemViewHolder> {
 
     private final Context context;
-    private final List<Trip> trips;
+    private List<Trip> trips;
 
     public TripAdapter(Context context, List<Trip> trips) {
         this.context = context;
         this.trips = trips;
+    }
+
+    public void updateTrips(List<Trip> trips) {
+        this.trips = trips;
+        notifyDataSetChanged();
     }
 
     @NonNull

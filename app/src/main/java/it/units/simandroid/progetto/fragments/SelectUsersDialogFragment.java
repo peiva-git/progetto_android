@@ -10,7 +10,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -46,7 +45,7 @@ public class SelectUsersDialogFragment extends DialogFragment {
     private UserAdapter userAdapter;
 
     public static String TAG = "USER_SELECTION_DIALOG";
-    private View dialogView;
+    private AlertDialog dialog;
 
     public SelectUsersDialogFragment() {
         // Required empty public constructor
@@ -62,9 +61,10 @@ public class SelectUsersDialogFragment extends DialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        //View fragmentView = inflater.inflate(R.layout.fragment_select_users_dialog, container, false);
-        recyclerView = dialogView.findViewById(R.id.users_recycler_view);
-        searchField = dialogView.findViewById(R.id.search_field_text);
+        View fragmentView = inflater.inflate(R.layout.fragment_select_users_dialog, container, false);
+        dialog.setView(fragmentView);
+        recyclerView = fragmentView.findViewById(R.id.users_recycler_view);
+        searchField = fragmentView.findViewById(R.id.search_field_text);
 
         userAdapter = new UserAdapter(Collections.emptyList());
         recyclerView.setAdapter(userAdapter);
@@ -84,8 +84,7 @@ public class SelectUsersDialogFragment extends DialogFragment {
                     users.add(retrievedUser);
                     Log.d(GET_DB_USERS, "User with id " + key + " added to list");
                 }
-                userAdapter.setUsers(users);
-                userAdapter.notifyDataSetChanged();
+                userAdapter.updateUsers(users);
             } else {
                 Log.d(GET_DB_USERS, "No users found");
             }
@@ -110,20 +109,19 @@ public class SelectUsersDialogFragment extends DialogFragment {
                 userAdapter.getFilter().filter(editable.toString());
             }
         });
-        return dialogView;
+        return fragmentView;
     }
 
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        dialogView = requireActivity().getLayoutInflater().inflate(R.layout.fragment_select_users_dialog, null);
-        return new MaterialAlertDialogBuilder(requireContext())
+        dialog = new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.share_trip_title)
                 .setMessage(R.string.share_trip_description)
                 .setNegativeButton(R.string.share_trip_cancel, (dialogInterface, i) -> dialogInterface.cancel())
                 .setPositiveButton(R.string.share_trip_confirm, (dialogInterface, i) -> {
                 })
-                .setView(dialogView)
                 .create();
+        return dialog;
     }
 }
