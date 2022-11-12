@@ -10,23 +10,18 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Message;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.EditText;
 
-import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.divider.MaterialDividerItemDecoration;
 import com.google.android.material.snackbar.Snackbar;
@@ -34,22 +29,24 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicMarkableReference;
 
 import it.units.simandroid.progetto.R;
 import it.units.simandroid.progetto.User;
 import it.units.simandroid.progetto.UserAdapter;
 
-public class SelectUsersDialogFragment extends BottomSheetDialogFragment {
+public class SelectUsersDialogFragment extends DialogFragment {
 
+    public static final String GET_DB_USERS = "GET_DB_USERS";
     private RecyclerView recyclerView;
     private EditText searchField;
     private FirebaseDatabase database;
     private UserAdapter userAdapter;
 
     public static String TAG = "USER_SELECTION_DIALOG";
+    private View dialogView;
 
     public SelectUsersDialogFragment() {
         // Required empty public constructor
@@ -65,10 +62,12 @@ public class SelectUsersDialogFragment extends BottomSheetDialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View fragmentView = inflater.inflate(R.layout.fragment_select_users_dialog, container, false);
-        recyclerView = fragmentView.findViewById(R.id.users_recycler_view);
-        searchField = fragmentView.findViewById(R.id.search_field_text);
+        //View fragmentView = inflater.inflate(R.layout.fragment_select_users_dialog, container, false);
+        recyclerView = dialogView.findViewById(R.id.users_recycler_view);
+        searchField = dialogView.findViewById(R.id.search_field_text);
 
+        userAdapter = new UserAdapter(Collections.emptyList());
+        recyclerView.setAdapter(userAdapter);
         MaterialDividerItemDecoration divider = new MaterialDividerItemDecoration(recyclerView.getContext(), LinearLayoutManager.VERTICAL);
         recyclerView.addItemDecoration(divider);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
@@ -83,9 +82,12 @@ public class SelectUsersDialogFragment extends BottomSheetDialogFragment {
                 for (String key : usersById.keySet()) {
                     User retrievedUser = snapshot.child(key).getValue(User.class);
                     users.add(retrievedUser);
+                    Log.d(GET_DB_USERS, "User with id " + key + " added to list");
                 }
-                userAdapter = new UserAdapter(users);
-                recyclerView.setAdapter(userAdapter);
+                userAdapter.setUsers(users);
+                userAdapter.notifyDataSetChanged();
+            } else {
+                Log.d(GET_DB_USERS, "No users found");
             }
         }).addOnFailureListener(exception -> {
             Log.w(DB_ERROR, "Unable to retrieve user list: " + exception.getMessage());
@@ -108,19 +110,20 @@ public class SelectUsersDialogFragment extends BottomSheetDialogFragment {
                 userAdapter.getFilter().filter(editable.toString());
             }
         });
-
-        return fragmentView;
+        return dialogView;
     }
 
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
+        dialogView = requireActivity().getLayoutInflater().inflate(R.layout.fragment_select_users_dialog, null);
         return new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.share_trip_title)
                 .setMessage(R.string.share_trip_description)
                 .setNegativeButton(R.string.share_trip_cancel, (dialogInterface, i) -> dialogInterface.cancel())
-                .setPositiveButton(R.string.share_trip_confirm, (dialogInterface, i) -> {})
-                .setView(R.layout.fragment_select_users_dialog)
+                .setPositiveButton(R.string.share_trip_confirm, (dialogInterface, i) -> {
+                })
+                .setView(dialogView)
                 .create();
     }
 }

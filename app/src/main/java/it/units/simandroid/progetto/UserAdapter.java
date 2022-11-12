@@ -5,7 +5,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,16 +13,20 @@ import com.google.android.material.textview.MaterialTextView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ItemViewHolder> implements Filterable {
 
-    private final List<User> users;
+    private List<User> users;
     private List<User> filteredUsers;
 
     public UserAdapter(List<User> users) {
         this.users = users;
         this.filteredUsers = users;
+    }
+
+    public void setUsers(List<User> users) {
+        this.users = users;
+        filteredUsers = users;
     }
 
     @NonNull

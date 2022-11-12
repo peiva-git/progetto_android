@@ -9,7 +9,9 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.view.MenuProvider;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Lifecycle;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -108,9 +110,7 @@ public class TripContentFragment extends Fragment {
                 if (menuItem.getItemId() == R.id.favorite_trip) {
                     return true;
                 } else if (menuItem.getItemId() == R.id.share_trip) {
-                    new SelectUsersDialogFragment().show(
-                            getChildFragmentManager(), SelectUsersDialogFragment.TAG
-                    );
+                    new SelectUsersDialogFragment().show(getChildFragmentManager(), SelectUsersDialogFragment.TAG);
                     return true;
                 }
                 return false;
