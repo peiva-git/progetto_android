@@ -3,6 +3,7 @@ package it.units.simandroid.progetto.fragments;
 import static it.units.simandroid.progetto.RealtimeDatabase.DB_ERROR;
 import static it.units.simandroid.progetto.RealtimeDatabase.DB_URL;
 
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -12,7 +13,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.text.Editable;
+import android.text.Spanned;
 import android.text.TextWatcher;
+import android.text.style.BackgroundColorSpan;
+import android.text.style.ImageSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +24,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.chip.ChipDrawable;
 import com.google.android.material.divider.MaterialDividerItemDecoration;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.FirebaseDatabase;
@@ -30,6 +35,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import it.units.simandroid.progetto.OnUserClickListener;
 import it.units.simandroid.progetto.R;
 import it.units.simandroid.progetto.User;
 import it.units.simandroid.progetto.UserAdapter;
@@ -64,7 +70,17 @@ public class SelectUsersFragment extends Fragment {
         searchField = fragmentView.findViewById(R.id.search_field_text);
         negativeButton = fragmentView.findViewById(R.id.dialog_negative_button);
 
-        userAdapter = new UserAdapter(Collections.emptyList());
+        userAdapter = new UserAdapter(Collections.emptyList(), user -> {
+            ChipDrawable chipDrawable = ChipDrawable.createFromResource(requireContext(), R.xml.standalone_chip);
+            String chipText = String.format("%s %s", user.getName(), user.getSurname());
+            chipDrawable.setText(chipText);
+            chipDrawable.setBounds(0, 0, chipDrawable.getIntrinsicWidth(), chipDrawable.getIntrinsicHeight());
+            ImageSpan span = new ImageSpan(chipDrawable);
+            searchField.setText(chipText);
+            searchField.getText().setSpan(span, 0, searchField.getText().length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            searchField.append(" ");
+        });
+
         recyclerView.setAdapter(userAdapter);
         MaterialDividerItemDecoration divider = new MaterialDividerItemDecoration(recyclerView.getContext(), LinearLayoutManager.VERTICAL);
         recyclerView.addItemDecoration(divider);
@@ -94,12 +110,10 @@ public class SelectUsersFragment extends Fragment {
         searchField.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence oldText, int start, int count, int after) {
-
             }
 
             @Override
             public void onTextChanged(CharSequence newText, int start, int before, int count) {
-
             }
 
             @Override

@@ -9,7 +9,6 @@ import android.widget.Filterable;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textview.MaterialTextView;
 
 import java.util.ArrayList;
@@ -19,10 +18,12 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ItemViewHolder
 
     private List<User> users;
     private List<User> filteredUsers;
+    private final OnUserClickListener listener;
 
-    public UserAdapter(List<User> users) {
+    public UserAdapter(List<User> users, OnUserClickListener listener) {
         this.users = users;
         this.filteredUsers = users;
+        this.listener = listener;
     }
 
     public void updateUsers(List<User> users) {
@@ -43,6 +44,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ItemViewHolder
         User user = filteredUsers.get(position);
         holder.userEmail.setText(user.getEmail());
         holder.userNameSurname.setText(String.format("%s %s", user.getName(), user.getSurname()));
+
+        holder.itemView.setOnClickListener(view -> listener.onUserClick(user));
     }
 
     @Override

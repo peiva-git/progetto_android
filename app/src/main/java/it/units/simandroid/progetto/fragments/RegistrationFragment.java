@@ -70,7 +70,7 @@ public class RegistrationFragment extends Fragment {
                                     userName.getText().toString(),
                                     userSurname.getText().toString(),
                                     authentication.getUid());
-                            database.getReference("users").child(authentication.getUid()).setValue(newUser);
+                            database.getReference("users").child(newUser.getId()).setValue(newUser);
                             NavHostFragment.findNavController(this)
                                     .navigate(RegistrationFragmentDirections.actionRegistrationFragmentToTripsFragment());
                         } else {
