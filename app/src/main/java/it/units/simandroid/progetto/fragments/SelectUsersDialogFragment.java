@@ -21,6 +21,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.divider.MaterialDividerItemDecoration;
 import com.google.android.material.snackbar.Snackbar;
@@ -36,7 +38,7 @@ import it.units.simandroid.progetto.R;
 import it.units.simandroid.progetto.User;
 import it.units.simandroid.progetto.UserAdapter;
 
-public class SelectUsersDialogFragment extends DialogFragment {
+public class SelectUsersDialogFragment extends BottomSheetDialogFragment {
 
     public static final String GET_DB_USERS = "GET_DB_USERS";
     private RecyclerView recyclerView;
@@ -45,7 +47,6 @@ public class SelectUsersDialogFragment extends DialogFragment {
     private UserAdapter userAdapter;
 
     public static String TAG = "USER_SELECTION_DIALOG";
-    private AlertDialog dialog;
 
     public SelectUsersDialogFragment() {
         // Required empty public constructor
@@ -62,7 +63,6 @@ public class SelectUsersDialogFragment extends DialogFragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View fragmentView = inflater.inflate(R.layout.fragment_select_users_dialog, container, false);
-        dialog.setView(fragmentView);
         recyclerView = fragmentView.findViewById(R.id.users_recycler_view);
         searchField = fragmentView.findViewById(R.id.search_field_text);
 
@@ -110,18 +110,5 @@ public class SelectUsersDialogFragment extends DialogFragment {
             }
         });
         return fragmentView;
-    }
-
-    @NonNull
-    @Override
-    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        dialog = new MaterialAlertDialogBuilder(requireContext())
-                .setTitle(R.string.share_trip_title)
-                .setMessage(R.string.share_trip_description)
-                .setNegativeButton(R.string.share_trip_cancel, (dialogInterface, i) -> dialogInterface.cancel())
-                .setPositiveButton(R.string.share_trip_confirm, (dialogInterface, i) -> {
-                })
-                .create();
-        return dialog;
     }
 }
