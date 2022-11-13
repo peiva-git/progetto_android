@@ -118,7 +118,10 @@ public class SelectUsersFragment extends Fragment {
 
             @Override
             public void afterTextChanged(Editable editable) {
-                userAdapter.getFilter().filter(editable.toString());
+                ImageSpan[] chipSpans = editable.getSpans(0, editable.length(), ImageSpan.class);
+                int startIndex = editable.getSpanEnd(chipSpans[chipSpans.length - 1]);
+                CharSequence filterSequence = editable.subSequence(startIndex, editable.length());
+                userAdapter.getFilter().filter(filterSequence.toString());
             }
         });
 
