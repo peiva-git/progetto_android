@@ -1,18 +1,12 @@
 package it.units.simandroid.progetto;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
-import androidx.navigation.NavDestination;
-import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -27,10 +21,6 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import it.units.simandroid.progetto.fragments.SettingsFragment;
 import it.units.simandroid.progetto.fragments.directions.TripsFragmentDirections;
 
 public class MainActivity extends AppCompatActivity {
@@ -62,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
 
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
             // check destination id and handle accordingly
-            if (destination.getId() == R.id.loginFragment) {
+            if (destination.getId() == R.id.loginFragment || destination.getId() == R.id.selectUsersFragment) {
                 toolbar.setVisibility(View.GONE);
                 navigationView.setVisibility(View.GONE);
             } else {

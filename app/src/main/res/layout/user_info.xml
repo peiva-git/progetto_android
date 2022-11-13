@@ -29,6 +29,7 @@
         android:alpha="0.87"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toEndOf="@+id/user_icon"
+        app:layout_constraintBottom_toTopOf="@+id/user_email"
         app:layout_constraintEnd_toEndOf="parent"/>
 
     <com.google.android.material.textview.MaterialTextView

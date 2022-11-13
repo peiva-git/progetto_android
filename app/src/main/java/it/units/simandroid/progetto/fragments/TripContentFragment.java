@@ -13,6 +13,9 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Lifecycle;
+import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
@@ -30,6 +33,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.divider.MaterialDividerItemDecoration;
@@ -47,6 +51,7 @@ import it.units.simandroid.progetto.Trip;
 import it.units.simandroid.progetto.User;
 import it.units.simandroid.progetto.UserAdapter;
 import it.units.simandroid.progetto.fragments.directions.TripContentFragmentArgs;
+import it.units.simandroid.progetto.fragments.directions.TripContentFragmentDirections;
 
 public class TripContentFragment extends Fragment {
 
@@ -110,7 +115,8 @@ public class TripContentFragment extends Fragment {
                 if (menuItem.getItemId() == R.id.favorite_trip) {
                     return true;
                 } else if (menuItem.getItemId() == R.id.share_trip) {
-                    new SelectUsersDialogFragment().show(getChildFragmentManager(), SelectUsersDialogFragment.TAG);
+                    Navigation.findNavController(requireView())
+                            .navigate(TripContentFragmentDirections.actionTripContentFragmentToSelectUsersFragment());
                     return true;
                 }
                 return false;

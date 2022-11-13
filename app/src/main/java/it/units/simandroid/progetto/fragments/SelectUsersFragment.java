@@ -3,13 +3,11 @@ package it.units.simandroid.progetto.fragments;
 import static it.units.simandroid.progetto.RealtimeDatabase.DB_ERROR;
 import static it.units.simandroid.progetto.RealtimeDatabase.DB_URL;
 
-import android.app.Dialog;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -21,9 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
-import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.divider.MaterialDividerItemDecoration;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.FirebaseDatabase;
@@ -38,7 +34,7 @@ import it.units.simandroid.progetto.R;
 import it.units.simandroid.progetto.User;
 import it.units.simandroid.progetto.UserAdapter;
 
-public class SelectUsersDialogFragment extends BottomSheetDialogFragment {
+public class SelectUsersFragment extends Fragment {
 
     public static final String GET_DB_USERS = "GET_DB_USERS";
     private RecyclerView recyclerView;
@@ -47,8 +43,9 @@ public class SelectUsersDialogFragment extends BottomSheetDialogFragment {
     private UserAdapter userAdapter;
 
     public static String TAG = "USER_SELECTION_DIALOG";
+    private MaterialButton negativeButton;
 
-    public SelectUsersDialogFragment() {
+    public SelectUsersFragment() {
         // Required empty public constructor
     }
 
@@ -62,9 +59,10 @@ public class SelectUsersDialogFragment extends BottomSheetDialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View fragmentView = inflater.inflate(R.layout.fragment_select_users_dialog, container, false);
+        View fragmentView = inflater.inflate(R.layout.fragment_select_users, container, false);
         recyclerView = fragmentView.findViewById(R.id.users_recycler_view);
         searchField = fragmentView.findViewById(R.id.search_field_text);
+        negativeButton = fragmentView.findViewById(R.id.dialog_negative_button);
 
         userAdapter = new UserAdapter(Collections.emptyList());
         recyclerView.setAdapter(userAdapter);
@@ -109,6 +107,8 @@ public class SelectUsersDialogFragment extends BottomSheetDialogFragment {
                 userAdapter.getFilter().filter(editable.toString());
             }
         });
+
+        negativeButton.setOnClickListener(view -> NavHostFragment.findNavController(this).navigateUp());
         return fragmentView;
     }
 }

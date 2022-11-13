@@ -73,9 +73,16 @@
             android:name="TripJSONString"
             app:argType="string"
             android:defaultValue="@null" />
+        <action
+            android:id="@+id/action_tripContentFragment_to_selectUsersDialogFragment"
+            app:destination="@id/selectUsersFragment" />
     </fragment>
     <fragment
         android:id="@+id/settings"
         android:name="it.units.simandroid.progetto.fragments.SettingsFragment"
         android:label="@string/settings" />
+    <fragment
+        android:id="@+id/selectUsersFragment"
+        android:name="it.units.simandroid.progetto.fragments.SelectUsersFragment"
+        android:label="SelectUsersDialogFragment" />
 </navigation>
