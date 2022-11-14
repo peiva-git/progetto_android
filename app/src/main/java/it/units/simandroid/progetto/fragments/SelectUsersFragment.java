@@ -76,9 +76,25 @@ public class SelectUsersFragment extends Fragment {
             chipDrawable.setText(chipText);
             chipDrawable.setBounds(0, 0, chipDrawable.getIntrinsicWidth(), chipDrawable.getIntrinsicHeight());
             ImageSpan span = new ImageSpan(chipDrawable);
-            searchField.setText(chipText);
-            searchField.getText().setSpan(span, 0, searchField.getText().length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            searchField.append(" ");
+            ImageSpan[] chipSpans = searchField.getText().getSpans(0, searchField.getText().length(), ImageSpan.class);
+            Log.d("INDEX", "Detected " + chipSpans.length + " spans");
+            if (chipSpans.length != 0) {
+                int startIndex = searchField.getText().getSpanEnd(chipSpans[chipSpans.length - 1]);
+                searchField.setSelection(startIndex);
+                searchField.append(chipText);
+                int endIndex = searchField.getText().length();
+                Log.d("INDEX", "Start index is: " + startIndex);
+                Log.d("INDEX", "End index is: " + endIndex);
+                searchField.getText().setSpan(span, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                searchField.append(" ");
+            } else {
+                searchField.setText(chipText);
+                int endIndex = searchField.getText().length();
+                Log.d("INDEX", "End index is: " + endIndex);
+                searchField.setText(chipText);
+                searchField.getText().setSpan(span, 0, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                searchField.append(" ");
+            }
         });
 
         recyclerView.setAdapter(userAdapter);
@@ -119,9 +135,14 @@ public class SelectUsersFragment extends Fragment {
             @Override
             public void afterTextChanged(Editable editable) {
                 ImageSpan[] chipSpans = editable.getSpans(0, editable.length(), ImageSpan.class);
-                int startIndex = editable.getSpanEnd(chipSpans[chipSpans.length - 1]);
-                CharSequence filterSequence = editable.subSequence(startIndex, editable.length());
-                userAdapter.getFilter().filter(filterSequence.toString());
+                if (chipSpans.length != 0) {
+                    int startIndex = editable.getSpanEnd(chipSpans[chipSpans.length - 1]);
+                    CharSequence filterSequence = editable.subSequence(startIndex, editable.length());
+                    Log.d("FILTER", "Filter string is: " + filterSequence);
+                    userAdapter.getFilter().filter(filterSequence.toString());
+                } else {
+                    userAdapter.getFilter().filter(editable.toString());
+                }
             }
         });
 
