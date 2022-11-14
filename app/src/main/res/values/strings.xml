@@ -64,4 +64,6 @@
     <string name="load_users_failed">Failed to load users list</string>
     <string name="choose_users">Pick users</string>
     <string name="chosen_users">Picked users</string>
+    <string name="trip_shared">Trip sucessfully shared</string>
+    <string name="trip_shared_error">Unable to share trip</string>
 </resources>

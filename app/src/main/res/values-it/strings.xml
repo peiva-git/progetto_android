@@ -64,4 +64,6 @@
     <string name="load_users_failed">Impossibile recuperare la lista utenti</string>
     <string name="choose_users">Seleziona utenti</string>
     <string name="chosen_users">Utenti selezionati</string>
+    <string name="trip_shared">Viaggio condiviso con successo</string>
+    <string name="trip_shared_error">Impossibile condividere viaggio</string>
 </resources>

@@ -84,5 +84,10 @@
     <fragment
         android:id="@+id/selectUsersFragment"
         android:name="it.units.simandroid.progetto.fragments.SelectUsersFragment"
-        android:label="SelectUsersFragment" />
+        android:label="SelectUsersFragment" >
+        <argument
+            android:name="tripId"
+            app:argType="string"
+            android:defaultValue="@null" />
+    </fragment>
 </navigation>

@@ -93,8 +93,10 @@ public class TripContentFragment extends Fragment {
                 if (menuItem.getItemId() == R.id.favorite_trip) {
                     return true;
                 } else if (menuItem.getItemId() == R.id.share_trip) {
+                    TripContentFragmentDirections.ShareTripAction action = TripContentFragmentDirections.actionShareTrip();
+                    action.setTripId(trip.getId());
                     Navigation.findNavController(requireView())
-                            .navigate(TripContentFragmentDirections.actionTripContentFragmentToSelectUsersFragment());
+                            .navigate(action);
                     return true;
                 }
                 return false;

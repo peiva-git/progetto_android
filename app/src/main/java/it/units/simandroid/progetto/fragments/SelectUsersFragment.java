@@ -36,6 +36,7 @@ import it.units.simandroid.progetto.adapters.OnUserClickListener;
 import it.units.simandroid.progetto.R;
 import it.units.simandroid.progetto.User;
 import it.units.simandroid.progetto.adapters.SelectUserAdapter;
+import it.units.simandroid.progetto.fragments.directions.SelectUsersFragmentArgs;
 
 public class SelectUsersFragment extends Fragment {
 
@@ -62,6 +63,7 @@ public class SelectUsersFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View fragmentView = inflater.inflate(R.layout.fragment_select_users, container, false);
+        String tripId = SelectUsersFragmentArgs.fromBundle(requireArguments()).getTripId();
         recyclerView = fragmentView.findViewById(R.id.users_recycler_view);
         searchField = fragmentView.findViewById(R.id.search_field_text);
         negativeButton = fragmentView.findViewById(R.id.dialog_negative_button);
@@ -138,6 +140,12 @@ public class SelectUsersFragment extends Fragment {
         });
 
         negativeButton.setOnClickListener(view -> NavHostFragment.findNavController(this).navigateUp());
+        positiveButton.setOnClickListener(
+                view -> database.getReference("trips").child(tripId).child("authorizedUsers").setValue(selectedUsers)
+                .addOnSuccessListener(
+                        task -> Snackbar.make(requireView(), R.string.trip_shared, Snackbar.LENGTH_SHORT).show())
+                .addOnFailureListener(
+                        exception -> Snackbar.make(requireView(), R.string.trip_shared_error, Snackbar.LENGTH_SHORT).show()));
         return fragmentView;
     }
 }
