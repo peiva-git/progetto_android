@@ -3,19 +3,9 @@ package it.units.simandroid.progetto.fragments;
 import static it.units.simandroid.progetto.RealtimeDatabase.DB_ERROR;
 import static it.units.simandroid.progetto.RealtimeDatabase.DB_URL;
 
-import android.graphics.Color;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.navigation.fragment.NavHostFragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.text.Editable;
-import android.text.Spanned;
 import android.text.TextWatcher;
-import android.text.style.BackgroundColorSpan;
 import android.text.style.ImageSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,8 +13,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.chip.ChipDrawable;
 import com.google.android.material.divider.MaterialDividerItemDecoration;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.FirebaseDatabase;
@@ -35,69 +31,41 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import it.units.simandroid.progetto.OnUserClickListener;
 import it.units.simandroid.progetto.R;
 import it.units.simandroid.progetto.User;
-import it.units.simandroid.progetto.UserAdapter;
+import it.units.simandroid.progetto.SelectUserAdapter;
 
 public class SelectUsersFragment extends Fragment {
 
-    public static final String GET_DB_USERS = "GET_DB_USERS";
+    private static final String GET_DB_USERS = "GET_DB_USERS";
     private RecyclerView recyclerView;
     private EditText searchField;
-    private FirebaseDatabase database;
-    private UserAdapter userAdapter;
-
-    public static String TAG = "USER_SELECTION_DIALOG";
     private MaterialButton negativeButton;
+    private SelectUserAdapter selectUserAdapter;
+    private FirebaseDatabase database;
 
     public SelectUsersFragment() {
-        // Required empty public constructor
+
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         database = FirebaseDatabase.getInstance(DB_URL);
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View fragmentView = inflater.inflate(R.layout.fragment_select_users, container, false);
         recyclerView = fragmentView.findViewById(R.id.users_recycler_view);
         searchField = fragmentView.findViewById(R.id.search_field_text);
         negativeButton = fragmentView.findViewById(R.id.dialog_negative_button);
 
-        userAdapter = new UserAdapter(Collections.emptyList(), user -> {
-            ChipDrawable chipDrawable = ChipDrawable.createFromResource(requireContext(), R.xml.standalone_chip);
-            String chipText = String.format("%s %s", user.getName(), user.getSurname());
-            chipDrawable.setText(chipText);
-            chipDrawable.setBounds(0, 0, chipDrawable.getIntrinsicWidth(), chipDrawable.getIntrinsicHeight());
-            ImageSpan span = new ImageSpan(chipDrawable);
-            ImageSpan[] chipSpans = searchField.getText().getSpans(0, searchField.getText().length(), ImageSpan.class);
-            Log.d("INDEX", "Detected " + chipSpans.length + " spans");
-            if (chipSpans.length != 0) {
-                int startIndex = searchField.getText().getSpanEnd(chipSpans[chipSpans.length - 1]);
-                searchField.setSelection(startIndex);
-                searchField.append(chipText);
-                int endIndex = searchField.getText().length();
-                Log.d("INDEX", "Start index is: " + startIndex);
-                Log.d("INDEX", "End index is: " + endIndex);
-                searchField.getText().setSpan(span, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                searchField.append(" ");
-            } else {
-                searchField.setText(chipText);
-                int endIndex = searchField.getText().length();
-                Log.d("INDEX", "End index is: " + endIndex);
-                searchField.setText(chipText);
-                searchField.getText().setSpan(span, 0, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                searchField.append(" ");
-            }
+        selectUserAdapter = new SelectUserAdapter(Collections.emptyList(), user -> {
+
         });
 
-        recyclerView.setAdapter(userAdapter);
+        recyclerView.setAdapter(selectUserAdapter);
         MaterialDividerItemDecoration divider = new MaterialDividerItemDecoration(recyclerView.getContext(), LinearLayoutManager.VERTICAL);
         recyclerView.addItemDecoration(divider);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
@@ -114,7 +82,7 @@ public class SelectUsersFragment extends Fragment {
                     users.add(retrievedUser);
                     Log.d(GET_DB_USERS, "User with id " + key + " added to list");
                 }
-                userAdapter.updateUsers(users);
+                selectUserAdapter.updateUsers(users);
             } else {
                 Log.d(GET_DB_USERS, "No users found");
             }
@@ -139,9 +107,9 @@ public class SelectUsersFragment extends Fragment {
                     int startIndex = editable.getSpanEnd(chipSpans[chipSpans.length - 1]);
                     CharSequence filterSequence = editable.subSequence(startIndex, editable.length());
                     Log.d("FILTER", "Filter string is: " + filterSequence);
-                    userAdapter.getFilter().filter(filterSequence.toString());
+                    selectUserAdapter.getFilter().filter(filterSequence.toString());
                 } else {
-                    userAdapter.getFilter().filter(editable.toString());
+                    selectUserAdapter.getFilter().filter(editable.toString());
                 }
             }
         });

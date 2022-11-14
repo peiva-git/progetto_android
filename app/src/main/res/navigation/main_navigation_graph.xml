@@ -83,6 +83,6 @@
         android:label="@string/settings" />
     <fragment
         android:id="@+id/selectUsersFragment"
-        android:name="it.units.simandroid.progetto.fragments.SelectUsersFragment"
+        android:name="it.units.simandroid.progetto.fragments.ShareTripFragment"
         android:label="SelectUsersDialogFragment" />
 </navigation>

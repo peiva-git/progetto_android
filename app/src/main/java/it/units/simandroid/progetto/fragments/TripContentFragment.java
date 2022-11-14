@@ -1,28 +1,18 @@
 package it.units.simandroid.progetto.fragments;
 
-import static it.units.simandroid.progetto.RealtimeDatabase.DB_ERROR;
 import static it.units.simandroid.progetto.RealtimeDatabase.DB_URL;
 
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.core.view.MenuProvider;
-import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Lifecycle;
 import androidx.navigation.Navigation;
-import androidx.navigation.fragment.NavHostFragment;
-import androidx.navigation.ui.NavigationUI;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -30,26 +20,14 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.TextView;
 
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.checkbox.MaterialCheckBox;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.divider.MaterialDividerItemDecoration;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.GenericTypeIndicator;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 import it.units.simandroid.progetto.R;
 import it.units.simandroid.progetto.SlideshowPagerAdapter;
 import it.units.simandroid.progetto.Trip;
-import it.units.simandroid.progetto.User;
-import it.units.simandroid.progetto.UserAdapter;
 import it.units.simandroid.progetto.fragments.directions.TripContentFragmentArgs;
 import it.units.simandroid.progetto.fragments.directions.TripContentFragmentDirections;
 

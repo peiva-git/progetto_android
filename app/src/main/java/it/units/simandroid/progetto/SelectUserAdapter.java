@@ -14,13 +14,13 @@ import com.google.android.material.textview.MaterialTextView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ItemViewHolder> implements Filterable {
+public class SelectUserAdapter extends RecyclerView.Adapter<SelectUserAdapter.ItemViewHolder> implements Filterable {
 
     private List<User> users;
     private List<User> filteredUsers;
     private final OnUserClickListener listener;
 
-    public UserAdapter(List<User> users, OnUserClickListener listener) {
+    public SelectUserAdapter(List<User> users, OnUserClickListener listener) {
         this.users = users;
         this.filteredUsers = users;
         this.listener = listener;

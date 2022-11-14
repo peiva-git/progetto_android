@@ -62,4 +62,6 @@
     <string name="search_for_users">Cerca nomi di utenti</string>
     <string name="new_user_failed">Errore durante la creazione del nuovo utente</string>
     <string name="load_users_failed">Impossibile recuperare la lista utenti</string>
+    <string name="choose_users">Seleziona utenti</string>
+    <string name="chosen_users">Utenti selezionati</string>
 </resources>
