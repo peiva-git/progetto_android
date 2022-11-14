@@ -57,6 +57,7 @@
         android:id="@+id/dialog_positive_button"
         android:layout_margin="5dp"
         android:text="@string/share_trip_confirm"
+        android:enabled="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBaseline_toBaselineOf="@+id/dialog_negative_button"/>
 

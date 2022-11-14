@@ -9,12 +9,12 @@ import android.widget.Filterable;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.textview.MaterialTextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import it.units.simandroid.progetto.OnUserClickListener;
 import it.units.simandroid.progetto.R;
 import it.units.simandroid.progetto.User;
 
@@ -49,7 +49,13 @@ public class SelectUserAdapter extends RecyclerView.Adapter<SelectUserAdapter.It
         holder.userEmail.setText(user.getEmail());
         holder.userNameSurname.setText(String.format("%s %s", user.getName(), user.getSurname()));
 
-        holder.itemView.setOnClickListener(view -> listener.onUserClick(user));
+        holder.userSelected.setOnCheckedChangeListener(
+                (compoundButton, isChecked) -> listener.onUserCheckedStateChanged(user, compoundButton, isChecked));
+
+        holder.itemView.setOnClickListener(view -> {
+            holder.userSelected.setChecked(!holder.userSelected.isChecked());
+            listener.onUserClick(user);
+        });
     }
 
     @Override
@@ -90,11 +96,13 @@ public class SelectUserAdapter extends RecyclerView.Adapter<SelectUserAdapter.It
     public static class ItemViewHolder extends RecyclerView.ViewHolder {
         private final MaterialTextView userNameSurname;
         private final MaterialTextView userEmail;
+        private final MaterialCheckBox userSelected;
 
         public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
             userNameSurname = itemView.findViewById(R.id.user_name_surname);
             userEmail = itemView.findViewById(R.id.user_email);
+            userSelected = itemView.findViewById(R.id.user_selected_checkbox);
         }
     }
 }

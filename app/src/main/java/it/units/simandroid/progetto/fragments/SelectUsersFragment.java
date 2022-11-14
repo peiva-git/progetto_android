@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 
 import androidx.annotation.NonNull;
@@ -31,6 +32,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import it.units.simandroid.progetto.adapters.OnUserClickListener;
 import it.units.simandroid.progetto.R;
 import it.units.simandroid.progetto.User;
 import it.units.simandroid.progetto.adapters.SelectUserAdapter;
@@ -43,6 +45,8 @@ public class SelectUsersFragment extends Fragment {
     private MaterialButton negativeButton;
     private SelectUserAdapter selectUserAdapter;
     private FirebaseDatabase database;
+    private List<User> selectedUsers;
+    private MaterialButton positiveButton;
 
     public SelectUsersFragment() {
 
@@ -52,6 +56,7 @@ public class SelectUsersFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         database = FirebaseDatabase.getInstance(DB_URL);
+        selectedUsers = new ArrayList<>();
     }
 
     @Override
@@ -60,9 +65,27 @@ public class SelectUsersFragment extends Fragment {
         recyclerView = fragmentView.findViewById(R.id.users_recycler_view);
         searchField = fragmentView.findViewById(R.id.search_field_text);
         negativeButton = fragmentView.findViewById(R.id.dialog_negative_button);
+        positiveButton = fragmentView.findViewById(R.id.dialog_positive_button);
 
-        selectUserAdapter = new SelectUserAdapter(Collections.emptyList(), user -> {
+        selectUserAdapter = new SelectUserAdapter(Collections.emptyList(), new OnUserClickListener() {
+            @Override
+            public void onUserClick(User user) {
+            }
 
+            @Override
+            public void onUserCheckedStateChanged(User user, CompoundButton compoundButton, boolean isChecked) {
+                if (isChecked) {
+                    selectedUsers.add(user);
+                    Log.d("CHECKED_USERS", "User " + user.getEmail() + " added to list");
+                } else {
+                    if (selectedUsers.remove(user)) {
+                        Log.d("CHECKED_USERS", "User " + user.getEmail() + " removed from list");
+                    } else {
+                        Log.d("CHEKED_USERS", "User " + user.getEmail() + " not in list");
+                    }
+                }
+                positiveButton.setEnabled(selectedUsers.size() > 0);
+            }
         });
 
         recyclerView.setAdapter(selectUserAdapter);

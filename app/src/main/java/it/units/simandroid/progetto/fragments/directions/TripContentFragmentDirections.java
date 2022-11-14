@@ -7,6 +7,6 @@ import it.units.simandroid.progetto.R;
 
 public class TripContentFragmentDirections {
     public static NavDirections actionTripContentFragmentToSelectUsersFragment() {
-        return new ActionOnlyNavDirections(R.id.action_tripContentFragment_to_selectUsersDialogFragment);
+        return new ActionOnlyNavDirections(R.id.action_tripContentFragment_to_selectUsersFragment);
     }
 }
