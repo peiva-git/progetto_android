@@ -1,4 +1,4 @@
-package it.units.simandroid.progetto;
+package it.units.simandroid.progetto.adapters;
 
 import android.os.Bundle;
 

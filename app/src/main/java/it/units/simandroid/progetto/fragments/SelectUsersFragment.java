@@ -33,7 +33,7 @@ import java.util.Map;
 
 import it.units.simandroid.progetto.R;
 import it.units.simandroid.progetto.User;
-import it.units.simandroid.progetto.SelectUserAdapter;
+import it.units.simandroid.progetto.adapters.SelectUserAdapter;
 
 public class SelectUsersFragment extends Fragment {
 

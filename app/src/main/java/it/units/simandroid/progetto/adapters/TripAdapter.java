@@ -1,4 +1,4 @@
-package it.units.simandroid.progetto;
+package it.units.simandroid.progetto.adapters;
 
 import static it.units.simandroid.progetto.RealtimeDatabase.DB_URL;
 
@@ -20,6 +20,8 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.List;
 
+import it.units.simandroid.progetto.R;
+import it.units.simandroid.progetto.Trip;
 import it.units.simandroid.progetto.fragments.directions.TripsFragmentDirections;
 
 public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ItemViewHolder> {

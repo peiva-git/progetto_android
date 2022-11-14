@@ -1,6 +1,6 @@
 package it.units.simandroid.progetto.fragments;
 
-import static it.units.simandroid.progetto.SlideshowPagerAdapter.IMAGE_URI_ARG_KEY;
+import static it.units.simandroid.progetto.adapters.SlideshowPagerAdapter.IMAGE_URI_ARG_KEY;
 
 import android.net.Uri;
 import android.os.Bundle;

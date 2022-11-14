@@ -8,8 +8,13 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
+
+import it.units.simandroid.progetto.R;
 
 public class SelectedUsersFragment extends Fragment {
+
+    private RecyclerView recyclerView;
 
     public SelectedUsersFragment() {
 
@@ -23,6 +28,9 @@ public class SelectedUsersFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return super.onCreateView(inflater, container, savedInstanceState);
+        View fragmentView = inflater.inflate(R.layout.fragment_selected_users, container, false);
+        recyclerView = fragmentView.findViewById(R.id.selected_users_recycler_view);
+
+        return fragmentView;
     }
 }

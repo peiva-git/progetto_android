@@ -26,7 +26,7 @@ import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.firebase.database.FirebaseDatabase;
 
 import it.units.simandroid.progetto.R;
-import it.units.simandroid.progetto.SlideshowPagerAdapter;
+import it.units.simandroid.progetto.adapters.SlideshowPagerAdapter;
 import it.units.simandroid.progetto.Trip;
 import it.units.simandroid.progetto.fragments.directions.TripContentFragmentArgs;
 import it.units.simandroid.progetto.fragments.directions.TripContentFragmentDirections;

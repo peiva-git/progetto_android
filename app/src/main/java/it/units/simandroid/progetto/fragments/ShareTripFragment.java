@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.units.simandroid.progetto.R;
-import it.units.simandroid.progetto.ShareTripPagerAdapter;
+import it.units.simandroid.progetto.adapters.ShareTripPagerAdapter;
 
 public class ShareTripFragment extends Fragment {
 

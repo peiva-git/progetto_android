@@ -1,4 +1,4 @@
-package it.units.simandroid.progetto;
+package it.units.simandroid.progetto.adapters;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +13,10 @@ import com.google.android.material.textview.MaterialTextView;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import it.units.simandroid.progetto.OnUserClickListener;
+import it.units.simandroid.progetto.R;
+import it.units.simandroid.progetto.User;
 
 public class SelectUserAdapter extends RecyclerView.Adapter<SelectUserAdapter.ItemViewHolder> implements Filterable {
 
