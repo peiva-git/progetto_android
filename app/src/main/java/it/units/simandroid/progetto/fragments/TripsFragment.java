@@ -71,7 +71,6 @@ public class TripsFragment extends Fragment {
     private FloatingActionButton newTripButton;
     private TripAdapter tripAdapter;
     private ActivityResultLauncher<String> requestPermissionLauncher;
-    private boolean readStoragePermissionGranted = false;
 
     public TripsFragment() {
         // Required empty public constructor
@@ -103,27 +102,24 @@ public class TripsFragment extends Fragment {
             navController.navigate(TripsFragmentDirections.actionTripsFragmentToNewTripFragment());
         });
 
-        database.getReference("trips").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                GenericTypeIndicator<Map<String, Object>> type = new GenericTypeIndicator<Map<String, Object>>() {
-                };
-                Map<String, Object> tripsByKey = snapshot.getValue(type);
-                if (tripsByKey != null) {
-                    trips = new ArrayList<>();
-                    for (String key : tripsByKey.keySet()) {
-                        DataSnapshot tripSnapshot = snapshot.child(key);
-                        Trip trip = tripSnapshot.getValue(Trip.class);
-                        boolean isFavoritesFilteringEnabled = TripsFragmentArgs.fromBundle(requireArguments()).isFilteringActive();
-                        boolean isSharedTripsModeOn = TripsFragmentArgs.fromBundle(requireArguments()).isSharedTripsModeActive();
-                        boolean isTripFavorite = trip.isFavorite();
+        requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+            if (isGranted) {
+                database.getReference("trips").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        GenericTypeIndicator<Map<String, Object>> type = new GenericTypeIndicator<Map<String, Object>>() {
+                        };
+                        Map<String, Object> tripsByKey = snapshot.getValue(type);
+                        if (tripsByKey != null) {
+                            trips = new ArrayList<>();
+                            for (String key : tripsByKey.keySet()) {
+                                DataSnapshot tripSnapshot = snapshot.child(key);
+                                Trip trip = tripSnapshot.getValue(Trip.class);
+                                boolean isFavoritesFilteringEnabled = TripsFragmentArgs.fromBundle(requireArguments()).isFilteringActive();
+                                boolean isSharedTripsModeOn = TripsFragmentArgs.fromBundle(requireArguments()).isSharedTripsModeActive();
+                                boolean isTripFavorite = trip.isFavorite();
 
-                        // TODO check whether trip images are locally available, otherwise attempt to retrieve them remotely
-                        List<FileDownloadTask> downloadTasks = new ArrayList<>();
-                        List<String> newImageUris = new ArrayList<>();
-
-                        requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
-                            if (isGranted) {
+                                List<FileDownloadTask> downloadTasks = new ArrayList<>();
                                 AtomicInteger progress = new AtomicInteger(0);
                                 for (String uriString : trip.getImagesUris()) {
                                     DocumentFile image = DocumentFile.fromSingleUri(requireContext(), Uri.parse(uriString));
@@ -160,12 +156,54 @@ public class TripsFragment extends Fragment {
                                         }
                                     }
                                 }
-                            } else {
-                                Log.d("PERMISSION", "Permission not granted");
-                                // can't check if images are already available locally
-                                // gonna rely only on remote or previously downloaded data
-                                // and discard everything else
+                                Tasks.whenAllComplete(downloadTasks).addOnCompleteListener(task -> {
+                                    if (isSharedTripsModeOn) {
+                                        addTripIfUserAuthorized(trip);
+                                    } else {
+                                        if (isFavoritesFilteringEnabled) {
+                                            if (isTripFavorite) {
+                                                addTripIfCurrentUserOwner(trip);
+                                            }
+                                        } else {
+                                            addTripIfCurrentUserOwner(trip);
+                                        }
+                                    }
+                                    tripAdapter.updateTrips(trips);
+                                });
+                            }
+                            tripAdapter.updateTrips(trips);
+                        }
+                    }
 
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.w(DB_ERROR, "Trips' value update canceled: " + error.getMessage());
+                    }
+                });
+
+            } else {
+                Log.d("PERMISSION", "Permission not granted");
+                // can't check if images are already available locally
+                // gonna rely only on remote or previously downloaded data
+                // and discard everything else
+                database.getReference("trips").addValueEventListener(new ValueEventListener() {
+
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        GenericTypeIndicator<Map<String, Object>> type = new GenericTypeIndicator<Map<String, Object>>() {
+                        };
+                        Map<String, Object> tripsByKey = snapshot.getValue(type);
+                        if (tripsByKey != null) {
+                            trips = new ArrayList<>();
+                            for (String key : tripsByKey.keySet()) {
+                                DataSnapshot tripSnapshot = snapshot.child(key);
+                                Trip trip = tripSnapshot.getValue(Trip.class);
+                                boolean isFavoritesFilteringEnabled = TripsFragmentArgs.fromBundle(requireArguments()).isFilteringActive();
+                                boolean isSharedTripsModeOn = TripsFragmentArgs.fromBundle(requireArguments()).isSharedTripsModeActive();
+                                boolean isTripFavorite = trip.isFavorite();
+
+                                List<FileDownloadTask> downloadTasks = new ArrayList<>();
+                                List<String> newImageUris = new ArrayList<>();
                                 AtomicInteger progress = new AtomicInteger(0);
                                 for (String oldUriString : trip.getImagesUris()) {
                                     File imageFile = new File(requireContext().getFilesDir(), trip.getId() + "/" + oldUriString.replace("/", "$"));
@@ -191,39 +229,40 @@ public class TripsFragment extends Fragment {
                                         downloadTasks.add(downloadTask);
                                     }
                                 }
-                            }
-                        });
-
-                        Tasks.whenAllComplete(downloadTasks).addOnCompleteListener(task -> {
-                            if (newImageUris.size() != 0) {
-                                trip.setImagesUris(newImageUris);
-                            }
-
-                            if (isSharedTripsModeOn) {
-                                addTripIfUserAuthorized(trip);
-                            } else {
-                                if (isFavoritesFilteringEnabled) {
-                                    if (isTripFavorite) {
-                                        addTripIfCurrentUserOwner(trip);
+                                Tasks.whenAllComplete(downloadTasks).addOnCompleteListener(task -> {
+                                    trip.setImagesUris(newImageUris);
+                                    if (isSharedTripsModeOn) {
+                                        addTripIfUserAuthorized(trip);
+                                    } else {
+                                        if (isFavoritesFilteringEnabled) {
+                                            if (isTripFavorite) {
+                                                addTripIfCurrentUserOwner(trip);
+                                            }
+                                        } else {
+                                            addTripIfCurrentUserOwner(trip);
+                                        }
                                     }
-                                } else {
-                                    addTripIfCurrentUserOwner(trip);
-                                }
+                                    tripAdapter.updateTrips(trips);
+                                });
                             }
                             tripAdapter.updateTrips(trips);
-                        });
+                        }
                     }
-                    tripAdapter.updateTrips(trips);
-                }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
             }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.w(DB_ERROR, "Trips' value update canceled: " + error.getMessage());
-            }
         });
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
+        }
         return fragmentView;
     }
+
 
     private void addTripIfUserAuthorized(@NonNull Trip trip) {
         if (trip.getAuthorizedUsers() == null) {
