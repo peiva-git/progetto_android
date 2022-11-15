@@ -63,16 +63,23 @@ public class MainActivity extends AppCompatActivity {
 
         navigationView.setNavigationItemSelectedListener(item -> {
             if (item.getItemId() == R.id.favorites) {
-                TripsFragmentDirections.FilterByFavoriteTripsAction action = TripsFragmentDirections.actionFilterByFavoriteTrips();
+                TripsFragmentDirections.FilterTripsAction action = TripsFragmentDirections.actionFilterByFavoriteTrips();
                 action.setFilteringActive(true);
                 Log.d(FAVORITE_TRIPS_TAG, action.isFilteringActive() ? "Filtering active" : "Filtering inactive");
                 navigationDrawer.close();
                 navController.navigate(action);
                 return true;
             } else if (item.getItemId() == R.id.my_trips) {
-                TripsFragmentDirections.FilterByFavoriteTripsAction action = TripsFragmentDirections.actionFilterByFavoriteTrips();
+                TripsFragmentDirections.FilterTripsAction action = TripsFragmentDirections.actionFilterByFavoriteTrips();
                 action.setFilteringActive(false);
                 Log.d(FAVORITE_TRIPS_TAG, action.isFilteringActive() ? "Filtering active" : "Filtering inactive");
+                navigationDrawer.close();
+                navController.navigate(action);
+                return true;
+            } else if (item.getItemId() == R.id.shared_trips) {
+                TripsFragmentDirections.FilterTripsAction action = TripsFragmentDirections.actionFilterByFavoriteTrips();
+                action.setSharedTripsModeActive(true);
+                Log.d("SHARED_TRIPS", "Filtering by shared trips");
                 navigationDrawer.close();
                 navController.navigate(action);
                 return true;

@@ -34,8 +34,8 @@ public class TripsFragmentDirections {
 
     @NonNull
     @Contract(value = " -> new", pure = true)
-    public static FilterByFavoriteTripsAction actionFilterByFavoriteTrips() {
-        return new FilterByFavoriteTripsAction();
+    public static FilterTripsAction actionFilterByFavoriteTrips() {
+        return new FilterTripsAction();
     }
 
     public static class ViewTripDetailsAction implements NavDirections {
@@ -71,17 +71,18 @@ public class TripsFragmentDirections {
         }
     }
 
-    public static class FilterByFavoriteTripsAction implements NavDirections {
+    public static class FilterTripsAction implements NavDirections {
         private boolean isFilteringActive = false;
+        private boolean isSharedTripsModeActive = false;
         public static final String FAVORITE_TRIP_KEY = "TRIP_FAV";
+        public static final String SHARED_TRIPS_KEY = "TRIP_SHARE";
 
-        public FilterByFavoriteTripsAction(boolean isFilteringActive) {
+        public FilterTripsAction(boolean isFilteringActive, boolean isSharedTripsModeActive) {
             this.isFilteringActive = isFilteringActive;
+            this.isSharedTripsModeActive = isSharedTripsModeActive;
         }
 
-        public FilterByFavoriteTripsAction() {
-
-        }
+        public FilterTripsAction() {}
 
         public boolean isFilteringActive() {
             return isFilteringActive;
@@ -89,6 +90,14 @@ public class TripsFragmentDirections {
 
         public void setFilteringActive(boolean filteringActive) {
             isFilteringActive = filteringActive;
+        }
+
+        public boolean isSharedTripsModeActive() {
+            return isSharedTripsModeActive;
+        }
+
+        public void setSharedTripsModeActive(boolean sharedTripsModeActive) {
+            isSharedTripsModeActive = sharedTripsModeActive;
         }
 
         @Override
@@ -101,6 +110,7 @@ public class TripsFragmentDirections {
         public Bundle getArguments() {
             Bundle bundle = new Bundle();
             bundle.putBoolean(FAVORITE_TRIP_KEY, isFilteringActive);
+            bundle.putBoolean(SHARED_TRIPS_KEY, isSharedTripsModeActive);
             return bundle;
         }
     }

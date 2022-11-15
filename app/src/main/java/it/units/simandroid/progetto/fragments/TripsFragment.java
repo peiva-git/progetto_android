@@ -86,7 +86,8 @@ public class TripsFragment extends Fragment {
         database.getReference("trips").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                GenericTypeIndicator<Map<String, Object>> type = new GenericTypeIndicator<Map<String, Object>>() {};
+                GenericTypeIndicator<Map<String, Object>> type = new GenericTypeIndicator<Map<String, Object>>() {
+                };
                 Map<String, Object> tripsByKey = snapshot.getValue(type);
                 if (tripsByKey != null) {
                     trips = new ArrayList<>();
@@ -94,13 +95,18 @@ public class TripsFragment extends Fragment {
                         DataSnapshot tripSnapshot = snapshot.child(key);
                         Trip trip = tripSnapshot.getValue(Trip.class);
                         boolean isFavoritesFilteringEnabled = TripsFragmentArgs.fromBundle(requireArguments()).isFilteringActive();
+                        boolean isSharedTripsModeOn = TripsFragmentArgs.fromBundle(requireArguments()).isSharedTripsModeActive();
                         boolean isTripFavorite = trip.isFavorite();
-                        if (isFavoritesFilteringEnabled) {
-                            if (isTripFavorite) {
-                                addTripIfUserAuthorized(trip);
-                            }
-                        } else {
+                        if (isSharedTripsModeOn) {
                             addTripIfUserAuthorized(trip);
+                        } else {
+                            if (isFavoritesFilteringEnabled) {
+                                if (isTripFavorite) {
+                                    addTripIfCurrentUserOwner(trip);
+                                }
+                            } else {
+                                addTripIfCurrentUserOwner(trip);
+                            }
                         }
                     }
                     tripAdapter.updateTrips(trips);
@@ -116,14 +122,16 @@ public class TripsFragment extends Fragment {
     }
 
     private void addTripIfUserAuthorized(@NonNull Trip trip) {
-        if (isCurrentUserOwner(trip)) {
+        if (trip.getAuthorizedUsers().contains(authentication.getUid())) {
             trips.add(trip);
             Log.d(GET_DB_TRIPS, "Trip with id " + trip.getId() + " added to list");
         }
     }
 
-    private boolean isCurrentUserOwner(@NonNull Trip trip) {
-        return trip.getOwnerId().equals(authentication.getUid());
+    private void addTripIfCurrentUserOwner(@NonNull Trip trip) {
+        if (trip.getOwnerId().equals(authentication.getUid())) {
+            trips.add(trip);
+        }
     }
 
     @Override
