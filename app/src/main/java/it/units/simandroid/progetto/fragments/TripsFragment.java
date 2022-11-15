@@ -122,6 +122,9 @@ public class TripsFragment extends Fragment {
     }
 
     private void addTripIfUserAuthorized(@NonNull Trip trip) {
+        if (trip.getAuthorizedUsers() == null) {
+            return;
+        }
         if (trip.getAuthorizedUsers().contains(authentication.getUid())) {
             trips.add(trip);
             Log.d(GET_DB_TRIPS, "Trip with id " + trip.getId() + " added to list");

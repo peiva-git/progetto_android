@@ -17,6 +17,8 @@ public class TripContentFragmentDirections {
         return new ActionOnlyNavDirections(R.id.action_tripContentFragment_to_selectUsersFragment);
     }
 
+    @NonNull
+    @Contract(value = " -> new", pure = true)
     public static ShareTripAction actionShareTrip() {
         return new ShareTripAction();
     }

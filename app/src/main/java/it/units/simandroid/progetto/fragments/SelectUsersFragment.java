@@ -27,6 +27,7 @@ import com.google.android.gms.tasks.Tasks;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.divider.MaterialDividerItemDecoration;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
@@ -52,6 +53,7 @@ public class SelectUsersFragment extends Fragment {
     private FirebaseDatabase database;
     private List<User> selectedUsers;
     private MaterialButton positiveButton;
+    private FirebaseAuth authentication;
 
     public SelectUsersFragment() {
 
@@ -62,6 +64,7 @@ public class SelectUsersFragment extends Fragment {
         super.onCreate(savedInstanceState);
         database = FirebaseDatabase.getInstance(DB_URL);
         selectedUsers = new ArrayList<>();
+        authentication = FirebaseAuth.getInstance();
     }
 
     @Override
@@ -120,7 +123,9 @@ public class SelectUsersFragment extends Fragment {
                 List<User> users = new ArrayList<>(usersById.values().size());
                 for (String key : usersById.keySet()) {
                     User retrievedUser = getUsersTask.getResult().child(key).getValue(User.class);
-                    users.add(retrievedUser);
+                    if (!retrievedUser.getId().equals(authentication.getUid())) {
+                        users.add(retrievedUser);
+                    }
                     Log.d(GET_DB_USERS, "User with id " + key + " added to list");
                 }
                 selectUserAdapter.setAvailableUsers(users);

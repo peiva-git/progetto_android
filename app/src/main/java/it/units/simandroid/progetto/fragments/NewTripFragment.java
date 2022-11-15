@@ -172,7 +172,7 @@ public class NewTripFragment extends Fragment {
         StorageReference userImages = storage.getReference("users/" + authentication.getUid() + "/" + tripId);
         AtomicReference<Integer> progress = new AtomicReference<>(0);
         for (Uri pickedImageUri : pickedImages) {
-            userImages.child(pickedImageUri.getLastPathSegment()).putFile(pickedImageUri)
+            userImages.child(pickedImageUri.toString().replace("/", "$")).putFile(pickedImageUri)
                     .addOnSuccessListener(taskSnapshot -> {
                         Log.d(NEW_TRIP_DB_TAG, "Added trip image to remote storage");
                         progress.set(progress.get() + (100 / pickedImages.size()));

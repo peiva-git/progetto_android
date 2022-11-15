@@ -31,6 +31,7 @@ public class Trip {
         this.endDate = endDate;
         this.description = description;
         this.destination = destination;
+        this.id = tripId;
         this.authorizedUsers = authorizedUsers;
         this.ownerId = ownerId;
     }
