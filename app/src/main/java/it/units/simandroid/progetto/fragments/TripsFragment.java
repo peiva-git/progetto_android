@@ -70,7 +70,6 @@ public class TripsFragment extends Fragment {
     private RecyclerView tripsRecyclerView;
     private FloatingActionButton newTripButton;
     private TripAdapter tripAdapter;
-    private ActivityResultLauncher<String> requestPermissionLauncher;
 
     public TripsFragment() {
         // Required empty public constructor
@@ -102,13 +101,11 @@ public class TripsFragment extends Fragment {
             navController.navigate(TripsFragmentDirections.actionTripsFragmentToNewTripFragment());
         });
 
-        requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
             if (isGranted) {
                 database.getReference("trips").addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        GenericTypeIndicator<Map<String, Object>> type = new GenericTypeIndicator<Map<String, Object>>() {
-                        };
+                        GenericTypeIndicator<Map<String, Object>> type = new GenericTypeIndicator<Map<String, Object>>() {};
                         Map<String, Object> tripsByKey = snapshot.getValue(type);
                         if (tripsByKey != null) {
                             trips = new ArrayList<>();
@@ -255,11 +252,6 @@ public class TripsFragment extends Fragment {
                     }
                 });
             }
-
-        });
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
-        }
         return fragmentView;
     }
 
