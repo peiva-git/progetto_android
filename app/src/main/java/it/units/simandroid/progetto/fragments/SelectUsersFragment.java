@@ -155,17 +155,23 @@ public class SelectUsersFragment extends Fragment {
 
         negativeButton.setOnClickListener(view -> NavHostFragment.findNavController(this).navigateUp());
         positiveButton.setOnClickListener(
-                view -> database.getReference("trips").child(tripId).child("authorizedUsers").setValue(selectedUsers)
-                        .addOnSuccessListener(
-                                task -> {
-                                    NavHostFragment.findNavController(this).navigateUp();
-                                    Snackbar.make(requireActivity().findViewById(R.id.activity_layout), R.string.trip_shared, Snackbar.LENGTH_SHORT).show();
-                                })
-                        .addOnFailureListener(
-                                exception -> {
-                                    NavHostFragment.findNavController(this).navigateUp();
-                                    Snackbar.make(requireActivity().findViewById(R.id.activity_layout), R.string.trip_shared_error, Snackbar.LENGTH_SHORT).show();
-                                }));
+                view -> {
+                    List<String> selectedUsersIds = new ArrayList<>(selectedUsers.size());
+                    for (User selectedUser : selectedUsers) {
+                        selectedUsersIds.add(selectedUser.getId());
+                    }
+                    database.getReference("trips").child(tripId).child("authorizedUsers").setValue(selectedUsersIds)
+                            .addOnSuccessListener(
+                                    task -> {
+                                        NavHostFragment.findNavController(this).navigateUp();
+                                        Snackbar.make(requireActivity().findViewById(R.id.activity_layout), R.string.trip_shared, Snackbar.LENGTH_SHORT).show();
+                                    })
+                            .addOnFailureListener(
+                                    exception -> {
+                                        NavHostFragment.findNavController(this).navigateUp();
+                                        Snackbar.make(requireActivity().findViewById(R.id.activity_layout), R.string.trip_shared_error, Snackbar.LENGTH_SHORT).show();
+                                    });
+                });
         return fragmentView;
     }
 }

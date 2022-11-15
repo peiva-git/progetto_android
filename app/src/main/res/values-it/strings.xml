@@ -66,4 +66,5 @@
     <string name="chosen_users">Utenti selezionati</string>
     <string name="trip_shared">Viaggio condiviso con successo</string>
     <string name="trip_shared_error">Impossibile condividere viaggio</string>
+    <string name="get_images_error">Impossibile scaricare alcune immagini</string>
 </resources>

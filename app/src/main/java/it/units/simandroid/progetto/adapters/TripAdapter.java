@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.card.MaterialCardView;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.Collections;
 import java.util.List;
 
 import it.units.simandroid.progetto.R;
@@ -55,7 +56,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ItemViewHolder
         StringBuilder sb = new StringBuilder(trip.getStartDate());
         holder.tripStartEndDate.setText(sb.append(" - ").append(trip.getEndDate()).toString());
         holder.isTripFavorite.setChecked(trip.isFavorite());
-        if (trip.getImagesUris() != null) {
+        if (trip.getImagesUris() != null && !trip.getImagesUris().isEmpty()) {
             Uri mainImageUri = Uri.parse(trip.getImagesUris().get(0));
             holder.tripMainPicture.setImageURI(mainImageUri);
         }
