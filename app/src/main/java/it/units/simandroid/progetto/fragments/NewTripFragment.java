@@ -152,10 +152,15 @@ public class NewTripFragment extends Fragment {
         for (Uri pickedImageUri : pickedImages) {
             newTripImageUris.add(pickedImageUri.toString());
         }
-        List<String> tripUsers = new ArrayList<>();
-        tripUsers.add(authentication.getUid());
-        Trip newTrip = new Trip(newTripImageUris, newTripName, newTripStartDate, newTripEndDate, newTripDescription, newTripDestination, tripUsers);
-        newTrip.setId(tripDbReference.getKey());
+        Trip newTrip = new Trip(newTripImageUris,
+                newTripName,
+                newTripStartDate,
+                newTripEndDate,
+                newTripDescription,
+                newTripDestination,
+                tripDbReference.getKey(),
+                Collections.emptyList(),
+                authentication.getUid());
         tripDbReference.setValue(newTrip)
                 .addOnSuccessListener(task -> Log.d(NEW_TRIP_DB_TAG, "Added new trip data to realtime DB"))
                 .addOnFailureListener(exception -> Log.e(NEW_TRIP_DB_TAG, "Failed to add new trip data: " + exception.getMessage()));

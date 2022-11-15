@@ -21,6 +21,8 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.Collections;
+
 import it.units.simandroid.progetto.R;
 import it.units.simandroid.progetto.User;
 import it.units.simandroid.progetto.fragments.directions.RegistrationFragmentDirections;

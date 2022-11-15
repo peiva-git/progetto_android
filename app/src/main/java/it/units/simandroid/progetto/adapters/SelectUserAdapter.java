@@ -1,5 +1,6 @@
 package it.units.simandroid.progetto.adapters;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,20 +21,28 @@ import it.units.simandroid.progetto.User;
 
 public class SelectUserAdapter extends RecyclerView.Adapter<SelectUserAdapter.ItemViewHolder> implements Filterable {
 
-    private List<User> users;
+    private Context context;
+    private List<User> allUsers;
     private List<User> filteredUsers;
+    private List<String> authorizedUserIds;
     private final OnUserClickListener listener;
 
-    public SelectUserAdapter(List<User> users, OnUserClickListener listener) {
-        this.users = users;
-        this.filteredUsers = users;
+    public SelectUserAdapter(Context context, List<User> allUsers, List<String> authorizedUserIds, OnUserClickListener listener) {
+        this.context = context;
+        this.allUsers = allUsers;
+        this.filteredUsers = this.allUsers;
+        this.authorizedUserIds = authorizedUserIds;
         this.listener = listener;
     }
 
-    public void updateUsers(List<User> users) {
-        this.users = users;
-        filteredUsers = users;
+    public void setAvailableUsers(List<User> users) {
+        this.allUsers = users;
+        this.filteredUsers = this.allUsers;
         notifyDataSetChanged();
+    }
+
+    public void updateAuthorizedUserIds(List<String> authorizedUserIds) {
+        this.authorizedUserIds = authorizedUserIds;
     }
 
     @NonNull
@@ -48,6 +57,10 @@ public class SelectUserAdapter extends RecyclerView.Adapter<SelectUserAdapter.It
         User user = filteredUsers.get(position);
         holder.userEmail.setText(user.getEmail());
         holder.userNameSurname.setText(String.format("%s %s", user.getName(), user.getSurname()));
+
+        if (authorizedUserIds.contains(user.getId())) {
+            holder.userSelected.setChecked(true);
+        }
 
         holder.userSelected.setOnCheckedChangeListener(
                 (compoundButton, isChecked) -> listener.onUserCheckedStateChanged(user, compoundButton, isChecked));
@@ -69,11 +82,11 @@ public class SelectUserAdapter extends RecyclerView.Adapter<SelectUserAdapter.It
             @Override
             protected FilterResults performFiltering(CharSequence constraint) {
                 if (constraint == null || constraint.length() == 0) {
-                    filteredUsers = users;
+                    filteredUsers = allUsers;
                 } else {
                     String filterPattern = constraint.toString().toLowerCase().trim();
                     filteredUsers = new ArrayList<>();
-                    for (User user : users) {
+                    for (User user : allUsers) {
                         String userNameAndSurname = user.getName().toLowerCase() + user.getSurname().toLowerCase();
                         if (userNameAndSurname.contains(filterPattern)) {
                             filteredUsers.add(user);

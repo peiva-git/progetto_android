@@ -6,7 +6,6 @@ import static it.units.simandroid.progetto.RealtimeDatabase.DB_URL;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.text.style.ImageSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,9 +20,14 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.divider.MaterialDividerItemDecoration;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 
@@ -69,7 +73,7 @@ public class SelectUsersFragment extends Fragment {
         negativeButton = fragmentView.findViewById(R.id.dialog_negative_button);
         positiveButton = fragmentView.findViewById(R.id.dialog_positive_button);
 
-        selectUserAdapter = new SelectUserAdapter(Collections.emptyList(), new OnUserClickListener() {
+        selectUserAdapter = new SelectUserAdapter(getContext(), Collections.emptyList(), Collections.emptyList(), new OnUserClickListener() {
             @Override
             public void onUserClick(User user) {
             }
@@ -96,23 +100,35 @@ public class SelectUsersFragment extends Fragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
 
-        database.getReference("users").get().addOnSuccessListener(snapshot -> {
-            GenericTypeIndicator<Map<String, Object>> type = new GenericTypeIndicator<Map<String, Object>>() {
+        Tasks.whenAllComplete(database.getReference("trips").child(tripId).child("authorizedUsers").get(),
+                database.getReference("users").get()).addOnSuccessListener(tasks -> {
+            Task<DataSnapshot> getAuthorizedUsersTask = (Task<DataSnapshot>) tasks.get(0);
+            Task<DataSnapshot> getUsersTask = (Task<DataSnapshot>) tasks.get(1);
+
+            GenericTypeIndicator<List<String>> listType = new GenericTypeIndicator<List<String>>() {
             };
-            Map<String, Object> usersById = snapshot.getValue(type);
+            List<String> authorizedUsers = getAuthorizedUsersTask.getResult().getValue(listType);
+            if (authorizedUsers != null) {
+                selectUserAdapter.updateAuthorizedUserIds(authorizedUsers);
+            } else {
+                Log.d("GET_TRIP", "List of authorized users unavailable for this trip");
+            }
+
+            GenericTypeIndicator<Map<String, Object>> mapType = new GenericTypeIndicator<Map<String, Object>>() {};
+            Map<String, Object> usersById = getUsersTask.getResult().getValue(mapType);
             if (usersById != null) {
                 List<User> users = new ArrayList<>(usersById.values().size());
                 for (String key : usersById.keySet()) {
-                    User retrievedUser = snapshot.child(key).getValue(User.class);
+                    User retrievedUser = getUsersTask.getResult().child(key).getValue(User.class);
                     users.add(retrievedUser);
                     Log.d(GET_DB_USERS, "User with id " + key + " added to list");
                 }
-                selectUserAdapter.updateUsers(users);
+                selectUserAdapter.setAvailableUsers(users);
             } else {
                 Log.d(GET_DB_USERS, "No users found");
             }
-        }).addOnFailureListener(exception -> {
-            Log.w(DB_ERROR, "Unable to retrieve user list: " + exception.getMessage());
+        }).addOnFailureListener(e -> {
+            Log.w(DB_ERROR, "Unable to retrieve user list: " + e.getMessage());
             Snackbar.make(requireView(), R.string.load_users_failed, Snackbar.LENGTH_SHORT).show();
         });
 
@@ -127,25 +143,24 @@ public class SelectUsersFragment extends Fragment {
 
             @Override
             public void afterTextChanged(Editable editable) {
-                ImageSpan[] chipSpans = editable.getSpans(0, editable.length(), ImageSpan.class);
-                if (chipSpans.length != 0) {
-                    int startIndex = editable.getSpanEnd(chipSpans[chipSpans.length - 1]);
-                    CharSequence filterSequence = editable.subSequence(startIndex, editable.length());
-                    Log.d("FILTER", "Filter string is: " + filterSequence);
-                    selectUserAdapter.getFilter().filter(filterSequence.toString());
-                } else {
-                    selectUserAdapter.getFilter().filter(editable.toString());
-                }
+                Log.d("FILTER", "Filter string is: " + editable);
+                selectUserAdapter.getFilter().filter(editable.toString());
             }
         });
 
         negativeButton.setOnClickListener(view -> NavHostFragment.findNavController(this).navigateUp());
         positiveButton.setOnClickListener(
                 view -> database.getReference("trips").child(tripId).child("authorizedUsers").setValue(selectedUsers)
-                .addOnSuccessListener(
-                        task -> Snackbar.make(requireView(), R.string.trip_shared, Snackbar.LENGTH_SHORT).show())
-                .addOnFailureListener(
-                        exception -> Snackbar.make(requireView(), R.string.trip_shared_error, Snackbar.LENGTH_SHORT).show()));
+                        .addOnSuccessListener(
+                                task -> {
+                                    NavHostFragment.findNavController(this).navigateUp();
+                                    Snackbar.make(requireActivity().findViewById(R.id.activity_layout), R.string.trip_shared, Snackbar.LENGTH_SHORT).show();
+                                })
+                        .addOnFailureListener(
+                                exception -> {
+                                    NavHostFragment.findNavController(this).navigateUp();
+                                    Snackbar.make(requireActivity().findViewById(R.id.activity_layout), R.string.trip_shared_error, Snackbar.LENGTH_SHORT).show();
+                                }));
         return fragmentView;
     }
 }

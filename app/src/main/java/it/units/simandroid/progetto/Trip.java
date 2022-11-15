@@ -1,8 +1,5 @@
 package it.units.simandroid.progetto;
 
-import android.net.Uri;
-
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 
@@ -17,6 +14,7 @@ public class Trip {
     private boolean isFavorite = false;
     private String id;
     private List<String> authorizedUsers;
+    private String ownerId;
 
     public Trip(String name, String startDate, String endDate, String description, String destination) {
         this.name = name;
@@ -26,7 +24,7 @@ public class Trip {
         this.destination = destination;
     }
 
-    public Trip(List<String> imagesUris, String name, String startDate, String endDate, String description, String destination, List<String> authorizedUsers) {
+    public Trip(List<String> imagesUris, String name, String startDate, String endDate, String description, String destination, String tripId, List<String> authorizedUsers, String ownerId) {
         this.imagesUris = imagesUris;
         this.name = name;
         this.startDate = startDate;
@@ -34,6 +32,7 @@ public class Trip {
         this.description = description;
         this.destination = destination;
         this.authorizedUsers = authorizedUsers;
+        this.ownerId = ownerId;
     }
 
     public Trip() {
@@ -106,6 +105,14 @@ public class Trip {
 
     public List<String> getAuthorizedUsers() {
         return authorizedUsers;
+    }
+
+    public String getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(String ownerId) {
+        this.ownerId = ownerId;
     }
 
     public void setAuthorizedUsers(List<String> authorizedUsers) {
