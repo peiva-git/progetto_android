@@ -73,6 +73,7 @@ public class TripsFragment extends Fragment {
     private FloatingActionButton newTripButton;
     private TripAdapter tripAdapter;
     private ActivityResultLauncher<String> requestPermissionLauncher;
+    private List<Trip> retrievedTrips;
 
     public TripsFragment() {
         // Required empty public constructor
@@ -89,81 +90,59 @@ public class TripsFragment extends Fragment {
             if (isGranted) {
                 initTripDataChangeListener();
             } else {
-                database.getReference("trips").addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        GenericTypeIndicator<Map<String, Object>> type = new GenericTypeIndicator<Map<String, Object>>() {};
-                        Map<String, Object> tripsById = snapshot.getValue(type);
-                        if (tripsById != null) {
-                            trips = new ArrayList<>();
-                            for (String tripId : tripsById.keySet()) {
-                                DataSnapshot tripSnapshot = snapshot.child(tripId);
-                                Trip retrievedTrip = tripSnapshot.getValue(Trip.class);
-
-                                if (retrievedTrip != null) {
-                                    AtomicInteger progress = new AtomicInteger(0);
-                                    List<FileDownloadTask> downloadTasks = new ArrayList<>();
-                                    for (String imageUri : retrievedTrip.getImagesUris()) {
-                                        // can't check if the image is on the users phone
-                                        // rely only on remote and already stored data
-                                        File tripDirectory = requireContext().getDir(retrievedTrip.getId(), Context.MODE_PRIVATE);
-                                        File localImage = new File(tripDirectory, imageUri.replace("/", "$"));
-                                        if (localImage.exists()) {
-                                            int index = retrievedTrip.getImagesUris().indexOf(imageUri);
-                                            retrievedTrip.getImagesUris().set(index, localImage.toURI().toString());
-                                        } else {
-                                            FileDownloadTask downloadTask = storage.getReference("users").child(retrievedTrip.getOwnerId())
-                                                    .child(retrievedTrip.getId())
-                                                    .child(imageUri.replace("/", "$"))
-                                                    .getFile(localImage);
-                                            downloadTask.addOnSuccessListener(taskSnapshot -> {
-                                                        progress.set(progress.get() + (100 / retrievedTrip.getImagesUris().size()));
-                                                        LinearProgressIndicator progressIndicator = requireActivity().findViewById(R.id.progress_indicator);
-                                                        progressIndicator.setProgressCompat(progress.get(), true);
-
-                                                        int index = retrievedTrip.getImagesUris().indexOf(imageUri);
-                                                        retrievedTrip.getImagesUris().set(index, localImage.toURI().toString());
-                                                    })
-                                                    .addOnFailureListener(exception -> {
-                                                        Log.d("GET_TRIP_IMAGE", "Failed to retrieve trip image " + imageUri + "; " + exception.getMessage());
-                                                        retrievedTrip.getImagesUris().remove(imageUri);
-                                                    });
-                                            downloadTasks.add(downloadTask);
-                                        }
-                                    }
-                                    trips.add(retrievedTrip);
-
-                                    Tasks.whenAllComplete(downloadTasks).addOnCompleteListener(task -> {
-                                        boolean isSharedTripsModeOn = TripsFragmentArgs.fromBundle(requireArguments()).isSharedTripsModeActive();
-                                        boolean isFavoritesFilteringEnabled = TripsFragmentArgs.fromBundle(requireArguments()).isFilteringActive();
-                                        boolean isTripFavorite = retrievedTrip.isFavorite();
-                                        if (isSharedTripsModeOn) {
-                                            addTripIfUserAuthorized(retrievedTrip);
-                                        } else {
-                                            if (isFavoritesFilteringEnabled) {
-                                                if (isTripFavorite) {
-                                                    addTripIfCurrentUserOwner(retrievedTrip);
-                                                }
-                                            } else {
-                                                addTripIfCurrentUserOwner(retrievedTrip);
-                                            }
-                                        }
-                                        tripAdapter.updateTrips(trips);
-                                    });
-                                } else {
-                                    Log.d("GET_TRIPS", "No trip for id: " + tripId);
-                                }
-                            }
+                trips = new ArrayList<>();
+                for (Trip retrievedTrip : retrievedTrips) {
+                    AtomicInteger progress = new AtomicInteger(0);
+                    List<FileDownloadTask> downloadTasks = new ArrayList<>();
+                    for (String imageUri : retrievedTrip.getImagesUris()) {
+                        // can't check if the image is on the users phone
+                        // rely only on remote and already stored data
+                        File tripDirectory = requireContext().getDir(retrievedTrip.getId(), Context.MODE_PRIVATE);
+                        File localImage = new File(tripDirectory, imageUri.replace("/", "$"));
+                        if (localImage.exists()) {
+                            int index = retrievedTrip.getImagesUris().indexOf(imageUri);
+                            retrievedTrip.getImagesUris().set(index, localImage.toURI().toString());
                         } else {
-                            Snackbar.make(requireView(), R.string.no_trips, Snackbar.LENGTH_SHORT).show();
+                            FileDownloadTask downloadTask = storage.getReference("users").child(retrievedTrip.getOwnerId())
+                                    .child(retrievedTrip.getId())
+                                    .child(imageUri.replace("/", "$"))
+                                    .getFile(localImage);
+                            downloadTask.addOnSuccessListener(taskSnapshot -> {
+                                        progress.set(progress.get() + (100 / retrievedTrip.getImagesUris().size()));
+                                        LinearProgressIndicator progressIndicator = requireActivity().findViewById(R.id.progress_indicator);
+                                        progressIndicator.setProgressCompat(progress.get(), true);
+
+                                        int index = retrievedTrip.getImagesUris().indexOf(imageUri);
+                                        retrievedTrip.getImagesUris().set(index, localImage.toURI().toString());
+                                    })
+                                    .addOnFailureListener(exception -> {
+                                        Log.d("GET_TRIP_IMAGE", "Failed to retrieve trip image " + imageUri + "; " + exception.getMessage());
+                                        retrievedTrip.getImagesUris().remove(imageUri);
+                                    });
+                            downloadTasks.add(downloadTask);
                         }
                     }
+                    trips.add(retrievedTrip);
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        Log.w("GET_TRIPS", "Error downloading trip data: " + error.getMessage());
-                    }
-                });
+                    Tasks.whenAllComplete(downloadTasks).addOnCompleteListener(task -> {
+                        boolean isSharedTripsModeOn = TripsFragmentArgs.fromBundle(requireArguments()).isSharedTripsModeActive();
+                        boolean isFavoritesFilteringEnabled = TripsFragmentArgs.fromBundle(requireArguments()).isFilteringActive();
+                        boolean isTripFavorite = retrievedTrip.isFavorite();
+                        if (isSharedTripsModeOn) {
+                            addTripIfUserAuthorized(retrievedTrip);
+                        } else {
+                            if (isFavoritesFilteringEnabled) {
+                                if (isTripFavorite) {
+                                    addTripIfCurrentUserOwner(retrievedTrip);
+                                }
+                            } else {
+                                addTripIfCurrentUserOwner(retrievedTrip);
+                            }
+                        }
+                        tripAdapter.updateTrips(trips);
+                    });
+
+                }
             }
         });
     }
@@ -186,6 +165,28 @@ public class TripsFragment extends Fragment {
             navController.navigate(TripsFragmentDirections.actionTripsFragmentToNewTripFragment());
         });
 
+        database.getReference("trips").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                GenericTypeIndicator<Map<String, Object>> type = new GenericTypeIndicator<Map<String, Object>>() {
+                };
+                Map<String, Object> tripsById = snapshot.getValue(type);
+                if (tripsById != null) {
+                    retrievedTrips = new ArrayList<>();
+                    for (String key : tripsById.keySet()) {
+                        DataSnapshot tripSnapshot = snapshot.child(key);
+                        retrievedTrips.add(tripSnapshot.getValue(Trip.class));
+                    }
+                } else {
+                    Snackbar.make(requireView(), R.string.no_trips, Snackbar.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.w("GET_TRIPS", "Error downloading trip data: " + error.getMessage());
+            }
+        });
 
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
             initTripDataChangeListener();
