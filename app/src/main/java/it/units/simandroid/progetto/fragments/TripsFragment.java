@@ -74,6 +74,7 @@ public class TripsFragment extends Fragment {
     private TripAdapter tripAdapter;
     private ActivityResultLauncher<String> requestPermissionLauncher;
     private List<Trip> retrievedTrips;
+    private LinearProgressIndicator progressIndicator;
 
     public TripsFragment() {
         // Required empty public constructor
@@ -91,8 +92,8 @@ public class TripsFragment extends Fragment {
                 initTripDataChangeListener();
             } else {
                 trips = new ArrayList<>();
+                AtomicInteger progress = new AtomicInteger(0);
                 for (Trip retrievedTrip : retrievedTrips) {
-                    AtomicInteger progress = new AtomicInteger(0);
                     List<FileDownloadTask> downloadTasks = new ArrayList<>();
                     for (String imageUri : retrievedTrip.getImagesUris()) {
                         // can't check if the image is on the users phone
@@ -108,8 +109,7 @@ public class TripsFragment extends Fragment {
                                     .child(imageUri.replace("/", "$"))
                                     .getFile(localImage);
                             downloadTask.addOnSuccessListener(taskSnapshot -> {
-                                        progress.set(progress.get() + (100 / retrievedTrip.getImagesUris().size()));
-                                        LinearProgressIndicator progressIndicator = requireActivity().findViewById(R.id.progress_indicator);
+                                        progress.set(progress.get() + (100 / getFinalProgressValue()));
                                         progressIndicator.setProgressCompat(progress.get(), true);
 
                                         int index = retrievedTrip.getImagesUris().indexOf(imageUri);
@@ -145,6 +145,14 @@ public class TripsFragment extends Fragment {
         });
     }
 
+    private int getFinalProgressValue() {
+        int finalProgressValue = 0;
+        for (Trip retrievedTrip : retrievedTrips) {
+            finalProgressValue += retrievedTrip.getImagesUris().size();
+        }
+        return finalProgressValue;
+    }
+
     @Override
     public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -152,6 +160,7 @@ public class TripsFragment extends Fragment {
         View fragmentView = inflater.inflate(R.layout.fragment_trips, container, false);
         tripsRecyclerView = fragmentView.findViewById(R.id.trips_recycler_view);
         newTripButton = fragmentView.findViewById(R.id.new_trip_button);
+        progressIndicator = requireActivity().findViewById(R.id.progress_indicator);
 
         tripAdapter = new TripAdapter(getContext(), Collections.emptyList());
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
@@ -215,8 +224,7 @@ public class TripsFragment extends Fragment {
                                 .child(imageUri.replace("/", "$"))
                                 .getFile(localImage);
                         downloadTask.addOnSuccessListener(taskSnapshot -> {
-                                    progress.set(progress.get() + (100 / retrievedTrip.getImagesUris().size()));
-                                    LinearProgressIndicator progressIndicator = requireActivity().findViewById(R.id.progress_indicator);
+                                    progress.set(progress.get() + (100 / getFinalProgressValue()));
                                     progressIndicator.setProgressCompat(progress.get(), true);
 
                                     int index = retrievedTrip.getImagesUris().indexOf(imageUri);
