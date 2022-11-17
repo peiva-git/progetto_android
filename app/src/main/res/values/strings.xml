@@ -67,4 +67,5 @@
     <string name="trip_shared">Trip successfully shared</string>
     <string name="trip_shared_error">Unable to share trip</string>
     <string name="get_images_error">Unable to download some images</string>
+    <string name="no_trips">No trips found</string>
 </resources>
