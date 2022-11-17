@@ -122,7 +122,6 @@ public class TripsFragment extends Fragment {
                             downloadTasks.add(downloadTask);
                         }
                     }
-                    trips.add(retrievedTrip);
 
                     Tasks.whenAllComplete(downloadTasks).addOnCompleteListener(task -> {
                         boolean isSharedTripsModeOn = TripsFragmentArgs.fromBundle(requireArguments()).isSharedTripsModeActive();
@@ -141,7 +140,6 @@ public class TripsFragment extends Fragment {
                         }
                         tripAdapter.updateTrips(trips);
                     });
-
                 }
             }
         });
@@ -232,7 +230,6 @@ public class TripsFragment extends Fragment {
                     }
                 }
             }
-            trips.add(retrievedTrip);
 
             Tasks.whenAllComplete(downloadTasks).addOnCompleteListener(task -> {
                 boolean isSharedTripsModeOn = TripsFragmentArgs.fromBundle(requireArguments()).isSharedTripsModeActive();
