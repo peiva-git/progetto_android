@@ -83,19 +83,16 @@ public class TripsFragment extends Fragment {
 
         requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
             if (isGranted) {
-                initTripDataChangeListener();
+                getAndDisplayTrips();
             } else {
                 trips = new ArrayList<>();
                 AtomicInteger progress = new AtomicInteger(0);
                 for (Trip retrievedTrip : retrievedTrips) {
                     List<FileDownloadTask> downloadTasks = new ArrayList<>();
                     for (String imageUri : retrievedTrip.getImagesUris()) {
-                        // can't check if the image is on the users phone
-                        // rely only on remote and already stored data
                         updateTripImageFromLocalStorageOrRemotely(retrievedTrip, imageUri, progress, downloadTasks);
                     }
-
-                    updateTripDataOnTasksFinished(downloadTasks, retrievedTrip);
+                    setupUpdateTripDataOnTasksFinishedListener(downloadTasks, retrievedTrip);
                 }
             }
         });
@@ -178,14 +175,14 @@ public class TripsFragment extends Fragment {
         });
 
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-            initTripDataChangeListener();
+            getAndDisplayTrips();
         } else {
             requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
         }
         return fragmentView;
     }
 
-    private void initTripDataChangeListener() {
+    private void getAndDisplayTrips() {
         trips = new ArrayList<>();
         for (Trip retrievedTrip : retrievedTrips) {
             AtomicInteger progress = new AtomicInteger(0);
@@ -199,11 +196,11 @@ public class TripsFragment extends Fragment {
                 }
             }
 
-            updateTripDataOnTasksFinished(downloadTasks, retrievedTrip);
+            setupUpdateTripDataOnTasksFinishedListener(downloadTasks, retrievedTrip);
         }
     }
 
-    private void updateTripDataOnTasksFinished(List<FileDownloadTask> downloadTasks, Trip retrievedTrip) {
+    private void setupUpdateTripDataOnTasksFinishedListener(List<FileDownloadTask> downloadTasks, Trip retrievedTrip) {
         Tasks.whenAllComplete(downloadTasks).addOnCompleteListener(task -> {
             boolean isSharedTripsModeOn = TripsFragmentArgs.fromBundle(requireArguments()).isSharedTripsModeActive();
             boolean isFavoritesFilteringEnabled = TripsFragmentArgs.fromBundle(requireArguments()).isFilteringActive();
