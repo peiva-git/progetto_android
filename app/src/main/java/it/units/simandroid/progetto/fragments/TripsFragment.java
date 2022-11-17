@@ -5,6 +5,8 @@ import static it.units.simandroid.progetto.RealtimeDatabase.GET_DB_TRIPS;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -27,6 +29,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.android.gms.tasks.Tasks;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.android.material.snackbar.Snackbar;
@@ -59,6 +62,7 @@ import it.units.simandroid.progetto.fragments.directions.TripsFragmentDirections
 
 public class TripsFragment extends Fragment {
 
+    public static final String PERMISSION_ASKED = "PERMISSION_ASKED";
     private FirebaseAuth authentication;
     private FirebaseStorage storage;
     private FirebaseDatabase database;
@@ -85,17 +89,21 @@ public class TripsFragment extends Fragment {
             if (isGranted) {
                 getAndDisplayTrips();
             } else {
-                trips = new ArrayList<>();
-                AtomicInteger progress = new AtomicInteger(0);
-                for (Trip retrievedTrip : retrievedTrips) {
-                    List<FileDownloadTask> downloadTasks = new ArrayList<>();
-                    for (String imageUri : retrievedTrip.getImagesUris()) {
-                        updateTripImageFromLocalStorageOrRemotely(retrievedTrip, imageUri, progress, downloadTasks);
-                    }
-                    setupUpdateTripDataOnTasksFinishedListener(downloadTasks, retrievedTrip);
-                }
+                getAndDisplayTripsWithoutPermission();
             }
         });
+    }
+
+    private void getAndDisplayTripsWithoutPermission() {
+        trips = new ArrayList<>();
+        AtomicInteger progress = new AtomicInteger(0);
+        for (Trip retrievedTrip : retrievedTrips) {
+            List<FileDownloadTask> downloadTasks = new ArrayList<>();
+            for (String imageUri : retrievedTrip.getImagesUris()) {
+                updateTripImageFromLocalStorageOrRemotely(retrievedTrip, imageUri, progress, downloadTasks);
+            }
+            setupUpdateTripDataOnTasksFinishedListener(downloadTasks, retrievedTrip);
+        }
     }
 
     private void updateTripImageFromLocalStorageOrRemotely(Trip retrievedTrip, String imageUri, AtomicInteger downloadProgress, List<FileDownloadTask> downloadTasks) {
@@ -163,6 +171,20 @@ public class TripsFragment extends Fragment {
                         DataSnapshot tripSnapshot = snapshot.child(key);
                         retrievedTrips.add(tripSnapshot.getValue(Trip.class));
                     }
+                    if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                        getAndDisplayTrips();
+                    } else if (shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                        new MaterialAlertDialogBuilder(requireContext())
+                                .setTitle(R.string.educational_permission_request_title)
+                                .setMessage(R.string.educational_permission_request_content)
+                                .setPositiveButton(R.string.got_it, (dialogInterface, i) -> {
+                                    dialogInterface.dismiss();
+                                    getAndDisplayTripsWithoutPermission();
+                                })
+                                .show();
+                    } else {
+                        requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
+                    }
                 } else {
                     Snackbar.make(requireView(), R.string.no_trips, Snackbar.LENGTH_SHORT).show();
                 }
@@ -173,12 +195,6 @@ public class TripsFragment extends Fragment {
                 Log.w("GET_TRIPS", "Error downloading trip data: " + error.getMessage());
             }
         });
-
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-            getAndDisplayTrips();
-        } else {
-            requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
-        }
         return fragmentView;
     }
 
