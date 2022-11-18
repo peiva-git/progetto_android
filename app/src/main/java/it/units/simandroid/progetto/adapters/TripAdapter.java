@@ -18,7 +18,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.card.MaterialCardView;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.util.Collections;
 import java.util.List;
 
 import it.units.simandroid.progetto.R;
@@ -29,15 +28,26 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ItemViewHolder
 
     private final Context context;
     private List<Trip> trips;
+    private final OnTripClickListener listener;
+    private boolean isSharedModeOn;
 
-    public TripAdapter(Context context, List<Trip> trips) {
+    public TripAdapter(Context context, List<Trip> trips, OnTripClickListener listener) {
         this.context = context;
         this.trips = trips;
+        this.listener = listener;
     }
 
     public void updateTrips(List<Trip> trips) {
         this.trips = trips;
         notifyDataSetChanged();
+    }
+
+    public boolean isSharedModeOn() {
+        return isSharedModeOn;
+    }
+
+    public void setSharedModeOn(boolean sharedModeOn) {
+        isSharedModeOn = sharedModeOn;
     }
 
     @NonNull
@@ -55,23 +65,18 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ItemViewHolder
         holder.tripDestination.setText(trip.getDestination());
         StringBuilder sb = new StringBuilder(trip.getStartDate());
         holder.tripStartEndDate.setText(sb.append(" - ").append(trip.getEndDate()).toString());
-        holder.isTripFavorite.setChecked(trip.isFavorite());
+        if (isSharedModeOn) {
+            holder.isTripFavorite.setVisibility(View.GONE);
+        } else {
+            holder.isTripFavorite.setChecked(trip.isFavorite());
+        }
         if (trip.getImagesUris() != null && !trip.getImagesUris().isEmpty()) {
             Uri mainImageUri = Uri.parse(trip.getImagesUris().get(0));
             holder.tripMainPicture.setImageURI(mainImageUri);
         }
-        holder.cardView.setOnClickListener(view -> {
-            TripsFragmentDirections.ViewTripDetailsAction action = TripsFragmentDirections.actionViewTripDetails();
-            action.setTrip(trip);
-            Navigation.findNavController(view).navigate(action);
-        });
-        holder.isTripFavorite.setOnCheckedChangeListener((compoundButton, isChecked) -> {
-            trip.setFavorite(isChecked);
-            FirebaseDatabase.getInstance(DB_URL)
-                    .getReference("trips")
-                    .child(trip.getId())
-                    .setValue(trip);
-        });
+        holder.cardView.setOnClickListener(view -> listener.onTripClick(trip));
+        holder.isTripFavorite.setOnCheckedChangeListener(
+                (compoundButton, isChecked) -> listener.onTripFavoriteStateChanged(trip, compoundButton, isChecked));
     }
 
     @Override

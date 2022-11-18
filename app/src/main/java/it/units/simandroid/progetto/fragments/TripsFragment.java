@@ -5,8 +5,6 @@ import static it.units.simandroid.progetto.RealtimeDatabase.GET_DB_TRIPS;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -27,6 +25,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 
 import com.google.android.gms.tasks.Tasks;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -55,6 +54,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import it.units.simandroid.progetto.R;
 import it.units.simandroid.progetto.Trip;
+import it.units.simandroid.progetto.adapters.OnTripClickListener;
 import it.units.simandroid.progetto.adapters.TripAdapter;
 import it.units.simandroid.progetto.fragments.directions.TripsFragmentArgs;
 import it.units.simandroid.progetto.fragments.directions.TripsFragmentDirections;
@@ -149,7 +149,26 @@ public class TripsFragment extends Fragment {
         newTripButton = fragmentView.findViewById(R.id.new_trip_button);
         progressIndicator = requireActivity().findViewById(R.id.progress_indicator);
 
-        tripAdapter = new TripAdapter(getContext(), Collections.emptyList());
+        tripAdapter = new TripAdapter(getContext(), Collections.emptyList(), new OnTripClickListener() {
+            @Override
+            public void onTripClick(Trip trip) {
+                TripsFragmentDirections.ViewTripDetailsAction action = TripsFragmentDirections.actionViewTripDetails();
+                action.setTrip(trip);
+                Navigation.findNavController(requireView()).navigate(action);
+            }
+
+            @Override
+            public void onTripFavoriteStateChanged(Trip trip, CompoundButton compoundButton, boolean isChecked) {
+                trip.setFavorite(isChecked);
+                FirebaseDatabase.getInstance(DB_URL)
+                        .getReference("trips")
+                        .child(trip.getId())
+                        .child("favorite")
+                        .setValue(isChecked);
+            }
+        });
+        tripAdapter.setSharedModeOn(TripsFragmentArgs.fromBundle(requireArguments()).isSharedTripsModeActive());
+
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         tripsRecyclerView.setLayoutManager(linearLayoutManager);
         tripsRecyclerView.setAdapter(tripAdapter);
@@ -217,7 +236,7 @@ public class TripsFragment extends Fragment {
     }
 
     private void setupUpdateTripDataOnTasksFinishedListener(List<FileDownloadTask> downloadTasks, Trip retrievedTrip) {
-        Tasks.whenAllComplete(downloadTasks).addOnCompleteListener(task -> {
+        if (downloadTasks.isEmpty()) {
             boolean isSharedTripsModeOn = TripsFragmentArgs.fromBundle(requireArguments()).isSharedTripsModeActive();
             boolean isFavoritesFilteringEnabled = TripsFragmentArgs.fromBundle(requireArguments()).isFilteringActive();
             boolean isTripFavorite = retrievedTrip.isFavorite();
@@ -233,7 +252,25 @@ public class TripsFragment extends Fragment {
                 }
             }
             tripAdapter.updateTrips(trips);
-        });
+        } else {
+            Tasks.whenAllComplete(downloadTasks).addOnCompleteListener(task -> {
+                boolean isSharedTripsModeOn = TripsFragmentArgs.fromBundle(requireArguments()).isSharedTripsModeActive();
+                boolean isFavoritesFilteringEnabled = TripsFragmentArgs.fromBundle(requireArguments()).isFilteringActive();
+                boolean isTripFavorite = retrievedTrip.isFavorite();
+                if (isSharedTripsModeOn) {
+                    addTripIfUserAuthorized(retrievedTrip);
+                } else {
+                    if (isFavoritesFilteringEnabled) {
+                        if (isTripFavorite) {
+                            addTripIfCurrentUserOwner(retrievedTrip);
+                        }
+                    } else {
+                        addTripIfCurrentUserOwner(retrievedTrip);
+                    }
+                }
+                tripAdapter.updateTrips(trips);
+            });
+        }
     }
 
 
