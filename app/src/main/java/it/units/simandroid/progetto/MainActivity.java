@@ -21,6 +21,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import org.jetbrains.annotations.NotNull;
 
+import it.units.simandroid.progetto.fragments.directions.TripsFragmentArgs;
 import it.units.simandroid.progetto.fragments.directions.TripsFragmentDirections;
 
 public class MainActivity extends AppCompatActivity {
@@ -55,6 +56,18 @@ public class MainActivity extends AppCompatActivity {
             if (destination.getId() == R.id.loginFragment || destination.getId() == R.id.selectUsersFragment) {
                 toolbar.setVisibility(View.GONE);
                 navigationView.setVisibility(View.GONE);
+            } else if (destination.getId() == R.id.tripsFragment) {
+                toolbar.setVisibility(View.VISIBLE);
+                navigationView.setVisibility(View.VISIBLE);
+                if (arguments != null) {
+                    if (TripsFragmentArgs.fromBundle(arguments).isFilteringActive()) {
+                        toolbar.setTitle(R.string.trips_fragment_favorites_label);
+                    } else if (TripsFragmentArgs.fromBundle(arguments).isSharedTripsModeActive()) {
+                        toolbar.setTitle(R.string.trips_fragment_shared_label);
+                    } else {
+                        toolbar.setTitle(R.string.fragment_trips_label);
+                    }
+                }
             } else {
                 toolbar.setVisibility(View.VISIBLE);
                 navigationView.setVisibility(View.VISIBLE);

@@ -71,4 +71,6 @@
     <string name="educational_permission_request_title">Richiesta d\'accesso all\'archivio</string>
     <string name="educational_permission_request_content">L\'accesso all\'archivio è necessario per recuperare le eventuali immagini dei viaggi. Se non consentito, alcune immagini potrebbero essere mancanti</string>
     <string name="got_it">Capito</string>
+    <string name="trips_fragment_favorites_label">I miei viaggi preferiti</string>
+    <string name="trips_fragment_shared_label">Condivisi con me</string>
 </resources>
