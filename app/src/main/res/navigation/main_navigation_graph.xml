@@ -80,6 +80,10 @@
         <action
             android:id="@+id/action_tripContentFragment_to_selectUsersFragment"
             app:destination="@id/selectUsersFragment" />
+        <argument
+            android:name="isSharedTripsModeActive"
+            app:argType="boolean"
+            android:defaultValue="false" />
     </fragment>
     <fragment
         android:id="@+id/settings"

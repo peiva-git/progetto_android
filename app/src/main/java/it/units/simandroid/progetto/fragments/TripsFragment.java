@@ -154,6 +154,7 @@ public class TripsFragment extends Fragment {
             public void onTripClick(Trip trip) {
                 TripsFragmentDirections.ViewTripDetailsAction action = TripsFragmentDirections.actionViewTripDetails();
                 action.setTrip(trip);
+                action.setSharedTripsModeActive(TripsFragmentArgs.fromBundle(requireArguments()).isSharedTripsModeActive());
                 Navigation.findNavController(requireView()).navigate(action);
             }
 

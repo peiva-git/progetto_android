@@ -39,14 +39,25 @@ public class TripsFragmentDirections {
     }
 
     public static class ViewTripDetailsAction implements NavDirections {
+        public static final String SHARED_TRIPS_KEY = "TRIP_SHARE";
         private Trip trip;
+        private boolean isSharedTripsModeActive = false;
         public static final String TRIP_KEY = "TRIP";
 
-        public ViewTripDetailsAction(Trip trip) {
+        public ViewTripDetailsAction(Trip trip, boolean isSharedTripsModeActive) {
             this.trip = trip;
+            this.isSharedTripsModeActive = isSharedTripsModeActive;
         }
 
         public ViewTripDetailsAction() {}
+
+        public boolean isSharedTripsModeActive() {
+            return isSharedTripsModeActive;
+        }
+
+        public void setSharedTripsModeActive(boolean sharedTripsModeActive) {
+            isSharedTripsModeActive = sharedTripsModeActive;
+        }
 
         public void setTrip(Trip trip) {
             this.trip = trip;
@@ -67,6 +78,7 @@ public class TripsFragmentDirections {
             Bundle bundle = new Bundle();
             Gson gson = new Gson();
             bundle.putString(TRIP_KEY, gson.toJson(trip, Trip.class));
+            bundle.putBoolean(SHARED_TRIPS_KEY, isSharedTripsModeActive);
             return bundle;
         }
     }

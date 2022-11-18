@@ -71,21 +71,24 @@ public class TripContentFragment extends Fragment {
             public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
                 MenuItem userAccount = menu.findItem(R.id.user_account);
                 userAccount.setVisible(false);
-                menuInflater.inflate(R.menu.top_app_bar_trip_content, menu);
-                MaterialCheckBox isTripFavorite = (MaterialCheckBox) menu.findItem(R.id.favorite_trip).getActionView();
-                isTripFavorite.setButtonIconDrawableResource(R.drawable.sl_baseline_favorite_24);
-                isTripFavorite.setButtonDrawable(R.drawable.ic_baseline_favorite_border_24);
-                isTripFavorite.setButtonIconTintList(ColorStateList.valueOf(com.google.android.material.R.attr.colorOnPrimary));
-                isTripFavorite.setChecked(trip.isFavorite());
+                if (!TripContentFragmentArgs.fromBundle(requireArguments()).isSharedTripsModeActive()) {
+                    menuInflater.inflate(R.menu.top_app_bar_trip_content, menu);
+                    MaterialCheckBox isTripFavorite = (MaterialCheckBox) menu.findItem(R.id.favorite_trip).getActionView();
+                    isTripFavorite.setButtonIconDrawableResource(R.drawable.sl_baseline_favorite_24);
+                    isTripFavorite.setButtonDrawable(R.drawable.ic_baseline_favorite_border_24);
+                    isTripFavorite.setButtonIconTintList(ColorStateList.valueOf(com.google.android.material.R.attr.colorOnPrimary));
+                    isTripFavorite.setChecked(trip.isFavorite());
 
-                isTripFavorite.setOnCheckedChangeListener((compoundButton, isChecked) -> {
-                    trip.setFavorite(isChecked);
-                    String tripId = TripContentFragmentArgs.fromBundle(requireArguments()).getTrip().getId();
-                    FirebaseDatabase.getInstance(DB_URL)
-                            .getReference("trips")
-                            .child(tripId)
-                            .setValue(trip);
-                });
+                    isTripFavorite.setOnCheckedChangeListener((compoundButton, isChecked) -> {
+                        trip.setFavorite(isChecked);
+                        String tripId = TripContentFragmentArgs.fromBundle(requireArguments()).getTrip().getId();
+                        FirebaseDatabase.getInstance(DB_URL)
+                                .getReference("trips")
+                                .child(tripId)
+                                .child("favorite")
+                                .setValue(isChecked);
+                    });
+                }
             }
 
             @Override
