@@ -98,4 +98,5 @@
             android:defaultValue="@null"
             app:argType="string" />
     </fragment>
+    <action android:id="@+id/action_global_settings" app:destination="@id/settings"/>
 </navigation>
