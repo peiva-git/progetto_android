@@ -1,6 +1,8 @@
 package it.units.simandroid.progetto;
 
 import static it.units.simandroid.progetto.RealtimeDatabase.DB_URL;
+import static it.units.simandroid.progetto.fragments.SettingsFragment.USER_NAME_KEY;
+import static it.units.simandroid.progetto.fragments.SettingsFragment.USER_SURNAME_KEY;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -149,18 +151,20 @@ public class MainActivity extends AppCompatActivity {
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         preferences.registerOnSharedPreferenceChangeListener((sharedPreferences, key) -> {
-            if (key.equals("user_name")) {
+            if (key.equals(USER_NAME_KEY)) {
                 database.getReference("users")
                         .child(Objects.requireNonNull(authentication.getUid()))
                         .child("name")
                         .setValue(sharedPreferences.getString(key, ""));
                 Log.i("SETTINGS", "Preference value was updated to: " + sharedPreferences.getString(key, ""));
-            } else if (key.equals("user_surname")) {
+            } else if (key.equals(USER_SURNAME_KEY)) {
                 database.getReference("users")
                         .child(Objects.requireNonNull(authentication.getUid()))
                         .child("surname")
                         .setValue(sharedPreferences.getString(key, ""));
                 Log.i("SETTINGS", "Preference value was updated to: " + sharedPreferences.getString(key, ""));
+            } else {
+                Log.w("SETTINGS", "No preference key matching");
             }
         });
     }

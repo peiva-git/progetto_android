@@ -99,8 +99,12 @@ public class TripsFragment extends Fragment {
         AtomicInteger progress = new AtomicInteger(0);
         for (Trip retrievedTrip : retrievedTrips) {
             List<FileDownloadTask> downloadTasks = new ArrayList<>();
-            for (String imageUri : retrievedTrip.getImagesUris()) {
-                updateTripImageFromLocalStorageOrRemotely(retrievedTrip, imageUri, progress, downloadTasks);
+            if (retrievedTrip.getImagesUris() != null) {
+                for (String imageUri : retrievedTrip.getImagesUris()) {
+                    updateTripImageFromLocalStorageOrRemotely(retrievedTrip, imageUri, progress, downloadTasks);
+                }
+            } else {
+                retrievedTrip.setImagesUris(Collections.emptyList());
             }
             setupUpdateTripDataOnTasksFinishedListener(downloadTasks, retrievedTrip);
         }
@@ -223,13 +227,17 @@ public class TripsFragment extends Fragment {
         for (Trip retrievedTrip : retrievedTrips) {
             AtomicInteger progress = new AtomicInteger(0);
             List<FileDownloadTask> downloadTasks = new ArrayList<>();
-            for (String imageUri : retrievedTrip.getImagesUris()) {
-                DocumentFile image = DocumentFile.fromSingleUri(requireContext(), Uri.parse(imageUri));
-                // doesn't return null after Android KitKat, which is above minSdk version
-                // need READ_EXTERNAL_STORAGE permissions for the exists() call
-                if (!Objects.requireNonNull(image).exists()) {
-                    updateTripImageFromLocalStorageOrRemotely(retrievedTrip, imageUri, progress, downloadTasks);
+            if (retrievedTrip.getImagesUris() != null) {
+                for (String imageUri : retrievedTrip.getImagesUris()) {
+                    DocumentFile image = DocumentFile.fromSingleUri(requireContext(), Uri.parse(imageUri));
+                    // doesn't return null after Android KitKat, which is above minSdk version
+                    // need READ_EXTERNAL_STORAGE permissions for the exists() call
+                    if (!Objects.requireNonNull(image).exists()) {
+                        updateTripImageFromLocalStorageOrRemotely(retrievedTrip, imageUri, progress, downloadTasks);
+                    }
                 }
+            } else {
+                retrievedTrip.setImagesUris(Collections.emptyList());
             }
 
             setupUpdateTripDataOnTasksFinishedListener(downloadTasks, retrievedTrip);

@@ -20,6 +20,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.gms.tasks.Tasks;
 import com.google.android.material.button.MaterialButton;
@@ -132,8 +133,9 @@ public class NewTripFragment extends Fragment {
         saveTripButton.setOnClickListener(view -> {
             uploadNewTripData();
             NavDirections action = NewTripFragmentDirections.actionNewTripFragmentToTripsFragment();
-            Navigation.findNavController(fragmentView).navigate(action);
-            Snackbar.make(fragmentView, R.string.trip_saved, Snackbar.LENGTH_LONG).show();
+            NavHostFragment.findNavController(this).navigate(action);
+            // Navigation.findNavController(fragmentView).navigate(action);
+            Snackbar.make(requireActivity().findViewById(R.id.activity_layout), R.string.trip_saved, Snackbar.LENGTH_LONG).show();
         });
 
         return fragmentView;
