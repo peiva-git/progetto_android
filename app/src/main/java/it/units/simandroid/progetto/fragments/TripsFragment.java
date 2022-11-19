@@ -7,12 +7,14 @@ import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.core.content.ContextCompat;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.Fragment;
@@ -104,7 +106,7 @@ public class TripsFragment extends Fragment {
             List<FileDownloadTask> downloadTasks = new ArrayList<>();
             if (retrievedTrip.getImagesUris() != null) {
                 for (String imageUri : retrievedTrip.getImagesUris()) {
-                    updateTripImageFromLocalStorageOrRemotely(retrievedTrip, imageUri, progress, downloadTasks);
+                    updateTripImageFromLocalStorageOrRemotely(retrievedTrip.getId(), retrievedTrip.getOwnerId(), retrievedTrip.getImagesUris(), imageUri, progress, downloadTasks);
                 }
             } else {
                 retrievedTrip.setImagesUris(Collections.emptyList());
@@ -113,27 +115,28 @@ public class TripsFragment extends Fragment {
         }
     }
 
-    private void updateTripImageFromLocalStorageOrRemotely(Trip retrievedTrip, String imageUri, AtomicInteger downloadProgress, List<FileDownloadTask> downloadTasks) {
-        File tripDirectory = requireContext().getDir(retrievedTrip.getId(), Context.MODE_PRIVATE);
+
+    private void updateTripImageFromLocalStorageOrRemotely(@NonNull String tripId, @NonNull String tripOwnerId, @NonNull List<String> tripImageUris, @NonNull String imageUri, @NonNull AtomicInteger downloadProgress, @NonNull List<FileDownloadTask> downloadTasks) {
+        File tripDirectory = requireContext().getDir(tripId, Context.MODE_PRIVATE);
         File localImage = new File(tripDirectory, imageUri.replace("/", "$"));
         if (localImage.exists()) {
-            int index = retrievedTrip.getImagesUris().indexOf(imageUri);
-            retrievedTrip.getImagesUris().set(index, localImage.toURI().toString());
+            int index = tripImageUris.indexOf(imageUri);
+            tripImageUris.set(index, localImage.toURI().toString());
         } else {
-            FileDownloadTask downloadTask = storage.getReference("users").child(retrievedTrip.getOwnerId())
-                    .child(retrievedTrip.getId())
+            FileDownloadTask downloadTask = storage.getReference("users").child(tripOwnerId)
+                    .child(tripId)
                     .child(imageUri.replace("/", "$"))
                     .getFile(localImage);
             downloadTask.addOnSuccessListener(taskSnapshot -> {
                         downloadProgress.set(downloadProgress.get() + (100 / getFinalProgressValue()));
                         progressIndicator.setProgressCompat(downloadProgress.get(), true);
 
-                        int index = retrievedTrip.getImagesUris().indexOf(imageUri);
-                        retrievedTrip.getImagesUris().set(index, localImage.toURI().toString());
+                        int index = tripImageUris.indexOf(imageUri);
+                        tripImageUris.set(index, localImage.toURI().toString());
                     })
                     .addOnFailureListener(exception -> {
                         Log.d("GET_TRIP_IMAGE", "Failed to retrieve trip image " + imageUri + "; " + exception.getMessage());
-                        retrievedTrip.getImagesUris().remove(imageUri);
+                        tripImageUris.remove(imageUri);
                     });
             downloadTasks.add(downloadTask);
         }
@@ -243,7 +246,7 @@ public class TripsFragment extends Fragment {
                     // doesn't return null after Android KitKat, which is above minSdk version
                     // need READ_EXTERNAL_STORAGE permissions for the exists() call
                     if (!Objects.requireNonNull(image).exists()) {
-                        updateTripImageFromLocalStorageOrRemotely(retrievedTrip, imageUri, progress, downloadTasks);
+                        updateTripImageFromLocalStorageOrRemotely(retrievedTrip.getId(), retrievedTrip.getOwnerId(), retrievedTrip.getImagesUris(), imageUri, progress, downloadTasks);
                     }
                 }
             } else {
@@ -254,7 +257,7 @@ public class TripsFragment extends Fragment {
         }
     }
 
-    private void setupUpdateTripDataOnTasksFinishedListener(List<FileDownloadTask> downloadTasks, Trip retrievedTrip) {
+    private void setupUpdateTripDataOnTasksFinishedListener(@NonNull List<FileDownloadTask> downloadTasks,@NonNull Trip retrievedTrip) {
         if (downloadTasks.isEmpty()) {
             boolean isSharedTripsModeOn = TripsFragmentArgs.fromBundle(requireArguments()).isSharedTripsModeActive();
             boolean isFavoritesFilteringEnabled = TripsFragmentArgs.fromBundle(requireArguments()).isFilteringActive();
