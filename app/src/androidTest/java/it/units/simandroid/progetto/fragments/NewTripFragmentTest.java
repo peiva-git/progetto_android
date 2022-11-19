@@ -7,6 +7,7 @@ import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.filters.LargeTest;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -22,6 +23,7 @@ import org.junit.Test;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Map;
+import java.util.Objects;
 
 import it.units.simandroid.progetto.MainActivity;
 import it.units.simandroid.progetto.R;
@@ -38,6 +40,7 @@ public class NewTripFragmentTest {
     public static final String TRIP_DESCRIPTION = "My favorite trip so far!";
     private FirebaseDatabase database;
     private ValueEventListener listener;
+    private FirebaseAuth authentication;
 
     @Rule
     public ActivityScenarioRule<MainActivity> activityScenarioRule = new ActivityScenarioRule<>(MainActivity.class);
@@ -45,12 +48,14 @@ public class NewTripFragmentTest {
     @Before
     public void init() {
         database = FirebaseDatabase.getInstance(RealtimeDatabase.DB_URL);
+        authentication = FirebaseAuth.getInstance();
         listener = new ValueEventListener() {
             private boolean isFirstEvent = true;
 
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (isFirstEvent) {
+                    // assumes database starts empty
                     Assert.assertNull(snapshot.getValue());
                     isFirstEvent = false;
                 } else {
@@ -61,7 +66,15 @@ public class NewTripFragmentTest {
                     String firstKey = tripsById.keySet().iterator().next();
                     DataSnapshot tripSnapshot = snapshot.child(firstKey);
                     Trip retrievedTrip = tripSnapshot.getValue(Trip.class);
-                    Trip expectedTrip = new Trip(TRIP_NAME, DateFormat.getDateInstance().format(TRIP_START_DATE.getTime()), DateFormat.getDateInstance().format(TRIP_END_DATE.getTime()), TRIP_DESCRIPTION, TRIP_DESTINATION);
+                    Trip expectedTrip = new Trip(null,
+                            TRIP_NAME,
+                            DateFormat.getDateInstance().format(TRIP_START_DATE.getTime()),
+                            DateFormat.getDateInstance().format(TRIP_END_DATE.getTime()),
+                            TRIP_DESCRIPTION,
+                            TRIP_DESTINATION,
+                            firstKey,
+                            null,
+                            Objects.requireNonNull(authentication.getUid()));
                     Assert.assertEquals(expectedTrip, retrievedTrip);
                 }
             }

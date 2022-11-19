@@ -210,7 +210,7 @@ public class TripsFragment extends Fragment {
                         requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
                     }
                 } else {
-                    Snackbar.make(requireView(), R.string.no_trips, Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(requireActivity().findViewById(R.id.activity_layout), R.string.no_trips, Snackbar.LENGTH_SHORT).show();
                 }
             }
 

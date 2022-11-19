@@ -1,52 +1,63 @@
 package it.units.simandroid.progetto;
 
+import androidx.annotation.NonNull;
+
 import java.util.Objects;
 
 public class User {
 
+    @NonNull
     private String email;
+    @NonNull
     private String name;
+    @NonNull
     private String surname;
+    @NonNull
     private String id;
 
-    public User(String email, String name, String surname, String id) {
+    public User(@NonNull String email, @NonNull String name, @NonNull String surname, @NonNull String id) {
         this.email = email;
         this.name = name;
         this.surname = surname;
         this.id = id;
     }
 
+    // needed for realtime Firebase database
     public User() {}
 
+    @NonNull
     public String getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
+    public void setEmail(@NonNull String email) {
         this.email = email;
     }
 
+    @NonNull
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(@NonNull String name) {
         this.name = name;
     }
 
+    @NonNull
     public String getSurname() {
         return surname;
     }
 
-    public void setSurname(String surname) {
+    public void setSurname(@NonNull String surname) {
         this.surname = surname;
     }
 
+    @NonNull
     public String getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(@NonNull String id) {
         this.id = id;
     }
 
@@ -55,11 +66,11 @@ public class User {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return Objects.equals(email, user.email) && Objects.equals(name, user.name) && Objects.equals(surname, user.surname) && Objects.equals(id, user.id);
+        return id.equals(user.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(email, name, surname, id);
+        return Objects.hash(id);
     }
 }
