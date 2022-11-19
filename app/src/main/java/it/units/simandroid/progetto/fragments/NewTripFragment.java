@@ -39,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
 import it.units.simandroid.progetto.R;
@@ -134,7 +135,6 @@ public class NewTripFragment extends Fragment {
             uploadNewTripData();
             NavDirections action = NewTripFragmentDirections.actionNewTripFragmentToTripsFragment();
             NavHostFragment.findNavController(this).navigate(action);
-            // Navigation.findNavController(fragmentView).navigate(action);
             Snackbar.make(requireActivity().findViewById(R.id.activity_layout), R.string.trip_saved, Snackbar.LENGTH_LONG).show();
         });
 
@@ -160,9 +160,9 @@ public class NewTripFragment extends Fragment {
                 newTripEndDate,
                 newTripDescription,
                 newTripDestination,
-                tripDbReference.getKey(),
+                Objects.requireNonNull(tripDbReference.getKey()),
                 Collections.emptyList(),
-                authentication.getUid());
+                Objects.requireNonNull(authentication.getUid()));
         tripDbReference.setValue(newTrip)
                 .addOnSuccessListener(task -> Log.d(NEW_TRIP_DB_TAG, "Added new trip data to realtime DB"))
                 .addOnFailureListener(exception -> Log.e(NEW_TRIP_DB_TAG, "Failed to add new trip data: " + exception.getMessage()));

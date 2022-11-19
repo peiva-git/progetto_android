@@ -5,6 +5,7 @@ import static it.units.simandroid.progetto.RealtimeDatabase.GET_DB_TRIPS;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -63,10 +65,11 @@ import it.units.simandroid.progetto.fragments.directions.TripsFragmentDirections
 public class TripsFragment extends Fragment {
 
     public static final String PERMISSION_ASKED = "PERMISSION_ASKED";
+    public static final String PERMISSION_DIALOG_SHOWN = "PERMISSION_DIALOG_SHOWN";
     private FirebaseAuth authentication;
     private FirebaseStorage storage;
     private FirebaseDatabase database;
-    private List<Trip> trips;
+    private List<Trip> displayedTrips;
     private RecyclerView tripsRecyclerView;
     private FloatingActionButton newTripButton;
     private TripAdapter tripAdapter;
@@ -95,7 +98,7 @@ public class TripsFragment extends Fragment {
     }
 
     private void getAndDisplayTripsWithoutPermission() {
-        trips = new ArrayList<>();
+        displayedTrips = new ArrayList<>();
         AtomicInteger progress = new AtomicInteger(0);
         for (Trip retrievedTrip : retrievedTrips) {
             List<FileDownloadTask> downloadTasks = new ArrayList<>();
@@ -198,14 +201,21 @@ public class TripsFragment extends Fragment {
                     if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                         getAndDisplayTrips();
                     } else if (shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                        new MaterialAlertDialogBuilder(requireContext())
-                                .setTitle(R.string.educational_permission_request_title)
-                                .setMessage(R.string.educational_permission_request_content)
-                                .setPositiveButton(R.string.got_it, (dialogInterface, i) -> {
-                                    dialogInterface.dismiss();
-                                    getAndDisplayTripsWithoutPermission();
-                                })
-                                .show();
+                        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(requireContext());
+                        boolean hasPermissionDialogBeenShown = preferences.getBoolean(PERMISSION_DIALOG_SHOWN, false);
+                        if (!hasPermissionDialogBeenShown) {
+                            new MaterialAlertDialogBuilder(requireContext())
+                                    .setTitle(R.string.educational_permission_request_title)
+                                    .setMessage(R.string.educational_permission_request_content)
+                                    .setPositiveButton(R.string.got_it, (dialogInterface, i) -> {
+                                        dialogInterface.dismiss();
+                                        getAndDisplayTripsWithoutPermission();
+                                    })
+                                    .show();
+                            SharedPreferences.Editor editor = preferences.edit();
+                            editor.putBoolean(PERMISSION_DIALOG_SHOWN, true);
+                            editor.apply();
+                        }
                     } else {
                         requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
                     }
@@ -223,7 +233,7 @@ public class TripsFragment extends Fragment {
     }
 
     private void getAndDisplayTrips() {
-        trips = new ArrayList<>();
+        displayedTrips = new ArrayList<>();
         for (Trip retrievedTrip : retrievedTrips) {
             AtomicInteger progress = new AtomicInteger(0);
             List<FileDownloadTask> downloadTasks = new ArrayList<>();
@@ -260,7 +270,7 @@ public class TripsFragment extends Fragment {
                     addTripIfCurrentUserOwner(retrievedTrip);
                 }
             }
-            tripAdapter.updateTrips(trips);
+            tripAdapter.updateTrips(displayedTrips);
         } else {
             Tasks.whenAllComplete(downloadTasks).addOnCompleteListener(task -> {
                 boolean isSharedTripsModeOn = TripsFragmentArgs.fromBundle(requireArguments()).isSharedTripsModeActive();
@@ -277,7 +287,7 @@ public class TripsFragment extends Fragment {
                         addTripIfCurrentUserOwner(retrievedTrip);
                     }
                 }
-                tripAdapter.updateTrips(trips);
+                tripAdapter.updateTrips(displayedTrips);
             });
         }
     }
@@ -288,14 +298,14 @@ public class TripsFragment extends Fragment {
             return;
         }
         if (trip.getAuthorizedUsers().contains(authentication.getUid())) {
-            trips.add(trip);
+            displayedTrips.add(trip);
             Log.d(GET_DB_TRIPS, "Trip with id " + trip.getId() + " added to list");
         }
     }
 
     private void addTripIfCurrentUserOwner(@NonNull Trip trip) {
         if (trip.getOwnerId().equals(authentication.getUid())) {
-            trips.add(trip);
+            displayedTrips.add(trip);
         }
     }
 

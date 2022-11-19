@@ -31,7 +31,7 @@ import it.units.simandroid.progetto.RealtimeDatabase;
 import it.units.simandroid.progetto.Trip;
 
 @LargeTest
-public class NewTripFragmentTest {
+public class NewTripFragmentAndDatabaseValuesTest {
 
     public static final String TRIP_NAME = "My trip";
     public static final String TRIP_DESTINATION = "Trieste";

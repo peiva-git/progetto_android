@@ -3,6 +3,7 @@ package it.units.simandroid.progetto;
 import static it.units.simandroid.progetto.RealtimeDatabase.DB_URL;
 import static it.units.simandroid.progetto.fragments.SettingsFragment.USER_NAME_KEY;
 import static it.units.simandroid.progetto.fragments.SettingsFragment.USER_SURNAME_KEY;
+import static it.units.simandroid.progetto.fragments.TripsFragment.PERMISSION_DIALOG_SHOWN;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -192,5 +193,14 @@ public class MainActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         return NavigationUI.navigateUp(navController, appBarConfiguration) || super.onSupportNavigateUp();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean(PERMISSION_DIALOG_SHOWN, false);
+        editor.apply();
     }
 }
