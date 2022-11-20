@@ -23,20 +23,19 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.navigationrail.NavigationRailView;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicMarkableReference;
 
 import it.units.simandroid.progetto.fragments.directions.TripsFragmentArgs;
 import it.units.simandroid.progetto.fragments.directions.TripsFragmentDirections;
@@ -51,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
     private LinearProgressIndicator progressIndicator;
     private FirebaseAuth authentication;
     private FirebaseDatabase database;
+    private NavigationRailView navigationRailView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,25 +63,44 @@ public class MainActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar);
         navigationDrawer = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.navigation_view);
+        navigationRailView = findViewById(R.id.navigation_rail);
         progressIndicator = findViewById(R.id.progress_indicator);
         setSupportActionBar(toolbar);
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
         NavController navController = navHostFragment.getNavController();
-        appBarConfiguration = new AppBarConfiguration
-                .Builder(navController.getGraph())
-                .setOpenableLayout(navigationDrawer)
-                .build();
+        if (navigationDrawer != null) {
+            appBarConfiguration = new AppBarConfiguration
+                    .Builder(navController.getGraph())
+                    .setOpenableLayout(navigationDrawer)
+                    .build();
+        } else {
+            appBarConfiguration = new AppBarConfiguration
+                    .Builder(navController.getGraph())
+                    .build();
+        }
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-        NavigationUI.setupWithNavController(navigationView, navController);
+        if (navigationView != null) {
+            NavigationUI.setupWithNavController(navigationView, navController);
+        }
 
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
             // check destination id and handle accordingly
             if (destination.getId() == R.id.loginFragment || destination.getId() == R.id.selectUsersFragment) {
                 toolbar.setVisibility(View.GONE);
-                navigationView.setVisibility(View.GONE);
+                if (navigationView != null) {
+                    navigationView.setVisibility(View.GONE);
+                }
+                if (navigationRailView != null) {
+                    navigationRailView.setVisibility(View.GONE);
+                }
             } else if (destination.getId() == R.id.tripsFragment) {
                 toolbar.setVisibility(View.VISIBLE);
-                navigationView.setVisibility(View.VISIBLE);
+                if (navigationView != null) {
+                    navigationView.setVisibility(View.VISIBLE);
+                }
+                if (navigationRailView != null) {
+                    navigationRailView.setVisibility(View.VISIBLE);
+                }
                 if (arguments != null) {
                     if (TripsFragmentArgs.fromBundle(arguments).isFilteringActive()) {
                         toolbar.setTitle(R.string.trips_fragment_favorites_label);
@@ -91,64 +110,82 @@ public class MainActivity extends AppCompatActivity {
                         toolbar.setTitle(R.string.fragment_trips_label);
                     }
                 }
+            } else if (destination.getId() == R.id.settings
+                    || destination.getId() == R.id.newTripFragment
+                    || destination.getId() == R.id.tripContentFragment) {
+                if (navigationRailView != null) {
+                    navigationRailView.setVisibility(View.GONE);
+                }
             } else {
                 toolbar.setVisibility(View.VISIBLE);
-                navigationView.setVisibility(View.VISIBLE);
-            }
-        });
-
-        navigationView.setNavigationItemSelectedListener(item -> {
-            if (item.getItemId() == R.id.favorites) {
-                TripsFragmentDirections.FilterTripsAction action = TripsFragmentDirections.actionFilterByFavoriteTrips();
-                action.setFilteringActive(true);
-                Log.d(FAVORITE_TRIPS_TAG, action.isFilteringActive() ? "Filtering active" : "Filtering inactive");
-                navigationDrawer.close();
-                navController.navigate(action);
-                return true;
-            } else if (item.getItemId() == R.id.my_trips) {
-                TripsFragmentDirections.FilterTripsAction action = TripsFragmentDirections.actionFilterByFavoriteTrips();
-                action.setFilteringActive(false);
-                Log.d(FAVORITE_TRIPS_TAG, action.isFilteringActive() ? "Filtering active" : "Filtering inactive");
-                navigationDrawer.close();
-                navController.navigate(action);
-                return true;
-            } else if (item.getItemId() == R.id.shared_trips) {
-                TripsFragmentDirections.FilterTripsAction action = TripsFragmentDirections.actionFilterByFavoriteTrips();
-                action.setSharedTripsModeActive(true);
-                Log.d("SHARED_TRIPS", "Filtering by shared trips");
-                navigationDrawer.close();
-                navController.navigate(action);
-                return true;
-            } else if (item.getItemId() == R.id.settings) {
-                navigationDrawer.close();
-                navController.navigate(R.id.action_global_settings);
-                return true;
-            }
-            return false;
-        });
-
-        database.getReference("users").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (authentication.getUid() != null) {
-                    String userName = snapshot
-                            .child(authentication.getUid())
-                            .child("name")
-                            .getValue(String.class);
-                    String userSurname = snapshot
-                            .child(authentication.getUid())
-                            .child("surname")
-                            .getValue(String.class);
-
-
+                if (navigationView != null) {
+                    navigationView.setVisibility(View.VISIBLE);
+                }
+                if (navigationRailView != null) {
+                    navigationRailView.setVisibility(View.VISIBLE);
                 }
             }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
         });
+
+        if (navigationView != null) {
+            navigationView.setNavigationItemSelectedListener(item -> {
+                if (item.getItemId() == R.id.favorites) {
+                    TripsFragmentDirections.FilterTripsAction action = TripsFragmentDirections.actionFilterByFavoriteTrips();
+                    action.setFilteringActive(true);
+                    Log.d(FAVORITE_TRIPS_TAG, action.isFilteringActive() ? "Filtering active" : "Filtering inactive");
+                    navigationDrawer.close();
+                    navController.navigate(action);
+                    return true;
+                } else if (item.getItemId() == R.id.my_trips) {
+                    TripsFragmentDirections.FilterTripsAction action = TripsFragmentDirections.actionFilterByFavoriteTrips();
+                    action.setFilteringActive(false);
+                    Log.d(FAVORITE_TRIPS_TAG, action.isFilteringActive() ? "Filtering active" : "Filtering inactive");
+                    navigationDrawer.close();
+                    navController.navigate(action);
+                    return true;
+                } else if (item.getItemId() == R.id.shared_trips) {
+                    TripsFragmentDirections.FilterTripsAction action = TripsFragmentDirections.actionFilterByFavoriteTrips();
+                    action.setSharedTripsModeActive(true);
+                    Log.d("SHARED_TRIPS", "Filtering by shared trips");
+                    navigationDrawer.close();
+                    navController.navigate(action);
+                    return true;
+                } else if (item.getItemId() == R.id.settings) {
+                    navigationDrawer.close();
+                    navController.navigate(R.id.action_global_settings);
+                    return true;
+                }
+                return false;
+            });
+        }
+
+        if (navigationRailView != null) {
+            navigationRailView.setOnItemSelectedListener(item -> {
+                if (item.getItemId() == R.id.favorites) {
+                    TripsFragmentDirections.FilterTripsAction action = TripsFragmentDirections.actionFilterByFavoriteTrips();
+                    action.setFilteringActive(true);
+                    Log.d(FAVORITE_TRIPS_TAG, action.isFilteringActive() ? "Filtering active" : "Filtering inactive");
+                    navController.navigate(action);
+                    return true;
+                } else if (item.getItemId() == R.id.my_trips) {
+                    TripsFragmentDirections.FilterTripsAction action = TripsFragmentDirections.actionFilterByFavoriteTrips();
+                    action.setFilteringActive(false);
+                    Log.d(FAVORITE_TRIPS_TAG, action.isFilteringActive() ? "Filtering active" : "Filtering inactive");
+                    navController.navigate(action);
+                    return true;
+                } else if (item.getItemId() == R.id.shared_trips) {
+                    TripsFragmentDirections.FilterTripsAction action = TripsFragmentDirections.actionFilterByFavoriteTrips();
+                    action.setSharedTripsModeActive(true);
+                    Log.d("SHARED_TRIPS", "Filtering by shared trips");
+                    navController.navigate(action);
+                    return true;
+                }
+                return false;
+            });
+            navigationRailView.getHeaderView().setOnClickListener(
+                    view -> navController.navigate(TripsFragmentDirections.actionTripsFragmentToNewTripFragment()));
+        }
+
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         preferences.registerOnSharedPreferenceChangeListener((sharedPreferences, key) -> {
@@ -173,6 +210,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.top_app_bar, menu);
+        if (navigationRailView != null) {
+            MenuItem settingsItem = menu.add(Menu.NONE, R.id.settings, Menu.NONE, R.string.settings);
+            settingsItem.setIcon(R.drawable.ic_baseline_settings_24);
+            settingsItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        }
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -184,6 +226,8 @@ public class MainActivity extends AppCompatActivity {
         if (item.getItemId() == R.id.loginFragment) {
             FirebaseAuth authentication = FirebaseAuth.getInstance();
             authentication.signOut();
+        } else if (item.getTitle().equals(getString(R.string.settings))) {
+            navController.navigate(R.id.action_global_settings);
         }
         return NavigationUI.onNavDestinationSelected(item, navController)
                 || super.onOptionsItemSelected(item);

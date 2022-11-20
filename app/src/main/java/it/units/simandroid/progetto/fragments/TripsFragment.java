@@ -35,6 +35,7 @@ import android.widget.CompoundButton;
 import com.google.android.gms.tasks.Tasks;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigationrail.NavigationRailView;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
@@ -160,6 +161,11 @@ public class TripsFragment extends Fragment {
         newTripButton = fragmentView.findViewById(R.id.new_trip_button);
         progressIndicator = requireActivity().findViewById(R.id.progress_indicator);
 
+        boolean isSizeAtLeastLarge = getResources().getConfiguration().isLayoutSizeAtLeast(Configuration.SCREENLAYOUT_SIZE_LARGE);
+        if (isSizeAtLeastLarge) {
+            newTripButton.setVisibility(View.GONE);
+        }
+
         tripAdapter = new TripAdapter(getContext(), Collections.emptyList(), new OnTripClickListener() {
             @Override
             public void onTripClick(Trip trip) {
@@ -191,10 +197,12 @@ public class TripsFragment extends Fragment {
         }
         tripsRecyclerView.setAdapter(tripAdapter);
 
-        newTripButton.setOnClickListener(view -> {
-            NavController navController = Navigation.findNavController(view);
-            navController.navigate(TripsFragmentDirections.actionTripsFragmentToNewTripFragment());
-        });
+        if (newTripButton != null) {
+            newTripButton.setOnClickListener(view -> {
+                NavController navController = Navigation.findNavController(view);
+                navController.navigate(TripsFragmentDirections.actionTripsFragmentToNewTripFragment());
+            });
+        }
 
         database.getReference("trips").addValueEventListener(new ValueEventListener() {
             @Override
