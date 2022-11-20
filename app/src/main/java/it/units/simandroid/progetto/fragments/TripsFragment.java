@@ -32,6 +32,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 
+import com.google.android.flexbox.FlexDirection;
+import com.google.android.flexbox.FlexboxLayoutManager;
+import com.google.android.flexbox.JustifyContent;
 import com.google.android.gms.tasks.Tasks;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -51,11 +54,13 @@ import com.google.firebase.storage.FirebaseStorage;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import it.units.simandroid.progetto.R;
@@ -188,12 +193,19 @@ public class TripsFragment extends Fragment {
         tripAdapter.setSharedModeOn(TripsFragmentArgs.fromBundle(requireArguments()).isSharedTripsModeActive());
 
         int orientation = getResources().getConfiguration().orientation;
-        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
-            tripsRecyclerView.setLayoutManager(linearLayoutManager);
+        if (isSizeAtLeastLarge) {
+            FlexboxLayoutManager layoutManager = new FlexboxLayoutManager(getContext());
+            layoutManager.setFlexDirection(FlexDirection.ROW);
+            layoutManager.setJustifyContent(JustifyContent.FLEX_END);
+            tripsRecyclerView.setLayoutManager(layoutManager);
         } else {
-            GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
-            tripsRecyclerView.setLayoutManager(gridLayoutManager);
+            if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+                tripsRecyclerView.setLayoutManager(linearLayoutManager);
+            } else {
+                GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
+                tripsRecyclerView.setLayoutManager(gridLayoutManager);
+            }
         }
         tripsRecyclerView.setAdapter(tripAdapter);
 
@@ -272,7 +284,7 @@ public class TripsFragment extends Fragment {
         }
     }
 
-    private void setupUpdateTripDataOnTasksFinishedListener(@NonNull List<FileDownloadTask> downloadTasks,@NonNull Trip retrievedTrip) {
+    private void setupUpdateTripDataOnTasksFinishedListener(@NonNull List<FileDownloadTask> downloadTasks, @NonNull Trip retrievedTrip) {
         if (downloadTasks.isEmpty()) {
             boolean isSharedTripsModeOn = TripsFragmentArgs.fromBundle(requireArguments()).isSharedTripsModeActive();
             boolean isFavoritesFilteringEnabled = TripsFragmentArgs.fromBundle(requireArguments()).isFilteringActive();

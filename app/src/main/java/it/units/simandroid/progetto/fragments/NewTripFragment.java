@@ -134,8 +134,7 @@ public class NewTripFragment extends Fragment {
 
         saveTripButton.setOnClickListener(view -> {
             uploadNewTripData();
-            NavDirections action = NewTripFragmentDirections.actionNewTripFragmentToTripsFragment();
-            NavHostFragment.findNavController(this).navigate(action);
+            NavHostFragment.findNavController(this).navigateUp();
             Snackbar.make(requireActivity().findViewById(R.id.activity_layout), R.string.trip_saved, Snackbar.LENGTH_LONG).show();
         });
 
