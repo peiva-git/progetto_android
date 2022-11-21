@@ -2,4 +2,5 @@
 <resources>
     <dimen name="login_form_margin">10dp</dimen>
     <dimen name="registrationFormMargin">10dp</dimen>
+    <dimen name="trip_card_width">match_parent</dimen>
 </resources>

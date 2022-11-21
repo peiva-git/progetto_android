@@ -196,7 +196,7 @@ public class TripsFragment extends Fragment {
         if (isSizeAtLeastLarge) {
             FlexboxLayoutManager layoutManager = new FlexboxLayoutManager(getContext());
             layoutManager.setFlexDirection(FlexDirection.ROW);
-            layoutManager.setJustifyContent(JustifyContent.FLEX_END);
+            layoutManager.setJustifyContent(JustifyContent.FLEX_START);
             tripsRecyclerView.setLayoutManager(layoutManager);
         } else {
             if (orientation == Configuration.ORIENTATION_PORTRAIT) {
