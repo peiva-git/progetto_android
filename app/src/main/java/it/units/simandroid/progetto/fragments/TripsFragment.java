@@ -191,22 +191,10 @@ public class TripsFragment extends Fragment {
             }
         });
         tripAdapter.setSharedModeOn(TripsFragmentArgs.fromBundle(requireArguments()).isSharedTripsModeActive());
-
-        int orientation = getResources().getConfiguration().orientation;
-        if (isSizeAtLeastLarge) {
-            FlexboxLayoutManager layoutManager = new FlexboxLayoutManager(getContext());
-            layoutManager.setFlexDirection(FlexDirection.ROW);
-            layoutManager.setJustifyContent(JustifyContent.FLEX_START);
-            tripsRecyclerView.setLayoutManager(layoutManager);
-        } else {
-            if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
-                tripsRecyclerView.setLayoutManager(linearLayoutManager);
-            } else {
-                GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
-                tripsRecyclerView.setLayoutManager(gridLayoutManager);
-            }
-        }
+        FlexboxLayoutManager layoutManager = new FlexboxLayoutManager(getContext());
+        layoutManager.setFlexDirection(FlexDirection.ROW);
+        layoutManager.setJustifyContent(JustifyContent.FLEX_START);
+        tripsRecyclerView.setLayoutManager(layoutManager);
         tripsRecyclerView.setAdapter(tripAdapter);
 
         if (newTripButton != null) {
