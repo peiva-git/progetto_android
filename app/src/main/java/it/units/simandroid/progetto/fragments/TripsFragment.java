@@ -1,8 +1,5 @@
 package it.units.simandroid.progetto.fragments;
 
-import static it.units.simandroid.progetto.RealtimeDatabase.DB_URL;
-import static it.units.simandroid.progetto.RealtimeDatabase.GET_DB_TRIPS;
-
 import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -13,17 +10,14 @@ import android.os.Bundle;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
-import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.core.content.ContextCompat;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.preference.PreferenceManager;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
@@ -38,33 +32,23 @@ import com.google.android.flexbox.JustifyContent;
 import com.google.android.gms.tasks.Tasks;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.navigationrail.NavigationRailView;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.GenericTypeIndicator;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FileDownloadTask;
-import com.google.firebase.storage.FirebaseStorage;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Random;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import it.units.simandroid.progetto.R;
 import it.units.simandroid.progetto.Trip;
+import it.units.simandroid.progetto.TripsViewModel;
 import it.units.simandroid.progetto.adapters.OnTripClickListener;
 import it.units.simandroid.progetto.adapters.TripAdapter;
 import it.units.simandroid.progetto.fragments.directions.TripsFragmentArgs;
@@ -75,16 +59,15 @@ public class TripsFragment extends Fragment {
 
     public static final String PERMISSION_ASKED = "PERMISSION_ASKED";
     public static final String PERMISSION_DIALOG_SHOWN = "PERMISSION_DIALOG_SHOWN";
+    public static final String DATA_UPDATE_TAG = "TRIP_DATA_UPDATE";
+    public static final String GET_IMAGE_TAG = "GET_IMAGE";
     private FirebaseAuth authentication;
-    private FirebaseStorage storage;
-    private FirebaseDatabase database;
-    private List<Trip> displayedTrips;
     private RecyclerView tripsRecyclerView;
     private FloatingActionButton newTripButton;
     private TripAdapter tripAdapter;
     private ActivityResultLauncher<String> requestPermissionLauncher;
-    private List<Trip> retrievedTrips;
     private LinearProgressIndicator progressIndicator;
+    private TripsViewModel viewModel;
 
     public TripsFragment() {
         // Required empty public constructor
@@ -94,73 +77,28 @@ public class TripsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         authentication = FirebaseAuth.getInstance();
-        storage = FirebaseStorage.getInstance();
-        database = FirebaseDatabase.getInstance(DB_URL);
+        viewModel = new ViewModelProvider(requireActivity()).get(TripsViewModel.class);
 
         requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
-            if (isGranted) {
-                getAndDisplayTrips();
+            List<Trip> trips;
+            if (TripsFragmentArgs.fromBundle(TripsFragment.this.requireArguments()).isSharedTripsModeActive()) {
+                trips = viewModel.getTripsSharedWithUser(authentication.getUid()).getValue();
+            } else if (TripsFragmentArgs.fromBundle(TripsFragment.this.requireArguments()).isFilteringActive()) {
+                trips = viewModel.getFavoriteTrips(authentication.getUid()).getValue();
             } else {
-                getAndDisplayTripsWithoutPermission();
+                trips = viewModel.getTripsByOwner(authentication.getUid()).getValue();
+            }
+            if (isGranted) {
+                getTripsImagesWithPermissionAndUpdateAdapter(trips);
+            } else {
+                getTripsImagesWithoutPermissionAndUpdateAdapter(trips);
             }
         });
-    }
-
-    private void getAndDisplayTripsWithoutPermission() {
-        displayedTrips = new ArrayList<>();
-        AtomicInteger progress = new AtomicInteger(0);
-        for (Trip retrievedTrip : retrievedTrips) {
-            List<FileDownloadTask> downloadTasks = new ArrayList<>();
-            if (retrievedTrip.getImagesUris() != null) {
-                for (String imageUri : retrievedTrip.getImagesUris()) {
-                    updateTripImageFromLocalStorageOrRemotely(retrievedTrip.getId(), retrievedTrip.getOwnerId(), retrievedTrip.getImagesUris(), imageUri, progress, downloadTasks);
-                }
-            } else {
-                retrievedTrip.setImagesUris(Collections.emptyList());
-            }
-            setupUpdateTripDataOnTasksFinishedListener(downloadTasks, retrievedTrip);
-        }
-    }
-
-
-    private void updateTripImageFromLocalStorageOrRemotely(@NonNull String tripId, @NonNull String tripOwnerId, @NonNull List<String> tripImageUris, @NonNull String imageUri, @NonNull AtomicInteger downloadProgress, @NonNull List<FileDownloadTask> downloadTasks) {
-        File tripDirectory = requireContext().getDir(tripId, Context.MODE_PRIVATE);
-        File localImage = new File(tripDirectory, imageUri.replace("/", "$"));
-        if (localImage.exists()) {
-            int index = tripImageUris.indexOf(imageUri);
-            tripImageUris.set(index, localImage.toURI().toString());
-        } else {
-            FileDownloadTask downloadTask = storage.getReference("users").child(tripOwnerId)
-                    .child(tripId)
-                    .child(imageUri.replace("/", "$"))
-                    .getFile(localImage);
-            downloadTask.addOnSuccessListener(taskSnapshot -> {
-                        downloadProgress.set(downloadProgress.get() + (100 / getFinalProgressValue()));
-                        progressIndicator.setProgressCompat(downloadProgress.get(), true);
-
-                        int index = tripImageUris.indexOf(imageUri);
-                        tripImageUris.set(index, localImage.toURI().toString());
-                    })
-                    .addOnFailureListener(exception -> {
-                        Log.d("GET_TRIP_IMAGE", "Failed to retrieve trip image " + imageUri + "; " + exception.getMessage());
-                        tripImageUris.remove(imageUri);
-                    });
-            downloadTasks.add(downloadTask);
-        }
-    }
-
-    private int getFinalProgressValue() {
-        int finalProgressValue = 0;
-        for (Trip retrievedTrip : retrievedTrips) {
-            finalProgressValue += retrievedTrip.getImagesUris().size();
-        }
-        return finalProgressValue;
     }
 
     @Override
     public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        super.onCreateView(inflater, container, savedInstanceState);
         View fragmentView = inflater.inflate(R.layout.fragment_trips, container, false);
         tripsRecyclerView = fragmentView.findViewById(R.id.trips_recycler_view);
         newTripButton = fragmentView.findViewById(R.id.new_trip_button);
@@ -182,12 +120,7 @@ public class TripsFragment extends Fragment {
 
             @Override
             public void onTripFavoriteStateChanged(Trip trip, CompoundButton compoundButton, boolean isChecked) {
-                trip.setFavorite(isChecked);
-                FirebaseDatabase.getInstance(DB_URL)
-                        .getReference("trips")
-                        .child(trip.getId())
-                        .child("favorite")
-                        .setValue(isChecked);
+                viewModel.setTripFavorite(trip.getId(), isChecked);
             }
         });
         tripAdapter.setSharedModeOn(TripsFragmentArgs.fromBundle(requireArguments()).isSharedTripsModeActive());
@@ -204,127 +137,108 @@ public class TripsFragment extends Fragment {
             });
         }
 
-        database.getReference("trips").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                GenericTypeIndicator<Map<String, Object>> type = new GenericTypeIndicator<Map<String, Object>>() {
-                };
-                Map<String, Object> tripsById = snapshot.getValue(type);
-                retrievedTrips = new ArrayList<>();
-                if (tripsById != null) {
-                    for (String key : tripsById.keySet()) {
-                        DataSnapshot tripSnapshot = snapshot.child(key);
-                        retrievedTrips.add(tripSnapshot.getValue(Trip.class));
-                    }
-                    if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                        getAndDisplayTrips();
-                    } else if (shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(requireContext());
-                        boolean hasPermissionDialogBeenShown = preferences.getBoolean(PERMISSION_DIALOG_SHOWN, false);
-                        if (!hasPermissionDialogBeenShown) {
-                            new MaterialAlertDialogBuilder(requireContext())
-                                    .setTitle(R.string.educational_permission_request_title)
-                                    .setMessage(R.string.educational_permission_request_content)
-                                    .setPositiveButton(R.string.got_it, (dialogInterface, i) -> {
-                                        dialogInterface.dismiss();
-                                        getAndDisplayTripsWithoutPermission();
-                                    })
-                                    .show();
-                            SharedPreferences.Editor editor = preferences.edit();
-                            editor.putBoolean(PERMISSION_DIALOG_SHOWN, true);
-                            editor.apply();
-                        }
-                    } else {
-                        requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
-                    }
-                } else {
-                    Snackbar.make(requireActivity().findViewById(R.id.activity_layout), R.string.no_trips, Snackbar.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.w("GET_TRIPS", "Error downloading trip data: " + error.getMessage());
-            }
-        });
+        if (TripsFragmentArgs.fromBundle(requireArguments()).isSharedTripsModeActive()) {
+            viewModel.getTripsSharedWithUser(authentication.getUid()).observe(getViewLifecycleOwner(), trips -> {
+                Log.d(DATA_UPDATE_TAG, "Shared trips mode, received trip data update");
+                updateUI(trips);
+            });
+        } else if (TripsFragmentArgs.fromBundle(requireArguments()).isFilteringActive()) {
+            viewModel.getFavoriteTrips(authentication.getUid()).observe(getViewLifecycleOwner(), trips -> {
+                Log.d(DATA_UPDATE_TAG, "Favorite trips mode, received trip data update");
+                updateUI(trips);
+            });
+        } else {
+            viewModel.getTripsByOwner(authentication.getUid()).observe(getViewLifecycleOwner(), trips -> {
+                Log.d(DATA_UPDATE_TAG, "My trips mode, received trip data update");
+                updateUI(trips);
+            });
+        }
         return fragmentView;
     }
 
-    private void getAndDisplayTrips() {
-        displayedTrips = new ArrayList<>();
-        for (Trip retrievedTrip : retrievedTrips) {
-            AtomicInteger progress = new AtomicInteger(0);
-            List<FileDownloadTask> downloadTasks = new ArrayList<>();
-            if (retrievedTrip.getImagesUris() != null) {
-                for (String imageUri : retrievedTrip.getImagesUris()) {
-                    DocumentFile image = DocumentFile.fromSingleUri(requireContext(), Uri.parse(imageUri));
-                    // doesn't return null after Android KitKat, which is above minSdk version
-                    // need READ_EXTERNAL_STORAGE permissions for the exists() call
-                    if (!Objects.requireNonNull(image).exists()) {
-                        updateTripImageFromLocalStorageOrRemotely(retrievedTrip.getId(), retrievedTrip.getOwnerId(), retrievedTrip.getImagesUris(), imageUri, progress, downloadTasks);
-                    }
-                }
-            } else {
-                retrievedTrip.setImagesUris(Collections.emptyList());
-            }
+    private void updateUI(List<Trip> trips) {
+        if (ContextCompat.checkSelfPermission(TripsFragment.this.requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED) {
+            getTripsImagesWithPermissionAndUpdateAdapter(trips);
 
-            setupUpdateTripDataOnTasksFinishedListener(downloadTasks, retrievedTrip);
-        }
-    }
-
-    private void setupUpdateTripDataOnTasksFinishedListener(@NonNull List<FileDownloadTask> downloadTasks, @NonNull Trip retrievedTrip) {
-        if (downloadTasks.isEmpty()) {
-            boolean isSharedTripsModeOn = TripsFragmentArgs.fromBundle(requireArguments()).isSharedTripsModeActive();
-            boolean isFavoritesFilteringEnabled = TripsFragmentArgs.fromBundle(requireArguments()).isFilteringActive();
-            boolean isTripFavorite = retrievedTrip.isFavorite();
-            if (isSharedTripsModeOn) {
-                addTripIfUserAuthorized(retrievedTrip);
-            } else {
-                if (isFavoritesFilteringEnabled) {
-                    if (isTripFavorite) {
-                        addTripIfCurrentUserOwner(retrievedTrip);
-                    }
-                } else {
-                    addTripIfCurrentUserOwner(retrievedTrip);
-                }
+        } else if (shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            SharedPreferences  preferences = PreferenceManager.getDefaultSharedPreferences(TripsFragment.this.requireContext());
+            boolean hasPermissionDialogBeenShown = preferences.getBoolean(PERMISSION_DIALOG_SHOWN, false);
+            if (!hasPermissionDialogBeenShown) {
+                new MaterialAlertDialogBuilder(requireContext())
+                        .setTitle(R.string.educational_permission_request_title)
+                        .setMessage(R.string.educational_permission_request_content)
+                        .setPositiveButton(R.string.got_it, (dialogInterface, i) -> {
+                            dialogInterface.dismiss();
+                            getTripsImagesWithoutPermissionAndUpdateAdapter(trips);
+                        })
+                        .show();
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putBoolean(PERMISSION_DIALOG_SHOWN, true);
+                editor.apply();
             }
-            tripAdapter.updateTrips(displayedTrips);
         } else {
-            Tasks.whenAllComplete(downloadTasks).addOnCompleteListener(task -> {
-                boolean isSharedTripsModeOn = TripsFragmentArgs.fromBundle(requireArguments()).isSharedTripsModeActive();
-                boolean isFavoritesFilteringEnabled = TripsFragmentArgs.fromBundle(requireArguments()).isFilteringActive();
-                boolean isTripFavorite = retrievedTrip.isFavorite();
-                if (isSharedTripsModeOn) {
-                    addTripIfUserAuthorized(retrievedTrip);
-                } else {
-                    if (isFavoritesFilteringEnabled) {
-                        if (isTripFavorite) {
-                            addTripIfCurrentUserOwner(retrievedTrip);
-                        }
+            requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
+        }
+    }
+
+    private void getTripsImagesWithoutPermissionAndUpdateAdapter(List<Trip> trips) {
+        List<FileDownloadTask> imagesDownloadTasks = new ArrayList<>();
+        for (Trip trip : trips) {
+            if (trip.getImagesUris() != null) {
+                for (Map.Entry<String, String> imageUriById : trip.getImagesUris().entrySet()) {
+                    File tripDirectory = TripsFragment.this.requireContext().getDir(trip.getId(), Context.MODE_PRIVATE);
+                    File storedImage = new File(tripDirectory, imageUriById.getKey());
+                    if (storedImage.exists()) {
+                        trip.getImagesUris().put(imageUriById.getKey(), storedImage.toURI().toString());
                     } else {
-                        addTripIfCurrentUserOwner(retrievedTrip);
+                        FileDownloadTask task = viewModel.getTripImage(trip, imageUriById.getKey(), storedImage);
+                        task.addOnCompleteListener(getImage -> {
+                            if (getImage.isSuccessful()) {
+                                trip.getImagesUris().put(imageUriById.getKey(), storedImage.toURI().toString());
+                                Log.d(GET_IMAGE_TAG, "Downloaded image " + imageUriById.getKey() + " for trip " + trip.getId());
+                            } else {
+                                trip.getImagesUris().remove(imageUriById.getKey());
+                                Log.d(GET_IMAGE_TAG, "Error downloading image " + imageUriById.getKey() + " for trip " + trip.getId() + ": " + getImage.getException().getMessage());
+                            }
+                        });
+                        imagesDownloadTasks.add(task);
                     }
                 }
-                tripAdapter.updateTrips(displayedTrips);
-            });
+            }
         }
+        Tasks.whenAllComplete(imagesDownloadTasks).addOnCompleteListener(task -> tripAdapter.updateTrips(trips));
     }
 
-
-    private void addTripIfUserAuthorized(@NonNull Trip trip) {
-        if (trip.getAuthorizedUsers() == null) {
-            return;
+    private void getTripsImagesWithPermissionAndUpdateAdapter(List<Trip> trips) {
+        List<FileDownloadTask> imagesDownloadTasks = new ArrayList<>();
+        for (Trip trip : trips) {
+            if (trip.getImagesUris() != null) {
+                for (Map.Entry<String, String> imageUriById : trip.getImagesUris().entrySet()) {
+                    DocumentFile localImage = DocumentFile.fromSingleUri(TripsFragment.this.requireContext(), Uri.parse(imageUriById.getValue()));
+                    if (!Objects.requireNonNull(localImage).exists()) {
+                        File tripDirectory = TripsFragment.this.requireContext().getDir(trip.getId(), Context.MODE_PRIVATE);
+                        File storedImage = new File(tripDirectory, imageUriById.getKey());
+                        if (storedImage.exists()) {
+                            trip.getImagesUris().put(imageUriById.getKey(), storedImage.toURI().toString());
+                        } else {
+                            FileDownloadTask task = viewModel.getTripImage(trip, imageUriById.getKey(), storedImage);
+                            task.addOnCompleteListener(getImage -> {
+                                if (getImage.isSuccessful()) {
+                                    trip.getImagesUris().put(imageUriById.getKey(), storedImage.toURI().toString());
+                                    Log.d(GET_IMAGE_TAG, "Downloaded image " + imageUriById.getKey() + " for trip " + trip.getId());
+                                } else {
+                                    trip.getImagesUris().remove(imageUriById.getKey());
+                                    Log.d(GET_IMAGE_TAG, "Error downloading image " + imageUriById.getKey() + " for trip " + trip.getId() + ": " + getImage.getException().getMessage());
+                                }
+                            });
+                            imagesDownloadTasks.add(task);
+                        }
+                    }
+                }
+            }
         }
-        if (trip.getAuthorizedUsers().contains(authentication.getUid())) {
-            displayedTrips.add(trip);
-            Log.d(GET_DB_TRIPS, "Trip with id " + trip.getId() + " added to list");
-        }
-    }
-
-    private void addTripIfCurrentUserOwner(@NonNull Trip trip) {
-        if (trip.getOwnerId().equals(authentication.getUid())) {
-            displayedTrips.add(trip);
-        }
+        Tasks.whenAllComplete(imagesDownloadTasks).addOnCompleteListener(task -> tripAdapter.updateTrips(trips));
     }
 
     @Override

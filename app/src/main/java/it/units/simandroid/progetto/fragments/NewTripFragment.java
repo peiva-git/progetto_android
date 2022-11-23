@@ -1,7 +1,6 @@
 package it.units.simandroid.progetto.fragments;
 
 import static it.units.simandroid.progetto.RealtimeDatabase.DB_URL;
-import static it.units.simandroid.progetto.RealtimeDatabase.NEW_TRIP_DB_TAG;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -18,34 +17,29 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.NavDirections;
-import androidx.navigation.Navigation;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.gms.tasks.Tasks;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.navigationrail.NavigationRailView;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.text.DateFormat;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
 
 import it.units.simandroid.progetto.R;
 import it.units.simandroid.progetto.Trip;
-import it.units.simandroid.progetto.fragments.directions.NewTripFragmentDirections;
+import it.units.simandroid.progetto.TripsViewModel;
 
 public class NewTripFragment extends Fragment {
 
@@ -84,7 +78,7 @@ public class NewTripFragment extends Fragment {
                 Log.d(IMAGE_PICKER_TAG, "Picked " + uris.size() + " images");
                 pickedImages = uris;
                 for (Uri uri : uris) {
-                    requireContext().getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    NewTripFragment.this.requireContext().getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 }
                 newImageButton.setScaleType(ImageView.ScaleType.CENTER_CROP);
                 newImageButton.setImageURI(uris.get(0));
@@ -117,7 +111,7 @@ public class NewTripFragment extends Fragment {
                 Date date = new Date(selection);
                 tripStartDate.setText(DateFormat.getDateInstance().format(date));
             });
-            datePicker.show(requireActivity().getSupportFragmentManager(), START_DATE_PICKER_TAG);
+            datePicker.show(NewTripFragment.this.requireActivity().getSupportFragmentManager(), START_DATE_PICKER_TAG);
         });
 
         tripEndDate.setOnClickListener(view -> {
@@ -129,13 +123,13 @@ public class NewTripFragment extends Fragment {
                 Date date = new Date(selection);
                 tripEndDate.setText(DateFormat.getDateInstance().format(date));
             });
-            datePicker.show(requireActivity().getSupportFragmentManager(), END_DATE_PICKER_TAG);
+            datePicker.show(NewTripFragment.this.requireActivity().getSupportFragmentManager(), END_DATE_PICKER_TAG);
         });
 
         saveTripButton.setOnClickListener(view -> {
             uploadNewTripData();
             NavHostFragment.findNavController(this).navigateUp();
-            Snackbar.make(requireActivity().findViewById(R.id.activity_layout), R.string.trip_saved, Snackbar.LENGTH_LONG).show();
+            Snackbar.make(NewTripFragment.this.requireActivity().findViewById(R.id.activity_layout), R.string.trip_saved, Snackbar.LENGTH_LONG).show();
         });
 
         return fragmentView;
@@ -144,49 +138,28 @@ public class NewTripFragment extends Fragment {
     private void uploadNewTripData() {
         LinearProgressIndicator progressIndicator = requireActivity().findViewById(R.id.progress_indicator);
         progressIndicator.show();
-        DatabaseReference tripDbReference = database.getReference("trips").push();
         String newTripName = tripName.getText().toString();
         String newTripDestination = tripDestination.getText().toString();
         String newTripStartDate = tripStartDate.getText().toString();
         String newTripEndDate = tripEndDate.getText().toString();
         String newTripDescription = tripDescription.getText().toString();
-        List<String> newTripImageUris = new ArrayList<>();
-        for (Uri pickedImageUri : pickedImages) {
-            newTripImageUris.add(pickedImageUri.toString());
-        }
-        Trip newTrip = new Trip(newTripImageUris,
+
+        TripsViewModel viewModel = new ViewModelProvider(requireActivity()).get(TripsViewModel.class);
+        Trip uploadedTrip = viewModel.uploadTripData(pickedImages,
                 newTripName,
                 newTripStartDate,
                 newTripEndDate,
                 newTripDescription,
                 newTripDestination,
-                Objects.requireNonNull(tripDbReference.getKey()),
-                Collections.emptyList(),
-                Objects.requireNonNull(authentication.getUid()));
-        tripDbReference.setValue(newTrip)
-                .addOnSuccessListener(task -> Log.d(NEW_TRIP_DB_TAG, "Added new trip data to realtime DB"))
-                .addOnFailureListener(exception -> Log.e(NEW_TRIP_DB_TAG, "Failed to add new trip data: " + exception.getMessage()));
-        uploadNewTripImages(tripDbReference);
-    }
-
-    private void uploadNewTripImages(@NonNull DatabaseReference tripReference) {
-        String tripId = tripReference.getKey();
-        StorageReference userImages = storage.getReference("users/" + authentication.getUid() + "/" + tripId);
-        AtomicReference<Integer> progress = new AtomicReference<>(0);
-        for (Uri pickedImageUri : pickedImages) {
-            userImages.child(pickedImageUri.toString().replace("/", "$")).putFile(pickedImageUri)
-                    .addOnSuccessListener(taskSnapshot -> {
-                        Log.d(NEW_TRIP_DB_TAG, "Added trip image to remote storage");
-                        progress.set(progress.get() + (100 / pickedImages.size()));
-                        LinearProgressIndicator progressIndicator = requireActivity().findViewById(R.id.progress_indicator);
-                        progressIndicator.setProgressCompat(progress.get(), true);
-                    })
-                    .addOnFailureListener(exception -> Log.d(NEW_TRIP_DB_TAG, "Failed to add trip image to remote storage: " + exception.getMessage()));
-        }
-        Tasks.whenAllComplete(userImages.getActiveUploadTasks()).addOnCompleteListener(task -> {
-            Snackbar.make(requireActivity().findViewById(R.id.activity_layout), R.string.trip_images_uploaded, Snackbar.LENGTH_SHORT).show();
-            LinearProgressIndicator progressIndicator = requireActivity().findViewById(R.id.progress_indicator);
-            progressIndicator.hide();
+                authentication.getUid());
+        List<UploadTask> tasks = viewModel.uploadTripImages(uploadedTrip);
+        Tasks.whenAllComplete(tasks).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Snackbar.make(NewTripFragment.this.requireActivity().findViewById(R.id.activity_layout), R.string.trip_images_uploaded, Snackbar.LENGTH_SHORT).show();
+                progressIndicator.hide();
+            } else {
+                Log.e("NEW_TRIP", "Failed to upload trip images to remote storage: " + Objects.requireNonNull(task.getException()).getMessage());
+            }
         });
     }
 }

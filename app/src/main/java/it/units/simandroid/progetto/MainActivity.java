@@ -8,6 +8,7 @@ import static it.units.simandroid.progetto.fragments.TripsFragment.PERMISSION_DI
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
@@ -56,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        TripsViewModel model = new ViewModelProvider(this).get(TripsViewModel.class);
 
         authentication = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance(DB_URL);

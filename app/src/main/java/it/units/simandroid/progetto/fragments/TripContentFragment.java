@@ -25,6 +25,9 @@ import android.widget.TextView;
 import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import it.units.simandroid.progetto.R;
 import it.units.simandroid.progetto.adapters.SlideshowPagerAdapter;
 import it.units.simandroid.progetto.Trip;
@@ -55,6 +58,8 @@ public class TripContentFragment extends Fragment {
                              Bundle savedInstanceState) {
         View fragmentView = inflater.inflate(R.layout.fragment_trip_content, container, false);
         Trip trip = TripContentFragmentArgs.fromBundle(requireArguments()).getTrip();
+        List<String> tripImages = new ArrayList<>(trip.getImagesUris().size());
+        tripImages.addAll(trip.getImagesUris().values());
         Log.d(TRIP_TAG, "Received trip as an argument to fragment " + getClass().getName() + ": " + trip.getName());
 
         viewPager = fragmentView.findViewById(R.id.trip_image_pager);
@@ -63,7 +68,7 @@ public class TripContentFragment extends Fragment {
         tripDates = fragmentView.findViewById(R.id.content_trip_dates);
         tripDescription = fragmentView.findViewById(R.id.content_trip_description);
 
-        pagerAdapter = new SlideshowPagerAdapter(this, trip.getImagesUris());
+        pagerAdapter = new SlideshowPagerAdapter(this, tripImages);
         viewPager.setAdapter(pagerAdapter);
 
         requireActivity().addMenuProvider(new MenuProvider() {

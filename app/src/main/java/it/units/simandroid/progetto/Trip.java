@@ -4,12 +4,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class Trip {
 
     @Nullable
-    private List<String> imagesUris;
+    private Map<String, String> imagesUris;
     @NotNull
     private String name;
     @NotNull
@@ -28,7 +29,7 @@ public class Trip {
     @NotNull
     private String ownerId;
 
-    public Trip(@Nullable List<String> imagesUris, @NotNull String name, @NotNull String startDate, @NotNull String endDate, @NotNull String description, @NotNull String destination, @NotNull String tripId, @Nullable List<String> authorizedUsers, @NotNull String ownerId) {
+    public Trip(@Nullable Map<String, String> imagesUris, @NotNull String name, @NotNull String startDate, @NotNull String endDate, @NotNull String description, @NotNull String destination, @NotNull String tripId, @Nullable List<String> authorizedUsers, @NotNull String ownerId) {
         this.imagesUris = imagesUris;
         this.name = name;
         this.startDate = startDate;
@@ -60,11 +61,11 @@ public class Trip {
     }
 
     @Nullable
-    public List<String> getImagesUris() {
+    public Map<String, String> getImagesUris() {
         return imagesUris;
     }
 
-    public void setImagesUris(@Nullable List<String> imagesUris) {
+    public void setImagesUris(@Nullable Map<String, String> imagesUris) {
         this.imagesUris = imagesUris;
     }
 

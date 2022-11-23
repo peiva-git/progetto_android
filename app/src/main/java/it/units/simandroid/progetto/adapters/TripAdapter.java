@@ -18,7 +18,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.card.MaterialCardView;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import it.units.simandroid.progetto.R;
 import it.units.simandroid.progetto.Trip;
@@ -29,7 +31,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ItemViewHolder
     private final Context context;
     private List<Trip> trips;
     private final OnTripClickListener listener;
-    private boolean isSharedModeOn;
+    private boolean isSharedModeOn = false;
 
     public TripAdapter(Context context, List<Trip> trips, OnTripClickListener listener) {
         this.context = context;
@@ -71,7 +73,8 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ItemViewHolder
             holder.isTripFavorite.setChecked(trip.isFavorite());
         }
         if (trip.getImagesUris() != null && !trip.getImagesUris().isEmpty()) {
-            Uri mainImageUri = Uri.parse(trip.getImagesUris().get(0));
+            Iterator<String> iterator = trip.getImagesUris().values().iterator();
+            Uri mainImageUri = Uri.parse(iterator.next());
             holder.tripMainPicture.setImageURI(mainImageUri);
         }
         holder.cardView.setOnClickListener(view -> listener.onTripClick(trip));
