@@ -216,9 +216,16 @@ public class TripsFragment extends Fragment {
             if (trip.getImagesUris() != null) {
                 for (Map.Entry<String, String> imageUriById : trip.getImagesUris().entrySet()) {
                     DocumentFile localImage = DocumentFile.fromSingleUri(TripsFragment.this.requireContext(), Uri.parse(imageUriById.getValue()));
-                    if (!Objects.requireNonNull(localImage).exists()) {
+                    boolean hasImageBeenPickedOnThisPhone = Objects.requireNonNull(localImage).exists();
+                    Log.d(GET_IMAGE_TAG, hasImageBeenPickedOnThisPhone ?
+                            "Image " + imageUriById.getKey() + " picked on this phone" :
+                            "Image " + imageUriById.getKey() + " hasn't been picked on this phone, need to download it");
+                    if (!hasImageBeenPickedOnThisPhone) {
                         File tripDirectory = TripsFragment.this.requireContext().getDir(trip.getId(), Context.MODE_PRIVATE);
                         File storedImage = new File(tripDirectory, imageUriById.getKey());
+                        Log.d(GET_IMAGE_TAG, storedImage.exists() ?
+                                "Image " + imageUriById.getKey() + " already downloaded, available in internal storage" :
+                                "Image " + imageUriById.getKey() + " not available in internal storage, downloading");
                         if (storedImage.exists()) {
                             trip.getImagesUris().put(imageUriById.getKey(), storedImage.toURI().toString());
                         } else {
