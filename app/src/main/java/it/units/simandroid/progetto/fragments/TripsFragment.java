@@ -80,19 +80,6 @@ public class TripsFragment extends Fragment {
         viewModel = new ViewModelProvider(requireActivity()).get(TripsViewModel.class);
 
         requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
-            List<Trip> trips;
-            if (TripsFragmentArgs.fromBundle(TripsFragment.this.requireArguments()).isSharedTripsModeActive()) {
-                trips = viewModel.getTripsSharedWithUser(authentication.getUid()).getValue();
-            } else if (TripsFragmentArgs.fromBundle(TripsFragment.this.requireArguments()).isFilteringActive()) {
-                trips = viewModel.getFavoriteTrips(authentication.getUid()).getValue();
-            } else {
-                trips = viewModel.getTripsByOwner(authentication.getUid()).getValue();
-            }
-            if (isGranted) {
-                getTripsImagesWithPermissionAndUpdateAdapter(trips);
-            } else {
-                getTripsImagesWithoutPermissionAndUpdateAdapter(trips);
-            }
         });
     }
 
@@ -176,6 +163,8 @@ public class TripsFragment extends Fragment {
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.putBoolean(PERMISSION_DIALOG_SHOWN, true);
                 editor.apply();
+            } else {
+                getTripsImagesWithoutPermissionAndUpdateAdapter(trips);
             }
         } else {
             requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
