@@ -25,11 +25,11 @@ public class Trip {
     @NotNull
     private String id;
     @Nullable
-    private List<String> authorizedUsers;
+    private Map<String, Boolean> authorizedUsers;
     @NotNull
     private String ownerId;
 
-    public Trip(@Nullable Map<String, String> imagesUris, @NotNull String name, @NotNull String startDate, @NotNull String endDate, @NotNull String description, @NotNull String destination, @NotNull String tripId, @Nullable List<String> authorizedUsers, @NotNull String ownerId) {
+    public Trip(@Nullable Map<String, String> imagesUris, @NotNull String name, @NotNull String startDate, @NotNull String endDate, @NotNull String description, @NotNull String destination, @NotNull String tripId, @Nullable Map<String, Boolean> authorizedUsers, @NotNull String ownerId) {
         this.imagesUris = imagesUris;
         this.name = name;
         this.startDate = startDate;
@@ -118,7 +118,7 @@ public class Trip {
     }
 
     @Nullable
-    public List<String> getAuthorizedUsers() {
+    public Map<String, Boolean> getAuthorizedUsers() {
         return authorizedUsers;
     }
 
@@ -131,7 +131,7 @@ public class Trip {
         this.ownerId = ownerId;
     }
 
-    public void setAuthorizedUsers(@Nullable List<String> authorizedUsers) {
+    public void setAuthorizedUsers(@Nullable Map<String, Boolean> authorizedUsers) {
         this.authorizedUsers = authorizedUsers;
     }
 

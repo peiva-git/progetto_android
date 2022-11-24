@@ -58,7 +58,7 @@
     <string name="share_trip_description">Selezionare gli utenti coi quali condividere il viaggio</string>
     <string name="share_trip_title">Condividi viaggio</string>
     <string name="share_trip_cancel">Annulla</string>
-    <string name="share_trip_confirm">Condividi</string>
+    <string name="share_trip_confirm">Conferma</string>
     <string name="search_for_users">Cerca nomi di utenti</string>
     <string name="new_user_failed">Errore durante la creazione del nuovo utente</string>
     <string name="load_users_failed">Impossibile recuperare la lista utenti</string>

@@ -116,6 +116,10 @@ public class MainActivity extends AppCompatActivity {
             } else if (destination.getId() == R.id.settings
                     || destination.getId() == R.id.newTripFragment
                     || destination.getId() == R.id.tripContentFragment) {
+                toolbar.setVisibility(View.VISIBLE);
+                if (navigationView != null) {
+                    navigationView.setVisibility(View.VISIBLE);
+                }
                 if (navigationRailView != null) {
                     navigationRailView.setVisibility(View.GONE);
                 }

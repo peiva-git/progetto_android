@@ -9,9 +9,11 @@ import android.widget.ArrayAdapter;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
 import com.google.android.gms.common.api.internal.TaskUtil;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -79,66 +81,53 @@ public class TripsViewModel extends ViewModel {
         return databaseTrips;
     }
 
-    public LiveData<List<Trip>> getTripsById(String tripId) {
-        List<Trip> allTrips = databaseTrips.getValue();
-        List<Trip> filteredTrips = new ArrayList<>();
-        if (allTrips != null) {
-            for (Trip trip : allTrips) {
+    public LiveData<Trip> getTripById(String tripId) throws TripNotFoundException {
+        return Transformations.map(databaseTrips, trips -> {
+            for (Trip trip : trips) {
                 if (trip.getId().equals(tripId)) {
-                    filteredTrips.add(trip);
+                    return trip;
                 }
             }
-            return new MutableLiveData<>(filteredTrips);
-        } else {
-            return databaseTrips;
-        }
+            throw new TripNotFoundException("Unable to find trip with specified id");
+        });
     }
 
     public LiveData<List<Trip>> getTripsByOwner(String ownerId) {
-        List<Trip> allTrips = databaseTrips.getValue();
-        List<Trip> filteredTrips = new ArrayList<>();
-        if (allTrips != null) {
-            for (Trip trip : allTrips) {
+        return Transformations.map(databaseTrips, trips -> {
+            List<Trip> filteredTrips = new ArrayList<>();
+            for (Trip trip : trips) {
                 if (trip.getOwnerId().equals(ownerId)) {
                     filteredTrips.add(trip);
                 }
             }
-            return new MutableLiveData<>(filteredTrips);
-        } else {
-            return databaseTrips;
-        }
+            return filteredTrips;
+        });
     }
 
     public LiveData<List<Trip>> getTripsSharedWithUser(String userId) {
-        List<Trip> allTrips = databaseTrips.getValue();
-        List<Trip> filteredTrips = new ArrayList<>();
-        if (allTrips != null) {
-            for (Trip trip : allTrips) {
+        return Transformations.map(databaseTrips, trips -> {
+            List<Trip> filteredTrips = new ArrayList<>();
+            for (Trip trip : trips) {
                 if (trip.getAuthorizedUsers() != null) {
-                    if (trip.getAuthorizedUsers().contains(userId)) {
+                    if (trip.getAuthorizedUsers().containsKey(userId)) {
                         filteredTrips.add(trip);
                     }
                 }
             }
-            return new MutableLiveData<>(filteredTrips);
-        } else {
-            return databaseTrips;
-        }
+            return filteredTrips;
+        });
     }
 
     public LiveData<List<Trip>> getFavoriteTrips(String ownerId) {
-        List<Trip> allUsersTrips = getTripsByOwner(ownerId).getValue();
-        List<Trip> filteredTrips = new ArrayList<>();
-        if (allUsersTrips != null) {
-            for (Trip trip : allUsersTrips) {
+        return Transformations.map(getTripsByOwner(ownerId), trips -> {
+            List<Trip> filteredTrips = new ArrayList<>();
+            for (Trip trip : trips) {
                 if (trip.isFavorite()) {
                     filteredTrips.add(trip);
                 }
             }
-            return new MutableLiveData<>(filteredTrips);
-        } else {
-            return databaseTrips;
-        }
+            return filteredTrips;
+        });
     }
 
     public FileDownloadTask getTripImage(Trip trip, String imageId, File image) {
@@ -192,17 +181,48 @@ public class TripsViewModel extends ViewModel {
         return tasks;
     }
 
-    public void setTripFavorite(String tripId, boolean isFavorite) {
-        database.getReference(TRIPS)
+    public Task<Void> setTripFavorite(String tripId, boolean isFavorite) {
+        return database.getReference(TRIPS)
                 .child(tripId)
                 .child(IS_FAVORITE_FIELD_NAME)
                 .setValue(isFavorite);
     }
 
-    public void shareTripWithUSers(String tripId, List<String> userIds) {
+    public LiveData<Map<String, Boolean>> getAuthorizedUserIds(String tripId) throws TripNotFoundException {
+        return Transformations.map(databaseTrips, trips -> {
+            for (Trip trip : trips) {
+                if (trip.getId().equals(tripId)) {
+                    return trip.getAuthorizedUsers();
+                }
+            }
+            throw new TripNotFoundException("Unable to find trip with specified id");
+        });
+    }
+
+    public Task<Void> shareTripWithUsers(String tripId, Set<String> userIds) {
+        Map<String, Boolean> tripAuthorizations = new HashMap<>(userIds.size());
+        for (String userId : userIds) {
+            tripAuthorizations.put(userId, true);
+        }
+        return database.getReference(TRIPS)
+                .child(tripId)
+                .child(AUTHORIZED_USERS_FIELD_NAME)
+                .setValue(tripAuthorizations);
+    }
+
+    public void shareTripWithUser(String tripId, String userId) {
         database.getReference(TRIPS)
                 .child(tripId)
                 .child(AUTHORIZED_USERS_FIELD_NAME)
-                .setValue(userIds);
+                .child(userId)
+                .setValue(true);
+    }
+
+    public void unshareTripWithUser(String tripId, String userId) {
+        database.getReference(TRIPS)
+                .child(tripId)
+                .child(AUTHORIZED_USERS_FIELD_NAME)
+                .child(userId)
+                .setValue(false);
     }
 }

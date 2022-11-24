@@ -58,7 +58,7 @@
     <string name="share_trip_description">Select the users to share the trip with</string>
     <string name="share_trip_title">Share trip</string>
     <string name="share_trip_cancel">Cancel</string>
-    <string name="share_trip_confirm">Share</string>
+    <string name="share_trip_confirm">Confirm</string>
     <string name="search_for_users">Search for user names</string>
     <string name="new_user_failed">Failed to create new user</string>
     <string name="load_users_failed">Failed to load users list</string>

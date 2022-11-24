@@ -15,6 +15,7 @@ import com.google.android.material.textview.MaterialTextView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import it.units.simandroid.progetto.R;
 import it.units.simandroid.progetto.User;
@@ -24,10 +25,10 @@ public class SelectUserAdapter extends RecyclerView.Adapter<SelectUserAdapter.It
     private Context context;
     private List<User> allUsers;
     private List<User> filteredUsers;
-    private List<String> authorizedUserIds;
+    private final Set<String> authorizedUserIds;
     private final OnUserClickListener listener;
 
-    public SelectUserAdapter(Context context, List<User> allUsers, List<String> authorizedUserIds, OnUserClickListener listener) {
+    public SelectUserAdapter(Context context, List<User> allUsers, Set<String> authorizedUserIds, OnUserClickListener listener) {
         this.context = context;
         this.allUsers = allUsers;
         this.filteredUsers = this.allUsers;
@@ -37,12 +38,8 @@ public class SelectUserAdapter extends RecyclerView.Adapter<SelectUserAdapter.It
 
     public void setAvailableUsers(List<User> users) {
         this.allUsers = users;
-        this.filteredUsers = this.allUsers;
+        this.filteredUsers = users;
         notifyDataSetChanged();
-    }
-
-    public void updateAuthorizedUserIds(List<String> authorizedUserIds) {
-        this.authorizedUserIds = authorizedUserIds;
     }
 
     @NonNull
