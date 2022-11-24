@@ -16,6 +16,7 @@ import android.widget.EditText;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -37,6 +38,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import it.units.simandroid.progetto.UsersViewModel;
 import it.units.simandroid.progetto.adapters.OnUserClickListener;
 import it.units.simandroid.progetto.R;
 import it.units.simandroid.progetto.User;
@@ -76,6 +78,8 @@ public class SelectUsersFragment extends Fragment {
         negativeButton = fragmentView.findViewById(R.id.dialog_negative_button);
         positiveButton = fragmentView.findViewById(R.id.dialog_positive_button);
 
+        UsersViewModel viewModel = new ViewModelProvider(requireActivity()).get(UsersViewModel.class);
+
         selectUserAdapter = new SelectUserAdapter(getContext(), Collections.emptyList(), Collections.emptyList(), new OnUserClickListener() {
             @Override
             public void onUserClick(User user) {
@@ -90,7 +94,7 @@ public class SelectUsersFragment extends Fragment {
                     if (selectedUsers.remove(user)) {
                         Log.d("CHECKED_USERS", "User " + user.getEmail() + " removed from list");
                     } else {
-                        Log.d("CHEKED_USERS", "User " + user.getEmail() + " not in list");
+                        Log.d("CHECKED_USERS", "User " + user.getEmail() + " not in list");
                     }
                 }
                 positiveButton.setEnabled(selectedUsers.size() > 0);
@@ -117,7 +121,8 @@ public class SelectUsersFragment extends Fragment {
                 Log.d("GET_TRIP", "List of authorized users unavailable for this trip");
             }
 
-            GenericTypeIndicator<Map<String, Object>> mapType = new GenericTypeIndicator<Map<String, Object>>() {};
+            GenericTypeIndicator<Map<String, Object>> mapType = new GenericTypeIndicator<Map<String, Object>>() {
+            };
             Map<String, Object> usersById = getUsersTask.getResult().getValue(mapType);
             if (usersById != null) {
                 List<User> users = new ArrayList<>(usersById.values().size());
@@ -154,24 +159,23 @@ public class SelectUsersFragment extends Fragment {
         });
 
         negativeButton.setOnClickListener(view -> NavHostFragment.findNavController(this).navigateUp());
-        positiveButton.setOnClickListener(
-                view -> {
-                    List<String> selectedUsersIds = new ArrayList<>(selectedUsers.size());
-                    for (User selectedUser : selectedUsers) {
-                        selectedUsersIds.add(selectedUser.getId());
-                    }
-                    database.getReference("trips").child(tripId).child("authorizedUsers").setValue(selectedUsersIds)
-                            .addOnSuccessListener(
-                                    task -> {
-                                        NavHostFragment.findNavController(this).navigateUp();
-                                        Snackbar.make(requireActivity().findViewById(R.id.activity_layout), R.string.trip_shared, Snackbar.LENGTH_SHORT).show();
-                                    })
-                            .addOnFailureListener(
-                                    exception -> {
-                                        NavHostFragment.findNavController(this).navigateUp();
-                                        Snackbar.make(requireActivity().findViewById(R.id.activity_layout), R.string.trip_shared_error, Snackbar.LENGTH_SHORT).show();
-                                    });
-                });
+        positiveButton.setOnClickListener(view -> {
+            List<String> selectedUsersIds = new ArrayList<>(selectedUsers.size());
+            for (User selectedUser : selectedUsers) {
+                selectedUsersIds.add(selectedUser.getId());
+            }
+            database.getReference("trips").child(tripId).child("authorizedUsers").setValue(selectedUsersIds)
+                    .addOnSuccessListener(
+                            task -> {
+                                NavHostFragment.findNavController(this).navigateUp();
+                                Snackbar.make(requireActivity().findViewById(R.id.activity_layout), R.string.trip_shared, Snackbar.LENGTH_SHORT).show();
+                            })
+                    .addOnFailureListener(
+                            exception -> {
+                                NavHostFragment.findNavController(this).navigateUp();
+                                Snackbar.make(requireActivity().findViewById(R.id.activity_layout), R.string.trip_shared_error, Snackbar.LENGTH_SHORT).show();
+                            });
+        });
         return fragmentView;
     }
 }

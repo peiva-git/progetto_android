@@ -40,6 +40,7 @@ public class TripsViewModel extends ViewModel {
     public static final String TRIPS = "trips";
     public static final String NEW_TRIP_DB_TAG = "NEW_TRIP_DB";
     public static final String IS_FAVORITE_FIELD_NAME = "favorite";
+    public static final String AUTHORIZED_USERS_FIELD_NAME = "authorizedUsers";
     private final MutableLiveData<List<Trip>> databaseTrips;
     private final FirebaseDatabase database;
     private final FirebaseStorage storage;
@@ -55,7 +56,7 @@ public class TripsViewModel extends ViewModel {
                 };
                 Map<String, Object> tripsById = snapshot.getValue(type);
                 if (tripsById != null) {
-                    List<Trip> trips = new ArrayList<>(tripsById.keySet().size());
+                    List<Trip> trips = new ArrayList<>(tripsById.size());
                     for (String tripKey : tripsById.keySet()) {
                         DataSnapshot tripSnapshot = snapshot.child(tripKey);
                         Trip databaseTrip = tripSnapshot.getValue(Trip.class);
@@ -196,5 +197,12 @@ public class TripsViewModel extends ViewModel {
                 .child(tripId)
                 .child(IS_FAVORITE_FIELD_NAME)
                 .setValue(isFavorite);
+    }
+
+    public void shareTripWithUSers(String tripId, List<String> userIds) {
+        database.getReference(TRIPS)
+                .child(tripId)
+                .child(AUTHORIZED_USERS_FIELD_NAME)
+                .setValue(userIds);
     }
 }
