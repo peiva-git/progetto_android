@@ -2,12 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/trip_content_menu">
-
-    <item
-        android:id="@+id/favorite_trip"
-        android:title="@string/set_favorite_trip"
-        app:showAsAction="ifRoom"
-        app:actionViewClass="com.google.android.material.checkbox.MaterialCheckBox" />
     <item
         android:id="@+id/share_trip"
         android:title="@string/set_shared_trip"

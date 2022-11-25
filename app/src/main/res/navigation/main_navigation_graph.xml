@@ -17,9 +17,6 @@
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim" />
         <action
-            android:id="@+id/action_tripsFragment_to_loginFragment"
-            app:destination="@id/loginFragment" />
-        <action
             android:id="@+id/view_trip_details_action"
             app:destination="@id/tripContentFragment"
             app:enterAnim="@android:anim/slide_in_left"
@@ -70,10 +67,6 @@
         android:name="it.units.simandroid.progetto.fragments.TripContentFragment"
         android:label="@string/trip_content_fragment_label"
         tools:layout="@layout/fragment_trip_content" >
-        <argument
-            android:name="TripJSONString"
-            app:argType="string"
-            android:defaultValue="@null" />
         <action
             android:id="@+id/action_tripContentFragment_to_selectUsersFragment"
             app:destination="@id/selectUsersFragment" />
@@ -81,6 +74,9 @@
             android:name="isSharedTripsModeActive"
             app:argType="boolean"
             android:defaultValue="false" />
+        <argument
+            android:name="tripId"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/settings"
@@ -96,4 +92,5 @@
             app:argType="string" />
     </fragment>
     <action android:id="@+id/action_global_settings" app:destination="@id/settings"/>
+    <action android:id="@+id/action_global_loginFragment" app:destination="@id/loginFragment" />
 </navigation>

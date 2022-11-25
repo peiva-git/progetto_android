@@ -20,6 +20,11 @@ public class SlideshowPagerAdapter extends FragmentStateAdapter {
         this.tripImageUris = tripImageUris;
     }
 
+    public void setTripImageUris(List<String> tripImageUris) {
+        this.tripImageUris = tripImageUris;
+        notifyDataSetChanged();
+    }
+
     @NonNull
     @Override
     public Fragment createFragment(int position) {

@@ -23,7 +23,7 @@ public class TripsFragmentDirections {
     @NonNull
     @Contract(" -> new")
     public static NavDirections actionTripsFragmentToLoginFragment() {
-        return new ActionOnlyNavDirections(R.id.action_tripsFragment_to_loginFragment);
+        return new ActionOnlyNavDirections(R.id.action_global_loginFragment);
     }
 
     @NonNull
@@ -40,16 +40,17 @@ public class TripsFragmentDirections {
 
     public static class ViewTripDetailsAction implements NavDirections {
         public static final String SHARED_TRIPS_KEY = "TRIP_SHARE";
-        private Trip trip;
+        @NonNull
+        private String tripId;
         private boolean isSharedTripsModeActive = false;
-        public static final String TRIP_KEY = "TRIP";
+        public static final String TRIP_ID_KEY = "TRIP_ID";
 
-        public ViewTripDetailsAction(Trip trip, boolean isSharedTripsModeActive) {
-            this.trip = trip;
+        public ViewTripDetailsAction(@NonNull String tripId, boolean isSharedTripsModeActive) {
+            this.tripId = tripId;
             this.isSharedTripsModeActive = isSharedTripsModeActive;
         }
 
-        public ViewTripDetailsAction() {}
+        private ViewTripDetailsAction() {}
 
         public boolean isSharedTripsModeActive() {
             return isSharedTripsModeActive;
@@ -59,12 +60,13 @@ public class TripsFragmentDirections {
             isSharedTripsModeActive = sharedTripsModeActive;
         }
 
-        public void setTrip(Trip trip) {
-            this.trip = trip;
+        public void setTripId(@NonNull String tripId) {
+            this.tripId = tripId;
         }
 
-        public Trip getTrip() {
-            return trip;
+        @NonNull
+        public String getTripId() {
+            return tripId;
         }
 
         @Override
@@ -76,8 +78,7 @@ public class TripsFragmentDirections {
         @Override
         public Bundle getArguments() {
             Bundle bundle = new Bundle();
-            Gson gson = new Gson();
-            bundle.putString(TRIP_KEY, gson.toJson(trip, Trip.class));
+            bundle.putString(TRIP_ID_KEY, tripId);
             bundle.putBoolean(SHARED_TRIPS_KEY, isSharedTripsModeActive);
             return bundle;
         }

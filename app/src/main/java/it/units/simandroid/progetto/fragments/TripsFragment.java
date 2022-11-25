@@ -100,7 +100,7 @@ public class TripsFragment extends Fragment {
             @Override
             public void onTripClick(Trip trip) {
                 TripsFragmentDirections.ViewTripDetailsAction action = TripsFragmentDirections.actionViewTripDetails();
-                action.setTrip(trip);
+                action.setTripId(trip.getId());
                 action.setSharedTripsModeActive(TripsFragmentArgs.fromBundle(requireArguments()).isSharedTripsModeActive());
                 Navigation.findNavController(requireView()).navigate(action);
             }
