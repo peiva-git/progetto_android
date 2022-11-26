@@ -67,6 +67,7 @@ public class TripsViewModel extends ViewModel {
                     databaseTrips.setValue(trips);
                 } else {
                     Log.i("GET_TRIPS", "No trips found in database");
+                    databaseTrips.setValue(Collections.emptyList());
                 }
             }
 
@@ -136,6 +137,17 @@ public class TripsViewModel extends ViewModel {
                 .child(trip.getId())
                 .child(imageId)
                 .getFile(image);
+    }
+
+    public List<Task<Void>> removeTrips(List<Trip> trips) {
+        List<Task<Void>> tasks = new ArrayList<>(trips.size());
+        for (Trip trip : trips) {
+            Task<Void> task = database.getReference(TRIPS)
+                    .child(trip.getId())
+                    .removeValue();
+            tasks.add(task);
+        }
+        return tasks;
     }
 
     public Trip uploadTripData(List<Uri> tripImages,

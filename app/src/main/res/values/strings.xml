@@ -73,4 +73,6 @@
     <string name="got_it">Understood</string>
     <string name="trips_fragment_favorites_label">My favorite trips</string>
     <string name="trips_fragment_shared_label">Shared with me</string>
+    <string name="select_trips_mode_title">picked</string>
+    <string name="delete_trip">Delete</string>
 </resources>

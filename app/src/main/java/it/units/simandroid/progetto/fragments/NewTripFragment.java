@@ -155,7 +155,6 @@ public class NewTripFragment extends Fragment {
         List<UploadTask> tasks = viewModel.uploadTripImages(uploadedTrip);
         Tasks.whenAllComplete(tasks).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                Snackbar.make(NewTripFragment.this.requireActivity().findViewById(R.id.activity_layout), R.string.trip_images_uploaded, Snackbar.LENGTH_SHORT).show();
                 progressIndicator.hide();
             } else {
                 Log.e("NEW_TRIP", "Failed to upload trip images to remote storage: " + Objects.requireNonNull(task.getException()).getMessage());

@@ -1,7 +1,5 @@
 package it.units.simandroid.progetto.adapters;
 
-import static it.units.simandroid.progetto.RealtimeDatabase.DB_URL;
-
 import android.content.Context;
 import android.net.Uri;
 import android.view.LayoutInflater;
@@ -12,31 +10,52 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.card.MaterialCardView;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import it.units.simandroid.progetto.R;
 import it.units.simandroid.progetto.Trip;
-import it.units.simandroid.progetto.fragments.directions.TripsFragmentDirections;
 
 public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ItemViewHolder> {
 
     private final Context context;
     private List<Trip> trips;
-    private final OnTripClickListener listener;
+
+    public OnTripClickListener getOnTripClickListener() {
+        return onTripClickListener;
+    }
+
+    public void setOnTripClickListener(OnTripClickListener onTripClickListener) {
+        this.onTripClickListener = onTripClickListener;
+    }
+
+    private OnTripClickListener onTripClickListener;
+    private OnFavoriteStateChangedListener onFavoriteStateChangedListener;
+
+    public OnTripLongClickListener getOnTripLongClickListener() {
+        return onTripLongClickListener;
+    }
+
+    public void setOnTripLongClickListener(OnTripLongClickListener onTripLongClickListener) {
+        this.onTripLongClickListener = onTripLongClickListener;
+    }
+
+    private OnTripLongClickListener onTripLongClickListener;
     private boolean isSharedModeOn = false;
 
-    public TripAdapter(Context context, List<Trip> trips, OnTripClickListener listener) {
+    public TripAdapter(Context context, List<Trip> trips,
+                       OnTripClickListener onTripClickListener,
+                       OnFavoriteStateChangedListener onFavoriteStateChangedListener,
+                       OnTripLongClickListener onTripLongClickListener) {
         this.context = context;
         this.trips = trips;
-        this.listener = listener;
+        this.onTripClickListener = onTripClickListener;
+        this.onFavoriteStateChangedListener = onFavoriteStateChangedListener;
+        this.onTripLongClickListener = onTripLongClickListener;
     }
 
     public void updateTrips(List<Trip> trips) {
@@ -77,9 +96,10 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ItemViewHolder
             Uri mainImageUri = Uri.parse(iterator.next());
             holder.tripMainPicture.setImageURI(mainImageUri);
         }
-        holder.cardView.setOnClickListener(view -> listener.onTripClick(trip));
+        holder.cardView.setOnLongClickListener(view -> onTripLongClickListener.onLongClick(trip, view));
+        holder.cardView.setOnClickListener(view -> onTripClickListener.onClick(trip, view));
         holder.isTripFavorite.setOnCheckedChangeListener(
-                (compoundButton, isChecked) -> listener.onTripFavoriteStateChanged(trip, compoundButton, isChecked));
+                (compoundButton, isChecked) -> onFavoriteStateChangedListener.onFavoriteStateChanged(trip, compoundButton, isChecked));
     }
 
     @Override

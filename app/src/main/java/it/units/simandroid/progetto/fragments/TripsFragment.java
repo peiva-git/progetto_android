@@ -21,15 +21,19 @@ import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 
 import com.google.android.flexbox.FlexDirection;
 import com.google.android.flexbox.FlexboxLayoutManager;
 import com.google.android.flexbox.JustifyContent;
 import com.google.android.gms.tasks.Tasks;
+import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
@@ -45,11 +49,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import it.units.simandroid.progetto.R;
 import it.units.simandroid.progetto.Trip;
 import it.units.simandroid.progetto.TripsViewModel;
+import it.units.simandroid.progetto.adapters.OnFavoriteStateChangedListener;
 import it.units.simandroid.progetto.adapters.OnTripClickListener;
+import it.units.simandroid.progetto.adapters.OnTripLongClickListener;
 import it.units.simandroid.progetto.adapters.TripAdapter;
 import it.units.simandroid.progetto.fragments.directions.TripsFragmentArgs;
 import it.units.simandroid.progetto.fragments.directions.TripsFragmentDirections;
@@ -91,25 +98,100 @@ public class TripsFragment extends Fragment {
         newTripButton = fragmentView.findViewById(R.id.new_trip_button);
         progressIndicator = requireActivity().findViewById(R.id.progress_indicator);
 
+        ActionMode.Callback actionMode = new ActionMode.Callback() {
+            @Override
+            public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+                return false;
+            }
+
+            @Override
+            public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
+                return false;
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+                return false;
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode actionMode) {
+
+            }
+        };
         boolean isSizeAtLeastLarge = getResources().getConfiguration().isLayoutSizeAtLeast(Configuration.SCREENLAYOUT_SIZE_LARGE);
         if (isSizeAtLeastLarge) {
             newTripButton.setVisibility(View.GONE);
         }
 
-        tripAdapter = new TripAdapter(getContext(), Collections.emptyList(), new OnTripClickListener() {
-            @Override
-            public void onTripClick(Trip trip) {
-                TripsFragmentDirections.ViewTripDetailsAction action = TripsFragmentDirections.actionViewTripDetails();
-                action.setTripId(trip.getId());
-                action.setSharedTripsModeActive(TripsFragmentArgs.fromBundle(requireArguments()).isSharedTripsModeActive());
-                Navigation.findNavController(requireView()).navigate(action);
-            }
+        tripAdapter = new TripAdapter(getContext(), Collections.emptyList(),
+                (OnTripClickListener) (trip, view) -> {
+                    TripsFragmentDirections.ViewTripDetailsAction action = TripsFragmentDirections.actionViewTripDetails();
+                    action.setTripId(trip.getId());
+                    action.setSharedTripsModeActive(TripsFragmentArgs.fromBundle(requireArguments()).isSharedTripsModeActive());
+                    Navigation.findNavController(requireView()).navigate(action);
+                },
+                (OnFavoriteStateChangedListener) (trip, compoundButton, isChecked) -> viewModel.setTripFavorite(trip.getId(), isChecked),
+                (OnTripLongClickListener) (onLongClickTrip, onLongClickView) -> {
+                    onLongClickView.setLongClickable(false);
+                    OnTripClickListener oldClickListener = tripAdapter.getOnTripClickListener();
+                    MaterialToolbar toolbar = TripsFragment.this.requireActivity().findViewById(R.id.toolbar);
+                    AtomicInteger tripsPicked = new AtomicInteger(1);
+                    MaterialCardView onLongClickCardView = (MaterialCardView) onLongClickView;
+                    onLongClickCardView.setChecked(true);
+                    List<Trip> selectedTrips = new ArrayList<>();
+                    selectedTrips.add(onLongClickTrip);
+                    Log.d("SELECT_TRIPS", "Trip " + onLongClickTrip.getId() + " added to selected trips list");
 
-            @Override
-            public void onTripFavoriteStateChanged(Trip trip, CompoundButton compoundButton, boolean isChecked) {
-                viewModel.setTripFavorite(trip.getId(), isChecked);
-            }
-        });
+                    ActionMode mode = toolbar.startActionMode(new ActionMode.Callback() {
+                        @Override
+                        public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+                            actionMode.getMenuInflater().inflate(R.menu.top_app_bar_contextual_pick_trips, menu);
+                            return true;
+                        }
+
+                        @Override
+                        public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+                            if (menuItem.getItemId() == R.id.delete_trip) {
+                                viewModel.removeTrips(selectedTrips);
+                                actionMode.finish();
+                                return true;
+                            }
+                            return false;
+                        }
+
+                        @Override
+                        public void onDestroyActionMode(ActionMode actionMode) {
+                            tripAdapter.setOnTripClickListener(oldClickListener);
+                            onLongClickView.setLongClickable(true);
+                        }
+                    });
+                    mode.setTitle(tripsPicked.get() + " " + getString(R.string.select_trips_mode_title));
+                    tripAdapter.setOnTripClickListener((onClickTrip, onClickView) -> {
+                        MaterialCardView onClickCardView = (MaterialCardView) onClickView;
+                        if (onClickCardView.isChecked()) {
+                            tripsPicked.addAndGet(-1);
+                            selectedTrips.remove(onClickTrip);
+                            Log.d("SELECT_TRIPS", "Trip " + onClickTrip.getId() + " removed from selected trips list");
+                        } else {
+                            tripsPicked.addAndGet(1);
+                            selectedTrips.add(onClickTrip);
+                            Log.d("SELECT_TRIPS", "Trip " + onClickTrip.getId() + " added to selected trips list");
+                        }
+                        onClickCardView.setChecked(!onClickCardView.isChecked());
+                        if (tripsPicked.get() == 0) {
+                            mode.finish();
+                        }
+                        mode.setTitle(tripsPicked.get() + " " + getString(R.string.select_trips_mode_title));
+                    });
+                    return true;
+                });
+
         tripAdapter.setSharedModeOn(TripsFragmentArgs.fromBundle(requireArguments()).isSharedTripsModeActive());
         FlexboxLayoutManager layoutManager = new FlexboxLayoutManager(getContext());
         layoutManager.setFlexDirection(FlexDirection.ROW);
@@ -149,7 +231,7 @@ public class TripsFragment extends Fragment {
             getTripsImagesWithPermissionAndUpdateAdapter(trips);
 
         } else if (shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE)) {
-            SharedPreferences  preferences = PreferenceManager.getDefaultSharedPreferences(TripsFragment.this.requireContext());
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(TripsFragment.this.requireContext());
             boolean hasPermissionDialogBeenShown = preferences.getBoolean(PERMISSION_DIALOG_SHOWN, false);
             if (!hasPermissionDialogBeenShown) {
                 new MaterialAlertDialogBuilder(requireContext())
