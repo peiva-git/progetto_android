@@ -1,6 +1,7 @@
 package it.units.simandroid.progetto.adapters;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.card.MaterialCardView;
 
+import java.security.SecureRandom;
 import java.util.Iterator;
 import java.util.List;
 
@@ -75,6 +77,13 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ItemViewHolder
     @Override
     public ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_trip, parent, false);
+        Configuration configuration = context.getResources().getConfiguration();
+        if (configuration.isLayoutSizeAtLeast(Configuration.SCREENLAYOUT_SIZE_LARGE)) {
+            ViewGroup.LayoutParams params = view.getLayoutParams();
+            SecureRandom random = new SecureRandom();
+            params.width += random.nextInt(30);
+            view.setLayoutParams(params);
+        }
         return new ItemViewHolder(view);
     }
 

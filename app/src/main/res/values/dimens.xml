@@ -2,5 +2,5 @@
 <resources>
     <dimen name="login_form_margin">10dp</dimen>
     <dimen name="registrationFormMargin">10dp</dimen>
-    <dimen name="trip_card_width">250dp</dimen>
+    <dimen name="trip_card_width">-1dp</dimen>
 </resources>
