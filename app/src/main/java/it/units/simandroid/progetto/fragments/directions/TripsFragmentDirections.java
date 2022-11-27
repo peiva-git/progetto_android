@@ -31,7 +31,7 @@ public class TripsFragmentDirections {
 
     @NonNull
     @Contract(value = " -> new", pure = true)
-    public static FilterTripsAction actionFilterByFavoriteTrips() {
+    public static FilterTripsAction actionFilterTrips() {
         return new FilterTripsAction();
     }
 

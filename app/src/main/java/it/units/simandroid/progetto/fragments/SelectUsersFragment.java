@@ -92,8 +92,8 @@ public class SelectUsersFragment extends Fragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
 
-        UsersViewModel usersViewModel = new ViewModelProvider(requireActivity()).get(UsersViewModel.class);
-        TripsViewModel tripsViewModel = new ViewModelProvider(requireActivity()).get(TripsViewModel.class);
+        UsersViewModel usersViewModel = new ViewModelProvider(this).get(UsersViewModel.class);
+        TripsViewModel tripsViewModel = new ViewModelProvider(this).get(TripsViewModel.class);
         usersViewModel.getUsers().observe(getViewLifecycleOwner(), users -> {
             for (User user : users) {
                 if (user.getId().equals(authentication.getUid())) {

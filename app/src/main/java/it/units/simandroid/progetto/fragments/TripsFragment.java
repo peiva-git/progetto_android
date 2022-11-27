@@ -74,6 +74,7 @@ public class TripsFragment extends Fragment {
     private ActivityResultLauncher<String> requestPermissionLauncher;
     private LinearProgressIndicator progressIndicator;
     private TripsViewModel viewModel;
+    private List<Trip> trips;
 
     public TripsFragment() {
         // Required empty public constructor
@@ -83,9 +84,14 @@ public class TripsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         authentication = FirebaseAuth.getInstance();
-        viewModel = new ViewModelProvider(requireActivity()).get(TripsViewModel.class);
+        viewModel = new ViewModelProvider(this).get(TripsViewModel.class);
 
         requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+            if (isGranted) {
+                getTripsImagesWithPermissionAndUpdateAdapter(trips);
+            } else {
+                getTripsImagesWithoutPermissionAndUpdateAdapter(trips);
+            }
         });
     }
 
@@ -204,17 +210,20 @@ public class TripsFragment extends Fragment {
 
         if (TripsFragmentArgs.fromBundle(requireArguments()).isSharedTripsModeActive()) {
             viewModel.getTripsSharedWithUser(authentication.getUid()).observe(getViewLifecycleOwner(), trips -> {
-                Log.d(DATA_UPDATE_TAG, "Shared trips mode, received trip data update");
+                Log.d(DATA_UPDATE_TAG, "Shared trips mode, received " + trips.size() + " trips");
+                this.trips = trips;
                 updateUI(trips);
             });
         } else if (TripsFragmentArgs.fromBundle(requireArguments()).isFilteringActive()) {
             viewModel.getFavoriteTrips(authentication.getUid()).observe(getViewLifecycleOwner(), trips -> {
-                Log.d(DATA_UPDATE_TAG, "Favorite trips mode, received trip data update");
+                Log.d(DATA_UPDATE_TAG, "Favorite trips mode, received " + trips.size() + " trips");
+                this.trips = trips;
                 updateUI(trips);
             });
         } else {
             viewModel.getTripsByOwner(authentication.getUid()).observe(getViewLifecycleOwner(), trips -> {
-                Log.d(DATA_UPDATE_TAG, "My trips mode, received trip data update");
+                Log.d(DATA_UPDATE_TAG, "My trips mode, received " + trips.size() + " trips");
+                this.trips = trips;
                 updateUI(trips);
             });
         }
@@ -272,6 +281,8 @@ public class TripsFragment extends Fragment {
                         imagesDownloadTasks.add(task);
                     }
                 }
+            } else {
+                Log.d(GET_IMAGE_TAG, "No images for trip " + trip.getId());
             }
         }
         Tasks.whenAllComplete(imagesDownloadTasks).addOnCompleteListener(task -> tripAdapter.updateTrips(trips));
@@ -310,6 +321,8 @@ public class TripsFragment extends Fragment {
                         }
                     }
                 }
+            } else {
+                Log.d(GET_IMAGE_TAG, "No images for trip " + trip.getId());
             }
         }
         Tasks.whenAllComplete(imagesDownloadTasks).addOnCompleteListener(task -> tripAdapter.updateTrips(trips));

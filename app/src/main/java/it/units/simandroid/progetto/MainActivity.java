@@ -24,15 +24,11 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.google.android.material.appbar.MaterialToolbar;
-import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.navigationrail.NavigationRailView;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -57,8 +53,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        TripsViewModel model = new ViewModelProvider(this).get(TripsViewModel.class);
 
         authentication = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance(DB_URL);
@@ -137,21 +131,21 @@ public class MainActivity extends AppCompatActivity {
         if (navigationView != null) {
             navigationView.setNavigationItemSelectedListener(item -> {
                 if (item.getItemId() == R.id.favorites) {
-                    TripsFragmentDirections.FilterTripsAction action = TripsFragmentDirections.actionFilterByFavoriteTrips();
+                    TripsFragmentDirections.FilterTripsAction action = TripsFragmentDirections.actionFilterTrips();
                     action.setFilteringActive(true);
                     Log.d(FAVORITE_TRIPS_TAG, action.isFilteringActive() ? "Filtering active" : "Filtering inactive");
                     navigationDrawer.close();
                     navController.navigate(action);
                     return true;
                 } else if (item.getItemId() == R.id.my_trips) {
-                    TripsFragmentDirections.FilterTripsAction action = TripsFragmentDirections.actionFilterByFavoriteTrips();
+                    TripsFragmentDirections.FilterTripsAction action = TripsFragmentDirections.actionFilterTrips();
                     action.setFilteringActive(false);
                     Log.d(FAVORITE_TRIPS_TAG, action.isFilteringActive() ? "Filtering active" : "Filtering inactive");
                     navigationDrawer.close();
                     navController.navigate(action);
                     return true;
                 } else if (item.getItemId() == R.id.shared_trips) {
-                    TripsFragmentDirections.FilterTripsAction action = TripsFragmentDirections.actionFilterByFavoriteTrips();
+                    TripsFragmentDirections.FilterTripsAction action = TripsFragmentDirections.actionFilterTrips();
                     action.setSharedTripsModeActive(true);
                     Log.d("SHARED_TRIPS", "Filtering by shared trips");
                     navigationDrawer.close();
@@ -169,21 +163,21 @@ public class MainActivity extends AppCompatActivity {
         if (navigationRailView != null) {
             navigationRailView.setOnItemSelectedListener(item -> {
                 if (item.getItemId() == R.id.favorites) {
-                    TripsFragmentDirections.FilterTripsAction action = TripsFragmentDirections.actionFilterByFavoriteTrips();
+                    TripsFragmentDirections.FilterTripsAction action = TripsFragmentDirections.actionFilterTrips();
                     action.setFilteringActive(true);
                     Log.d(FAVORITE_TRIPS_TAG, action.isFilteringActive() ? "Filtering active" : "Filtering inactive");
                     navController.navigate(action);
                     return true;
                 } else if (item.getItemId() == R.id.my_trips) {
-                    TripsFragmentDirections.FilterTripsAction action = TripsFragmentDirections.actionFilterByFavoriteTrips();
+                    TripsFragmentDirections.FilterTripsAction action = TripsFragmentDirections.actionFilterTrips();
                     action.setFilteringActive(false);
                     Log.d(FAVORITE_TRIPS_TAG, action.isFilteringActive() ? "Filtering active" : "Filtering inactive");
                     navController.navigate(action);
                     return true;
                 } else if (item.getItemId() == R.id.shared_trips) {
-                    TripsFragmentDirections.FilterTripsAction action = TripsFragmentDirections.actionFilterByFavoriteTrips();
+                    TripsFragmentDirections.FilterTripsAction action = TripsFragmentDirections.actionFilterTrips();
                     action.setSharedTripsModeActive(true);
-                    Log.d("SHARED_TRIPS", "Filtering by shared trips");
+                    Log.d("SHARED_TRIPS_TAG", "Filtering by shared trips");
                     navController.navigate(action);
                     return true;
                 }

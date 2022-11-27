@@ -78,7 +78,7 @@ public class TripContentFragment extends Fragment {
         pagerAdapter = new SlideshowPagerAdapter(this, Collections.emptyList());
         viewPager.setAdapter(pagerAdapter);
 
-        viewModel = new ViewModelProvider(requireActivity()).get(TripsViewModel.class);
+        viewModel = new ViewModelProvider(this).get(TripsViewModel.class);
         viewModel.getTripById(tripId).observe(getViewLifecycleOwner(), trip -> {
             tripName.setText(trip.getName());
             tripDestination.setText(trip.getDestination());

@@ -55,10 +55,10 @@ public class LoginFragment extends Fragment {
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             Log.d(AUTH_TAG, "Sign-in successful");
-                            NavHostFragment.findNavController(this).navigate(LoginFragmentDirections.actionLoginFragmentToTripsFragment());
+                            NavHostFragment.findNavController(LoginFragment.this).navigate(LoginFragmentDirections.actionLoginFragmentToTripsFragment());
                         } else {
                             Log.w(AUTH_TAG, "Sign-in failed", task.getException());
-                            Snackbar.make(requireView(), R.string.login_failed, Snackbar.LENGTH_LONG).show();
+                            Snackbar.make(LoginFragment.this.requireView(), R.string.login_failed, Snackbar.LENGTH_LONG).show();
                         }
                     });
         });
