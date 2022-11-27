@@ -125,14 +125,14 @@ public class TripsFragment extends Fragment {
         }
 
         tripAdapter = new TripAdapter(getContext(), Collections.emptyList(),
-                (OnTripClickListener) (trip, view) -> {
+                (trip, view) -> {
                     TripsFragmentDirections.ViewTripDetailsAction action = TripsFragmentDirections.actionViewTripDetails();
                     action.setTripId(trip.getId());
                     action.setSharedTripsModeActive(TripsFragmentArgs.fromBundle(requireArguments()).isSharedTripsModeActive());
                     Navigation.findNavController(requireView()).navigate(action);
                 },
-                (OnFavoriteStateChangedListener) (trip, compoundButton, isChecked) -> viewModel.setTripFavorite(trip.getId(), isChecked),
-                (OnTripLongClickListener) (onLongClickTrip, onLongClickView) -> {
+                (trip, compoundButton, isChecked) -> viewModel.setTripFavorite(trip.getId(), isChecked),
+                (onLongClickTrip, onLongClickView) -> {
                     onLongClickView.setLongClickable(false);
                     OnTripClickListener oldClickListener = tripAdapter.getOnTripClickListener();
                     MaterialToolbar toolbar = TripsFragment.this.requireActivity().findViewById(R.id.toolbar);
@@ -140,6 +140,8 @@ public class TripsFragment extends Fragment {
                     MaterialCardView onLongClickCardView = (MaterialCardView) onLongClickView;
                     onLongClickCardView.setChecked(true);
                     List<Trip> selectedTrips = new ArrayList<>();
+                    List<MaterialCardView> selectedCards = new ArrayList<>();
+                    selectedCards.add(onLongClickCardView);
                     selectedTrips.add(onLongClickTrip);
                     Log.d("SELECT_TRIPS", "Trip " + onLongClickTrip.getId() + " added to selected trips list");
 
@@ -167,6 +169,9 @@ public class TripsFragment extends Fragment {
 
                         @Override
                         public void onDestroyActionMode(ActionMode actionMode) {
+                            for (MaterialCardView card : selectedCards) {
+                                card.setChecked(false);
+                            }
                             tripAdapter.setOnTripClickListener(oldClickListener);
                             onLongClickView.setLongClickable(true);
                         }
@@ -177,10 +182,12 @@ public class TripsFragment extends Fragment {
                         if (onClickCardView.isChecked()) {
                             tripsPicked.addAndGet(-1);
                             selectedTrips.remove(onClickTrip);
+                            selectedCards.remove(onClickCardView);
                             Log.d("SELECT_TRIPS", "Trip " + onClickTrip.getId() + " removed from selected trips list");
                         } else {
                             tripsPicked.addAndGet(1);
                             selectedTrips.add(onClickTrip);
+                            selectedCards.add(onClickCardView);
                             Log.d("SELECT_TRIPS", "Trip " + onClickTrip.getId() + " added to selected trips list");
                         }
                         onClickCardView.setChecked(!onClickCardView.isChecked());
