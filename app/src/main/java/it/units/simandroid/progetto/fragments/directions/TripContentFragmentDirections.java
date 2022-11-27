@@ -8,14 +8,11 @@ import androidx.navigation.NavDirections;
 
 import org.jetbrains.annotations.Contract;
 
+import java.util.ArrayList;
+
 import it.units.simandroid.progetto.R;
 
 public class TripContentFragmentDirections {
-    @NonNull
-    @Contract(" -> new")
-    public static NavDirections actionTripContentFragmentToSelectUsersFragment() {
-        return new ActionOnlyNavDirections(R.id.action_tripContentFragment_to_selectUsersFragment);
-    }
 
     @NonNull
     @Contract(value = " -> new", pure = true)

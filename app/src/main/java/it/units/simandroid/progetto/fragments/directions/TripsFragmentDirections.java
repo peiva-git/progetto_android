@@ -6,12 +6,9 @@ import androidx.annotation.NonNull;
 import androidx.navigation.ActionOnlyNavDirections;
 import androidx.navigation.NavDirections;
 
-import com.google.gson.Gson;
-
 import org.jetbrains.annotations.Contract;
 
 import it.units.simandroid.progetto.R;
-import it.units.simandroid.progetto.Trip;
 
 public class TripsFragmentDirections {
     @NonNull
@@ -39,7 +36,7 @@ public class TripsFragmentDirections {
     }
 
     public static class ViewTripDetailsAction implements NavDirections {
-        public static final String SHARED_TRIPS_KEY = "TRIP_SHARE";
+        public static final String SHARED_MODE_KEY = "TRIP_SHARE";
         @NonNull
         private String tripId;
         private boolean isSharedTripsModeActive = false;
@@ -79,7 +76,7 @@ public class TripsFragmentDirections {
         public Bundle getArguments() {
             Bundle bundle = new Bundle();
             bundle.putString(TRIP_ID_KEY, tripId);
-            bundle.putBoolean(SHARED_TRIPS_KEY, isSharedTripsModeActive);
+            bundle.putBoolean(SHARED_MODE_KEY, isSharedTripsModeActive);
             return bundle;
         }
     }

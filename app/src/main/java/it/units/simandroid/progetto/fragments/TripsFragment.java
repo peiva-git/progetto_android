@@ -15,6 +15,7 @@ import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
+import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.preference.PreferenceManager;
@@ -54,9 +55,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import it.units.simandroid.progetto.R;
 import it.units.simandroid.progetto.Trip;
 import it.units.simandroid.progetto.TripsViewModel;
-import it.units.simandroid.progetto.adapters.OnFavoriteStateChangedListener;
 import it.units.simandroid.progetto.adapters.OnTripClickListener;
-import it.units.simandroid.progetto.adapters.OnTripLongClickListener;
 import it.units.simandroid.progetto.adapters.TripAdapter;
 import it.units.simandroid.progetto.fragments.directions.TripsFragmentArgs;
 import it.units.simandroid.progetto.fragments.directions.TripsFragmentDirections;
@@ -163,7 +162,12 @@ public class TripsFragment extends Fragment {
                         @Override
                         public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
                             if (menuItem.getItemId() == R.id.delete_trip) {
-                                viewModel.removeTrips(selectedTrips);
+                                List<String> selectedTripIds = new ArrayList<>();
+                                for (Trip trip : selectedTrips) {
+                                    selectedTripIds.add(trip.getId());
+                                    viewModel.deleteTripImages(trip);
+                                }
+                                viewModel.deleteTrips(selectedTripIds);
                                 actionMode.finish();
                                 return true;
                             }

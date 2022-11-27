@@ -1,23 +1,16 @@
 package it.units.simandroid.progetto.fragments;
 
-import static it.units.simandroid.progetto.RealtimeDatabase.DB_URL;
 import static it.units.simandroid.progetto.fragments.TripsFragment.GET_IMAGE_TAG;
 
-import android.Manifest;
 import android.content.Context;
-import android.content.pm.PackageManager;
-import android.content.res.ColorStateList;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
-import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.util.Log;
@@ -31,7 +24,6 @@ import android.widget.TextView;
 
 import com.google.android.gms.tasks.Tasks;
 import com.google.android.material.checkbox.MaterialCheckBox;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FileDownloadTask;
 
 import java.io.File;
@@ -57,6 +49,8 @@ public class TripContentFragment extends Fragment {
     private TextView tripDestination;
     private TextView tripDescription;
     private TripsViewModel viewModel;
+    private MaterialCheckBox isTripFavorite;
+    private Trip trip;
 
     public TripContentFragment() {
         // Required empty public constructor
@@ -76,6 +70,7 @@ public class TripContentFragment extends Fragment {
 
         viewPager = fragmentView.findViewById(R.id.trip_image_pager);
         tripName = fragmentView.findViewById(R.id.content_trip_name);
+        isTripFavorite = fragmentView.findViewById(R.id.content_favorite_trip);
         tripDestination = fragmentView.findViewById(R.id.content_trip_destination);
         tripDates = fragmentView.findViewById(R.id.content_trip_dates);
         tripDescription = fragmentView.findViewById(R.id.content_trip_description);
@@ -89,8 +84,11 @@ public class TripContentFragment extends Fragment {
             tripDestination.setText(trip.getDestination());
             tripDates.setText(String.format("%s - %s", trip.getStartDate(), trip.getEndDate()));
             tripDescription.setText(trip.getDescription());
-            updateUI(trip);
+            this.trip = trip;
+            updateUI(this.trip);
         });
+
+        isTripFavorite.setOnCheckedChangeListener((compoundButton, isChecked) -> viewModel.setTripFavorite(tripId, isChecked));
 
         requireActivity().addMenuProvider(new MenuProvider() {
             @Override
@@ -107,6 +105,11 @@ public class TripContentFragment extends Fragment {
                     action.setTripId(tripId);
                     NavHostFragment.findNavController(TripContentFragment.this)
                             .navigate(action);
+                    return true;
+                } else if (menuItem.getItemId() == R.id.delete_trip) {
+                    viewModel.deleteTrip(tripId).addOnSuccessListener(task -> Log.d(TRIP_CONTENT_TAG, "Trip " + tripId + " removed from database"));
+                    viewModel.deleteTripImages(trip);
+                    NavHostFragment.findNavController(TripContentFragment.this).navigateUp();
                     return true;
                 }
                 return false;

@@ -4,7 +4,6 @@ import static it.units.simandroid.progetto.RealtimeDatabase.DB_URL;
 
 import android.net.Uri;
 import android.util.Log;
-import android.widget.ArrayAdapter;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
@@ -12,7 +11,6 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
-import com.google.android.gms.common.api.internal.TaskUtil;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -22,7 +20,6 @@ import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
@@ -139,13 +136,31 @@ public class TripsViewModel extends ViewModel {
                 .getFile(image);
     }
 
-    public List<Task<Void>> removeTrips(List<Trip> trips) {
-        List<Task<Void>> tasks = new ArrayList<>(trips.size());
-        for (Trip trip : trips) {
-            Task<Void> task = database.getReference(TRIPS)
-                    .child(trip.getId())
-                    .removeValue();
-            tasks.add(task);
+    public Task<Void> deleteTrip(String tripId) {
+        return database.getReference(TRIPS)
+                .child(tripId)
+                .removeValue();
+    }
+
+    public List<Task<Void>> deleteTrips(List<String> tripIds) {
+        List<Task<Void>> tasks = new ArrayList<>(tripIds.size());
+        for (String tripId : tripIds) {
+            tasks.add(deleteTrip(tripId));
+        }
+        return tasks;
+    }
+
+    public List<Task<Void>> deleteTripImages(Trip trip) {
+        List<Task<Void>> tasks = new ArrayList<>();
+        if (trip.getImagesUris() != null) {
+            for (String imageKey : trip.getImagesUris().keySet()) {
+                Task<Void> task = storage.getReference(USERS)
+                        .child(trip.getOwnerId())
+                        .child(trip.getId())
+                        .child(imageKey)
+                        .delete();
+                tasks.add(task);
+            }
         }
         return tasks;
     }
@@ -220,6 +235,14 @@ public class TripsViewModel extends ViewModel {
                 .child(tripId)
                 .child(AUTHORIZED_USERS_FIELD_NAME)
                 .setValue(tripAuthorizations);
+    }
+
+    public List<Task<Void>> shareTripsWithUsers(List<String> tripIds, Set<String> userIds) {
+        List<Task<Void>> tasks = new ArrayList<>();
+        for (String tripId : tripIds) {
+            tasks.add(shareTripWithUsers(tripId, userIds));
+        }
+        return tasks;
     }
 
     public void shareTripWithUser(String tripId, String userId) {
