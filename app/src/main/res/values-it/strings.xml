@@ -54,7 +54,7 @@
     <string name="location_icon_description">Destinazione viaggio</string>
     <string name="favorite_trip_icon_description">Imposta viaggio come preferito</string>
     <string name="set_favorite_trip">Imposta viaggio come preferito</string>
-    <string name="set_shared_trip">Imposta viaggio come condiviso</string>
+    <string name="share">Condividi</string>
     <string name="share_trip_description">Selezionare gli utenti coi quali condividere il viaggio</string>
     <string name="share_trip_title">Condividi viaggio</string>
     <string name="share_trip_cancel">Annulla</string>
@@ -74,5 +74,5 @@
     <string name="trips_fragment_favorites_label">I miei viaggi preferiti</string>
     <string name="trips_fragment_shared_label">Condivisi con me</string>
     <string name="select_trips_mode_title">selezionati</string>
-    <string name="delete_trip">Elimina</string>
+    <string name="delete">Elimina</string>
 </resources>

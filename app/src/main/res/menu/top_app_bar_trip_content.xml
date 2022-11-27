@@ -4,8 +4,15 @@
     android:id="@+id/trip_content_menu">
     <item
         android:id="@+id/share_trip"
-        android:title="@string/set_shared_trip"
+        android:title="@string/share"
         android:icon="@drawable/ic_baseline_share_24"
         app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/delete_trip"
+        android:title="@string/delete"
+        android:icon="@drawable/ic_baseline_delete_24"
+        app:showAsAction="ifRoom"/>
+
 
 </menu>

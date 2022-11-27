@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -104,7 +105,7 @@ public class TripContentFragment extends Fragment {
                 if (menuItem.getItemId() == R.id.share_trip) {
                     TripContentFragmentDirections.ShareTripAction action = TripContentFragmentDirections.actionShareTrip();
                     action.setTripId(tripId);
-                    Navigation.findNavController(requireView())
+                    NavHostFragment.findNavController(TripContentFragment.this)
                             .navigate(action);
                     return true;
                 }
