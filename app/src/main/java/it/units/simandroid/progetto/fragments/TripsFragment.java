@@ -133,12 +133,15 @@ public class TripsFragment extends Fragment {
                 },
                 (trip, compoundButton, isChecked) -> viewModel.setTripFavorite(trip.getId(), isChecked),
                 (onLongClickTrip, onLongClickView) -> {
-                    onLongClickView.setLongClickable(false);
+                    for (int position = 0; position < tripsRecyclerView.getChildCount(); position++) {
+                        View view = tripsRecyclerView.getChildAt(position);
+                        view.setLongClickable(false);
+                    }
                     OnTripClickListener oldClickListener = tripAdapter.getOnTripClickListener();
                     MaterialToolbar toolbar = TripsFragment.this.requireActivity().findViewById(R.id.toolbar);
-                    AtomicInteger tripsPicked = new AtomicInteger(1);
                     MaterialCardView onLongClickCardView = (MaterialCardView) onLongClickView;
                     onLongClickCardView.setChecked(true);
+                    AtomicInteger tripsPicked = new AtomicInteger(1);
                     List<Trip> selectedTrips = new ArrayList<>();
                     List<MaterialCardView> selectedCards = new ArrayList<>();
                     selectedCards.add(onLongClickCardView);
@@ -173,7 +176,10 @@ public class TripsFragment extends Fragment {
                                 card.setChecked(false);
                             }
                             tripAdapter.setOnTripClickListener(oldClickListener);
-                            onLongClickView.setLongClickable(true);
+                            for (int position = 0; position < tripsRecyclerView.getChildCount(); position++) {
+                                View view = tripsRecyclerView.getChildAt(position);
+                                view.setLongClickable(true);
+                            }
                         }
                     });
                     mode.setTitle(tripsPicked.get() + " " + getString(R.string.select_trips_mode_title));
