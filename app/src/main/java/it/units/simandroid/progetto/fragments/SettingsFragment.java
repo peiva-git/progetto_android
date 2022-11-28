@@ -6,8 +6,12 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.EditTextPreference;
 import androidx.preference.PreferenceFragmentCompat;
@@ -33,6 +37,12 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.settings, rootKey);
+    }
+
+    @NonNull
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View fragmentView = super.onCreateView(inflater, container, savedInstanceState);
 
         SettingsViewModel viewModel = new ViewModelProvider(requireActivity()).get(SettingsViewModel.class);
         viewModel.getUserName().observe(getViewLifecycleOwner(), name -> {
@@ -57,5 +67,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             }
         });
 
+        return fragmentView;
     }
 }

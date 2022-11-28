@@ -337,4 +337,13 @@ public class TripsFragment extends Fragment {
                     .navigate(TripsFragmentDirections.actionTripsFragmentToLoginFragment());
         }
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(requireActivity());
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean(PERMISSION_DIALOG_SHOWN, false);
+        editor.apply();
+    }
 }

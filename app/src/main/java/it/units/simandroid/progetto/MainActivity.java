@@ -214,14 +214,4 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         return NavigationUI.navigateUp(navController, appBarConfiguration) || super.onSupportNavigateUp();
     }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putBoolean(PERMISSION_DIALOG_SHOWN, false);
-        editor.apply();
-    }
-
 }
