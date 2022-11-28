@@ -259,6 +259,7 @@ public class TripsFragment extends Fragment {
     }
 
     private void getTripsImagesWithoutPermissionAndUpdateAdapter(List<Trip> trips) {
+        progressIndicator.show();
         List<FileDownloadTask> imagesDownloadTasks = new ArrayList<>();
         for (Trip trip : trips) {
             if (trip.getImagesUris() != null) {
@@ -285,10 +286,14 @@ public class TripsFragment extends Fragment {
                 Log.d(GET_IMAGE_TAG, "No images for trip " + trip.getId());
             }
         }
-        Tasks.whenAllComplete(imagesDownloadTasks).addOnCompleteListener(task -> tripAdapter.updateTrips(trips));
+        Tasks.whenAllComplete(imagesDownloadTasks).addOnCompleteListener(task -> {
+            tripAdapter.updateTrips(trips);
+            progressIndicator.hide();
+        });
     }
 
     private void getTripsImagesWithPermissionAndUpdateAdapter(List<Trip> trips) {
+        progressIndicator.show();
         List<FileDownloadTask> imagesDownloadTasks = new ArrayList<>();
         for (Trip trip : trips) {
             if (trip.getImagesUris() != null) {
@@ -325,7 +330,10 @@ public class TripsFragment extends Fragment {
                 Log.d(GET_IMAGE_TAG, "No images for trip " + trip.getId());
             }
         }
-        Tasks.whenAllComplete(imagesDownloadTasks).addOnCompleteListener(task -> tripAdapter.updateTrips(trips));
+        Tasks.whenAllComplete(imagesDownloadTasks).addOnCompleteListener(task -> {
+            tripAdapter.updateTrips(trips);
+            progressIndicator.hide();
+        });
     }
 
     @Override

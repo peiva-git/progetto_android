@@ -24,6 +24,7 @@ import android.widget.TextView;
 
 import com.google.android.gms.tasks.Tasks;
 import com.google.android.material.checkbox.MaterialCheckBox;
+import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.firebase.storage.FileDownloadTask;
 
 import java.io.File;
@@ -51,6 +52,7 @@ public class TripContentFragment extends Fragment {
     private TripsViewModel viewModel;
     private MaterialCheckBox isTripFavorite;
     private Trip trip;
+    private LinearProgressIndicator progressIndicator;
 
     public TripContentFragment() {
         // Required empty public constructor
@@ -74,6 +76,7 @@ public class TripContentFragment extends Fragment {
         tripDestination = fragmentView.findViewById(R.id.content_trip_destination);
         tripDates = fragmentView.findViewById(R.id.content_trip_dates);
         tripDescription = fragmentView.findViewById(R.id.content_trip_description);
+        progressIndicator = requireActivity().findViewById(R.id.progress_indicator);
 
         pagerAdapter = new SlideshowPagerAdapter(this, Collections.emptyList());
         viewPager.setAdapter(pagerAdapter);
@@ -120,6 +123,7 @@ public class TripContentFragment extends Fragment {
     }
 
     private void updateUI(Trip trip) {
+        progressIndicator.show();
         if (trip.getImagesUris() != null) {
             List<FileDownloadTask> imagesDownloadTasks = new ArrayList<>();
             for (Map.Entry<String, String> imageUriById : trip.getImagesUris().entrySet()) {
@@ -148,6 +152,7 @@ public class TripContentFragment extends Fragment {
                 List<String> tripImages = new ArrayList<>(trip.getImagesUris().size());
                 tripImages.addAll(trip.getImagesUris().values());
                 pagerAdapter.setTripImageUris(tripImages);
+                progressIndicator.hide();
             });
         }
     }
