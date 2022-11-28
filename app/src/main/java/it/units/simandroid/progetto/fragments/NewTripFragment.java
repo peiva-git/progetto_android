@@ -145,20 +145,13 @@ public class NewTripFragment extends Fragment {
         String newTripDescription = tripDescription.getText().toString();
 
         TripsViewModel viewModel = new ViewModelProvider(this).get(TripsViewModel.class);
-        Trip uploadedTrip = viewModel.uploadTripData(pickedImages,
+        List<UploadTask> tasks = viewModel.uploadTripData(pickedImages,
                 newTripName,
                 newTripStartDate,
                 newTripEndDate,
                 newTripDescription,
                 newTripDestination,
                 authentication.getUid());
-        List<UploadTask> tasks = viewModel.uploadTripImages(uploadedTrip);
-        Tasks.whenAllComplete(tasks).addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                progressIndicator.hide();
-            } else {
-                Log.e("NEW_TRIP", "Failed to upload trip images to remote storage: " + Objects.requireNonNull(task.getException()).getMessage());
-            }
-        });
+        Tasks.whenAllComplete(tasks).addOnCompleteListener(task -> progressIndicator.hide());
     }
 }

@@ -77,13 +77,6 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ItemViewHolder
     @Override
     public ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_trip, parent, false);
-        Configuration configuration = context.getResources().getConfiguration();
-        if (configuration.isLayoutSizeAtLeast(Configuration.SCREENLAYOUT_SIZE_LARGE)) {
-            ViewGroup.LayoutParams params = view.getLayoutParams();
-            SecureRandom random = new SecureRandom();
-            params.width += random.nextInt(30);
-            view.setLayoutParams(params);
-        }
         return new ItemViewHolder(view);
     }
 

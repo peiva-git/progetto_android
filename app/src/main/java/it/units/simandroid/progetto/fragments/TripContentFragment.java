@@ -124,8 +124,8 @@ public class TripContentFragment extends Fragment {
 
     private void updateUI(Trip trip) {
         progressIndicator.show();
+        List<FileDownloadTask> imagesDownloadTasks = new ArrayList<>();
         if (trip.getImagesUris() != null) {
-            List<FileDownloadTask> imagesDownloadTasks = new ArrayList<>();
             for (Map.Entry<String, String> imageUriById : trip.getImagesUris().entrySet()) {
                 File tripDirectory = requireContext().getDir(trip.getId(), Context.MODE_PRIVATE);
                 File storedImage = new File(tripDirectory, imageUriById.getKey());
