@@ -1,6 +1,7 @@
 package it.units.simandroid.progetto;
 
 import static it.units.simandroid.progetto.RealtimeDatabase.DB_URL;
+import static it.units.simandroid.progetto.TripsViewModel.USERS;
 
 import android.util.Log;
 
@@ -23,36 +24,45 @@ public class UsersViewModel extends ViewModel {
     public static final String GET_USERS_TAG = "GET_USERS";
     private final FirebaseDatabase database;
     private final MutableLiveData<List<User>> databaseUsers;
+    private final ValueEventListener listener;
 
     public UsersViewModel() {
-         database = FirebaseDatabase.getInstance(DB_URL);
-         databaseUsers = new MutableLiveData<>();
-         database.getReference("users").addValueEventListener(new ValueEventListener() {
-             @Override
-             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                 GenericTypeIndicator<Map<String, Object>> type = new GenericTypeIndicator<Map<String, Object>>() {};
-                 Map<String, Object> usersById = snapshot.getValue(type);
-                 if (usersById != null) {
-                     List<User> users = new ArrayList<>(usersById.size());
-                     for (String userKey : usersById.keySet()) {
-                         DataSnapshot userSnapshot = snapshot.child(userKey);
-                         User databaseUser = userSnapshot.getValue(User.class);
-                         users.add(databaseUser);
-                     }
-                     databaseUsers.setValue(users);
-                 } else {
-                     Log.i(GET_USERS_TAG, "No users found in database");
-                 }
-             }
+        database = FirebaseDatabase.getInstance(DB_URL);
+        databaseUsers = new MutableLiveData<>();
+        listener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                GenericTypeIndicator<Map<String, Object>> type = new GenericTypeIndicator<Map<String, Object>>() {
+                };
+                Map<String, Object> usersById = snapshot.getValue(type);
+                if (usersById != null) {
+                    List<User> users = new ArrayList<>(usersById.size());
+                    for (String userKey : usersById.keySet()) {
+                        DataSnapshot userSnapshot = snapshot.child(userKey);
+                        User databaseUser = userSnapshot.getValue(User.class);
+                        users.add(databaseUser);
+                    }
+                    databaseUsers.setValue(users);
+                } else {
+                    Log.i(GET_USERS_TAG, "No users found in database");
+                }
+            }
 
-             @Override
-             public void onCancelled(@NonNull DatabaseError error) {
-                 Log.e(GET_USERS_TAG, "Unable to retrieve users from database: " + error.getMessage());
-             }
-         });
-     }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e(GET_USERS_TAG, "Unable to retrieve users from database: " + error.getMessage());
+            }
+        };
+        database.getReference(USERS).addValueEventListener(listener);
+    }
 
-     public LiveData<List<User>> getUsers() {
+    public LiveData<List<User>> getUsers() {
         return databaseUsers;
-     }
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        database.getReference(USERS).removeEventListener(listener);
+    }
 }

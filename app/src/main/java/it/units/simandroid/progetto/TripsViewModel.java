@@ -43,12 +43,13 @@ public class TripsViewModel extends ViewModel {
     private final MutableLiveData<List<Trip>> databaseTrips;
     private final FirebaseDatabase database;
     private final FirebaseStorage storage;
+    private final ValueEventListener listener;
 
     public TripsViewModel() {
         database = FirebaseDatabase.getInstance(DB_URL);
         storage = FirebaseStorage.getInstance();
         databaseTrips = new MutableLiveData<>();
-        database.getReference(TRIPS).addValueEventListener(new ValueEventListener() {
+        listener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 GenericTypeIndicator<Map<String, Object>> type = new GenericTypeIndicator<Map<String, Object>>() {
@@ -72,7 +73,8 @@ public class TripsViewModel extends ViewModel {
             public void onCancelled(@NonNull DatabaseError error) {
                 Log.e("GET_TRIPS", "Unable to retrieve trips from database: " + error.getMessage());
             }
-        });
+        };
+        database.getReference(TRIPS).addValueEventListener(listener);
     }
 
     public LiveData<List<Trip>> getTrips() {
@@ -259,5 +261,11 @@ public class TripsViewModel extends ViewModel {
                 .child(AUTHORIZED_USERS_FIELD_NAME)
                 .child(userId)
                 .setValue(false);
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        database.getReference(TRIPS).removeEventListener(listener);
     }
 }

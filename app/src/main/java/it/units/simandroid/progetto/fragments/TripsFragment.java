@@ -132,7 +132,7 @@ public class TripsFragment extends Fragment {
                     selectedTrips.add(onLongClickTrip);
                     Log.d("SELECT_TRIPS", "Trip " + onLongClickTrip.getId() + " added to selected trips list");
 
-                    ActionMode mode = toolbar.startActionMode(new ActionMode.Callback() {
+                    ActionMode pickTrips = toolbar.startActionMode(new ActionMode.Callback() {
                         @Override
                         public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
                             actionMode.getMenuInflater().inflate(R.menu.top_app_bar_contextual_pick_trips, menu);
@@ -171,7 +171,7 @@ public class TripsFragment extends Fragment {
                             }
                         }
                     });
-                    mode.setTitle(tripsPicked.get() + " " + getString(R.string.select_trips_mode_title));
+                    pickTrips.setTitle(tripsPicked.get() + " " + getString(R.string.select_trips_mode_title));
                     tripAdapter.setOnTripClickListener((onClickTrip, onClickView) -> {
                         MaterialCardView onClickCardView = (MaterialCardView) onClickView;
                         if (onClickCardView.isChecked()) {
@@ -187,9 +187,9 @@ public class TripsFragment extends Fragment {
                         }
                         onClickCardView.setChecked(!onClickCardView.isChecked());
                         if (tripsPicked.get() == 0) {
-                            mode.finish();
+                            pickTrips.finish();
                         }
-                        mode.setTitle(tripsPicked.get() + " " + getString(R.string.select_trips_mode_title));
+                        pickTrips.setTitle(tripsPicked.get() + " " + getString(R.string.select_trips_mode_title));
                     });
                     return true;
                 });

@@ -8,6 +8,7 @@ import android.provider.ContactsContract;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.EditTextPreference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
@@ -22,42 +23,39 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.Objects;
 
 import it.units.simandroid.progetto.R;
+import it.units.simandroid.progetto.SettingsViewModel;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
 
     public static final String USER_NAME_KEY = "user_name";
     public static final String USER_SURNAME_KEY = "user_surname";
-    private FirebaseDatabase database;
-    private FirebaseAuth auth;
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.settings, rootKey);
-        EditTextPreference namePreference = findPreference(USER_NAME_KEY);
-        EditTextPreference surnamePreference = findPreference(USER_SURNAME_KEY);
 
-        database = FirebaseDatabase.getInstance(DB_URL);
-        auth = FirebaseAuth.getInstance();
-        database.getReference("users").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                String userId = Objects.requireNonNull(auth.getUid());
-                String userName = snapshot
-                        .child(userId)
-                        .child("name")
-                        .getValue(String.class);
-                String userSurname = snapshot
-                        .child(userId)
-                        .child("surname")
-                        .getValue(String.class);
-                Objects.requireNonNull(namePreference).setText(userName);
-                Objects.requireNonNull(surnamePreference).setText(userSurname);
-            }
+        SettingsViewModel viewModel = new ViewModelProvider(requireActivity()).get(SettingsViewModel.class);
+        viewModel.getUserName().observe(getViewLifecycleOwner(), name -> {
+            EditTextPreference namePreference = findPreference(USER_NAME_KEY);
+            namePreference.setText(name);
+        });
+        viewModel.getUserSurname().observe(getViewLifecycleOwner(), surname -> {
+            EditTextPreference surnamePreference = findPreference(USER_SURNAME_KEY);
+            surnamePreference.setText(surname);
+        });
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("SETTINGS", "Error retrieving settings: " + error.getMessage());
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(requireContext());
+        preferences.registerOnSharedPreferenceChangeListener((sharedPreferences, key) -> {
+            if (key.equals(USER_NAME_KEY)) {
+                viewModel.setUserName(sharedPreferences.getString(key, ""));
+                Log.i("SETTINGS", "Preference value was updated to: " + sharedPreferences.getString(key, ""));
+            } else if (key.equals(USER_SURNAME_KEY)) {
+                viewModel.setUserSurname(sharedPreferences.getString(key, ""));
+                Log.i("SETTINGS", "Preference value was updated to: " + sharedPreferences.getString(key, ""));
+            } else {
+                Log.w("SETTINGS", "No preference key matching");
             }
         });
+
     }
 }

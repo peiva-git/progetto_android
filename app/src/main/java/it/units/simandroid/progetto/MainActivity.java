@@ -186,26 +186,6 @@ public class MainActivity extends AppCompatActivity {
             navigationRailView.getHeaderView().setOnClickListener(
                     view -> navController.navigate(TripsFragmentDirections.actionTripsFragmentToNewTripFragment()));
         }
-
-
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        preferences.registerOnSharedPreferenceChangeListener((sharedPreferences, key) -> {
-            if (key.equals(USER_NAME_KEY)) {
-                database.getReference("users")
-                        .child(Objects.requireNonNull(authentication.getUid()))
-                        .child("name")
-                        .setValue(sharedPreferences.getString(key, ""));
-                Log.i("SETTINGS", "Preference value was updated to: " + sharedPreferences.getString(key, ""));
-            } else if (key.equals(USER_SURNAME_KEY)) {
-                database.getReference("users")
-                        .child(Objects.requireNonNull(authentication.getUid()))
-                        .child("surname")
-                        .setValue(sharedPreferences.getString(key, ""));
-                Log.i("SETTINGS", "Preference value was updated to: " + sharedPreferences.getString(key, ""));
-            } else {
-                Log.w("SETTINGS", "No preference key matching");
-            }
-        });
     }
 
     @Override
@@ -248,4 +228,5 @@ public class MainActivity extends AppCompatActivity {
         editor.putBoolean(PERMISSION_DIALOG_SHOWN, false);
         editor.apply();
     }
+
 }
