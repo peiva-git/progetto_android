@@ -12,6 +12,7 @@ import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -167,7 +168,7 @@ public class TripsViewModel extends ViewModel {
         return tasks;
     }
 
-    public Trip uploadTripData(List<Uri> tripImages,
+    public List<UploadTask> uploadTripData(List<Uri> tripImages,
                                String tripName,
                                String tripStartDate,
                                String tripEndDate,
@@ -189,13 +190,15 @@ public class TripsViewModel extends ViewModel {
                 Objects.requireNonNull(tripReference.getKey()),
                 null,
                 tripOwner);
-        tripReference.setValue(trip)
-                .addOnSuccessListener(task -> Log.d(NEW_TRIP_DB_TAG, "Added new trip to realtime DB"))
-                .addOnFailureListener(exception -> Log.e(NEW_TRIP_DB_TAG, "Failed to add new trip to realtime DB: " + exception.getMessage()));
-        return trip;
+        List<UploadTask> imageTasks = uploadTripImages(trip);
+        Tasks.whenAllComplete(imageTasks).addOnCompleteListener(imagesTask ->
+                tripReference.setValue(trip)
+                        .addOnSuccessListener(tripTask -> Log.d(NEW_TRIP_DB_TAG, "Added new trip to realtime DB"))
+                        .addOnFailureListener(exception -> Log.e(NEW_TRIP_DB_TAG, "Failed to add new trip to realtime DB: " + exception.getMessage())));
+        return imageTasks;
     }
 
-    public List<UploadTask> uploadTripImages(@NonNull Trip trip) {
+    private List<UploadTask> uploadTripImages(@NonNull Trip trip) {
         List<UploadTask> tasks = new ArrayList<>();
         if (trip.getImagesUris() != null) {
             for (Map.Entry<String, String> image : trip.getImagesUris().entrySet()) {
