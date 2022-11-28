@@ -144,7 +144,7 @@ public class NewTripFragment extends Fragment {
         String newTripEndDate = tripEndDate.getText().toString();
         String newTripDescription = tripDescription.getText().toString();
 
-        TripsViewModel viewModel = new ViewModelProvider(requireActivity()).get(TripsViewModel.class);
+        TripsViewModel viewModel = new ViewModelProvider(this).get(TripsViewModel.class);
         Trip uploadedTrip = viewModel.uploadTripData(pickedImages,
                 newTripName,
                 newTripStartDate,

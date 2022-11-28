@@ -45,17 +45,12 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout navigationDrawer;
     private NavigationView navigationView;
     private LinearProgressIndicator progressIndicator;
-    private FirebaseAuth authentication;
-    private FirebaseDatabase database;
     private NavigationRailView navigationRailView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        authentication = FirebaseAuth.getInstance();
-        database = FirebaseDatabase.getInstance(DB_URL);
 
         toolbar = findViewById(R.id.toolbar);
         navigationDrawer = findViewById(R.id.drawer_layout);
