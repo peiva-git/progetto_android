@@ -51,6 +51,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ItemViewHolder
     @Override
     public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
         Trip trip = trips.get(position);
+        // need to set everything, otherwise old data is going to stay there when the holder is recycled
         holder.tripName.setText(trip.getName());
         holder.tripDescription.setText(trip.getDescription());
         holder.tripDestination.setText(trip.getDestination());
@@ -59,6 +60,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ItemViewHolder
         if (isSharedModeOn) {
             holder.isTripFavorite.setVisibility(View.INVISIBLE);
         } else {
+            holder.isTripFavorite.setVisibility(View.VISIBLE);
             holder.isTripFavorite.setChecked(trip.isFavorite());
         }
         if (trip.getImagesUris() != null && !trip.getImagesUris().isEmpty()) {
@@ -81,7 +83,6 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ItemViewHolder
         private final TextView tripDestination;
         private final TextView tripDescription;
         private final TextView tripStartEndDate;
-        private final MaterialCardView cardView;
         private final CheckBox isTripFavorite;
 
         public ItemViewHolder(@NonNull View itemView) {
@@ -91,7 +92,6 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ItemViewHolder
             tripName = itemView.findViewById(R.id.trip_name);
             tripDestination = itemView.findViewById(R.id.trip_location);
             tripStartEndDate = itemView.findViewById(R.id.trip_start_end_date);
-            cardView = itemView.findViewById(R.id.trip_card);
             isTripFavorite = itemView.findViewById(R.id.favorite_trip);
         }
     }
