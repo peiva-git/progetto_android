@@ -10,6 +10,8 @@ import android.os.Bundle;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.Fragment;
@@ -19,6 +21,7 @@ import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.preference.PreferenceManager;
+import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
@@ -117,6 +120,7 @@ public class TripsFragment extends Fragment implements OnTripClickListener {
         layoutManager.setFlexDirection(FlexDirection.ROW);
         layoutManager.setJustifyContent(JustifyContent.FLEX_START);
         tripsRecyclerView.setLayoutManager(layoutManager);
+        tripsRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
         if (newTripButton != null) {
             newTripButton.setOnClickListener(view -> {
@@ -323,7 +327,18 @@ public class TripsFragment extends Fragment implements OnTripClickListener {
         @Override
         public boolean onActionItemClicked(ActionMode mode, MenuItem menuItem) {
             if (menuItem.getItemId() == R.id.delete_trip) {
-
+                List<Trip> selectedTrips = new ArrayList<>();
+                for (Integer position : tripAdapter.getSelectedTripsPositions()) {
+                    selectedTrips.add(tripAdapter.getAdapterTrip(position));
+                }
+                for (Trip selectedTrip : selectedTrips) {
+                    viewModel.deleteTrip(selectedTrip.getId())
+                            .addOnSuccessListener(task -> Log.d("DELETE_TRIP", "Trip " + selectedTrip.getId() + " removed from database"))
+                            .addOnFailureListener(exception -> Log.w("DELETE_TRIP", exception));
+                    Tasks.whenAllComplete(viewModel.deleteTripImages(selectedTrip))
+                            .addOnCompleteListener(task -> Log.d("DELETE_TRIP", "Images removed for trip " + selectedTrip.getId()));
+                }
+                tripAdapter.removeTripsByPositions(tripAdapter.getSelectedTripsPositions());
                 mode.finish();
                 return true;
             }

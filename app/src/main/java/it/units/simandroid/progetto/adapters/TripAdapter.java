@@ -16,6 +16,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.card.MaterialCardView;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -75,6 +77,42 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ItemViewHolder
         for (Integer i : selection) {
             notifyItemChanged(i);
         }
+    }
+
+    public void removeTripByPosition(int position) {
+        trips.remove(position);
+        notifyItemRemoved(position);
+    }
+
+    public void removeTripsByPositions(List<Integer> positions) {
+        // reverse sort
+        Collections.sort(positions, (lhs, rhs) -> rhs - lhs);
+        while (!positions.isEmpty()) {
+            if (positions.size() == 1) {
+                removeTripByPosition(positions.get(0));
+                positions.remove(0);
+            } else {
+                int count = 1;
+                while (positions.size() > count && positions.get(count).equals(positions.get(count - 1) - 1)) {
+                    ++count;
+                }
+                if (count == 1) {
+                    removeTripByPosition(positions.get(0));
+                } else {
+                    removeRange(positions.get(count - 1), count);
+                }
+                if (count > 0) {
+                    positions.subList(0, count).clear();
+                }
+            }
+        }
+    }
+
+    private void removeRange(int positionStart, int itemCount) {
+        for (int i = 0; i < itemCount; ++i) {
+            trips.remove(positionStart);
+        }
+        notifyItemRangeRemoved(positionStart, itemCount);
     }
 
     public Trip getAdapterTrip(int position) {
