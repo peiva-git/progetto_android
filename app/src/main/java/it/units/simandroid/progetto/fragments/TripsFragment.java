@@ -22,6 +22,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
@@ -116,9 +117,7 @@ public class TripsFragment extends Fragment implements OnTripClickListener {
             newTripButton.setVisibility(View.GONE);
         }
 
-        FlexboxLayoutManager layoutManager = new FlexboxLayoutManager(getContext());
-        layoutManager.setFlexDirection(FlexDirection.ROW);
-        layoutManager.setJustifyContent(JustifyContent.FLEX_START);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         tripsRecyclerView.setLayoutManager(layoutManager);
         tripsRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
