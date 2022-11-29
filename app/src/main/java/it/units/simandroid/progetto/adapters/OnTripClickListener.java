@@ -6,5 +6,6 @@ import android.widget.CompoundButton;
 import it.units.simandroid.progetto.Trip;
 
 public interface OnTripClickListener {
-    void onClick(Trip trip, View view);
+    void onTripClick(int position);
+    boolean onTripLongClick(int position);
 }
