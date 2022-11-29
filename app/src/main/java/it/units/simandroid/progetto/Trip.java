@@ -140,11 +140,11 @@ public class Trip {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Trip trip = (Trip) o;
-        return Objects.equals(imagesUris, trip.imagesUris) && name.equals(trip.name) && startDate.equals(trip.startDate) && endDate.equals(trip.endDate) && description.equals(trip.description) && destination.equals(trip.destination) && ownerId.equals(trip.ownerId);
+        return id.equals(trip.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(imagesUris, name, startDate, endDate, description, destination, ownerId);
+        return Objects.hash(id);
     }
 }

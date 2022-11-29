@@ -25,44 +25,12 @@ import it.units.simandroid.progetto.Trip;
 public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ItemViewHolder> {
 
     private final Context context;
-    private List<Trip> trips;
-
-    public OnTripClickListener getOnTripClickListener() {
-        return onTripClickListener;
-    }
-
-    public void setOnTripClickListener(OnTripClickListener onTripClickListener) {
-        this.onTripClickListener = onTripClickListener;
-    }
-
-    private OnTripClickListener onTripClickListener;
-    private OnFavoriteStateChangedListener onFavoriteStateChangedListener;
-
-    public OnTripLongClickListener getOnTripLongClickListener() {
-        return onTripLongClickListener;
-    }
-
-    public void setOnTripLongClickListener(OnTripLongClickListener onTripLongClickListener) {
-        this.onTripLongClickListener = onTripLongClickListener;
-    }
-
-    private OnTripLongClickListener onTripLongClickListener;
+    private final List<Trip> trips;
     private boolean isSharedModeOn = false;
 
-    public TripAdapter(Context context, List<Trip> trips,
-                       OnTripClickListener onTripClickListener,
-                       OnFavoriteStateChangedListener onFavoriteStateChangedListener,
-                       OnTripLongClickListener onTripLongClickListener) {
+    public TripAdapter(Context context, List<Trip> trips) {
         this.context = context;
         this.trips = trips;
-        this.onTripClickListener = onTripClickListener;
-        this.onFavoriteStateChangedListener = onFavoriteStateChangedListener;
-        this.onTripLongClickListener = onTripLongClickListener;
-    }
-
-    public void updateTrips(List<Trip> trips) {
-        this.trips = trips;
-        notifyDataSetChanged();
     }
 
     public boolean isSharedModeOn() {
@@ -89,7 +57,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ItemViewHolder
         StringBuilder sb = new StringBuilder(trip.getStartDate());
         holder.tripStartEndDate.setText(sb.append(" - ").append(trip.getEndDate()).toString());
         if (isSharedModeOn) {
-            holder.isTripFavorite.setVisibility(View.GONE);
+            holder.isTripFavorite.setVisibility(View.INVISIBLE);
         } else {
             holder.isTripFavorite.setChecked(trip.isFavorite());
         }
@@ -97,11 +65,9 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ItemViewHolder
             Iterator<String> iterator = trip.getImagesUris().values().iterator();
             Uri mainImageUri = Uri.parse(iterator.next());
             holder.tripMainPicture.setImageURI(mainImageUri);
+        } else {
+            holder.tripMainPicture.setImageResource(R.drawable.ic_baseline_image_24);
         }
-        holder.cardView.setOnLongClickListener(view -> onTripLongClickListener.onLongClick(trip, view));
-        holder.cardView.setOnClickListener(view -> onTripClickListener.onClick(trip, view));
-        holder.isTripFavorite.setOnCheckedChangeListener(
-                (compoundButton, isChecked) -> onFavoriteStateChangedListener.onFavoriteStateChanged(trip, compoundButton, isChecked));
     }
 
     @Override

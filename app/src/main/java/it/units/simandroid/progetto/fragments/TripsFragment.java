@@ -108,98 +108,10 @@ public class TripsFragment extends Fragment {
             newTripButton.setVisibility(View.GONE);
         }
 
-        tripAdapter = new TripAdapter(getContext(), Collections.emptyList(),
-                (trip, view) -> {
-                    TripsFragmentDirections.ViewTripDetailsAction action = TripsFragmentDirections.actionViewTripDetails();
-                    action.setTripId(trip.getId());
-                    action.setSharedTripsModeActive(TripsFragmentArgs.fromBundle(requireArguments()).isSharedTripsModeActive());
-                    Navigation.findNavController(requireView()).navigate(action);
-                },
-                (trip, compoundButton, isChecked) -> viewModel.setTripFavorite(trip.getId(), isChecked),
-                (onLongClickTrip, onLongClickView) -> {
-                    for (int position = 0; position < tripsRecyclerView.getChildCount(); position++) {
-                        View view = tripsRecyclerView.getChildAt(position);
-                        view.setLongClickable(false);
-                    }
-                    OnTripClickListener oldClickListener = tripAdapter.getOnTripClickListener();
-                    MaterialToolbar toolbar = TripsFragment.this.requireActivity().findViewById(R.id.toolbar);
-                    MaterialCardView onLongClickCardView = (MaterialCardView) onLongClickView;
-                    onLongClickCardView.setChecked(true);
-                    AtomicInteger tripsPicked = new AtomicInteger(1);
-                    List<Trip> selectedTrips = new ArrayList<>();
-                    List<MaterialCardView> selectedCards = new ArrayList<>();
-                    selectedCards.add(onLongClickCardView);
-                    selectedTrips.add(onLongClickTrip);
-                    Log.d("SELECT_TRIPS", "Trip " + onLongClickTrip.getId() + " added to selected trips list");
-
-                    ActionMode pickTrips = toolbar.startActionMode(new ActionMode.Callback() {
-                        @Override
-                        public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
-                            actionMode.getMenuInflater().inflate(R.menu.top_app_bar_contextual_pick_trips, menu);
-                            return true;
-                        }
-
-                        @Override
-                        public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
-                            return false;
-                        }
-
-                        @Override
-                        public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
-                            if (menuItem.getItemId() == R.id.delete_trip) {
-                                List<String> selectedTripIds = new ArrayList<>();
-                                for (Trip trip : selectedTrips) {
-                                    selectedTripIds.add(trip.getId());
-                                    viewModel.deleteTripImages(trip);
-                                }
-                                viewModel.deleteTrips(selectedTripIds);
-                                actionMode.finish();
-                                return true;
-                            }
-                            return false;
-                        }
-
-                        @Override
-                        public void onDestroyActionMode(ActionMode actionMode) {
-                            for (MaterialCardView card : selectedCards) {
-                                card.setChecked(false);
-                            }
-                            tripAdapter.setOnTripClickListener(oldClickListener);
-                            for (int position = 0; position < tripsRecyclerView.getChildCount(); position++) {
-                                View view = tripsRecyclerView.getChildAt(position);
-                                view.setLongClickable(true);
-                            }
-                        }
-                    });
-                    pickTrips.setTitle(tripsPicked.get() + " " + getString(R.string.select_trips_mode_title));
-                    tripAdapter.setOnTripClickListener((onClickTrip, onClickView) -> {
-                        MaterialCardView onClickCardView = (MaterialCardView) onClickView;
-                        if (onClickCardView.isChecked()) {
-                            tripsPicked.addAndGet(-1);
-                            selectedTrips.remove(onClickTrip);
-                            selectedCards.remove(onClickCardView);
-                            Log.d("SELECT_TRIPS", "Trip " + onClickTrip.getId() + " removed from selected trips list");
-                        } else {
-                            tripsPicked.addAndGet(1);
-                            selectedTrips.add(onClickTrip);
-                            selectedCards.add(onClickCardView);
-                            Log.d("SELECT_TRIPS", "Trip " + onClickTrip.getId() + " added to selected trips list");
-                        }
-                        onClickCardView.setChecked(!onClickCardView.isChecked());
-                        if (tripsPicked.get() == 0) {
-                            pickTrips.finish();
-                        }
-                        pickTrips.setTitle(tripsPicked.get() + " " + getString(R.string.select_trips_mode_title));
-                    });
-                    return true;
-                });
-
-        tripAdapter.setSharedModeOn(TripsFragmentArgs.fromBundle(requireArguments()).isSharedTripsModeActive());
         FlexboxLayoutManager layoutManager = new FlexboxLayoutManager(getContext());
         layoutManager.setFlexDirection(FlexDirection.ROW);
         layoutManager.setJustifyContent(JustifyContent.FLEX_START);
         tripsRecyclerView.setLayoutManager(layoutManager);
-        tripsRecyclerView.setAdapter(tripAdapter);
 
         if (newTripButton != null) {
             newTripButton.setOnClickListener(view -> {
@@ -287,7 +199,9 @@ public class TripsFragment extends Fragment {
             }
         }
         Tasks.whenAllComplete(imagesDownloadTasks).addOnCompleteListener(task -> {
-            tripAdapter.updateTrips(trips);
+            tripAdapter = new TripAdapter(getContext(), trips);
+            tripAdapter.setSharedModeOn(TripsFragmentArgs.fromBundle(requireArguments()).isSharedTripsModeActive());
+            tripsRecyclerView.setAdapter(tripAdapter);
             progressIndicator.hide();
         });
     }
@@ -331,7 +245,9 @@ public class TripsFragment extends Fragment {
             }
         }
         Tasks.whenAllComplete(imagesDownloadTasks).addOnCompleteListener(task -> {
-            tripAdapter.updateTrips(trips);
+            tripAdapter = new TripAdapter(getContext(), trips);
+            tripAdapter.setSharedModeOn(TripsFragmentArgs.fromBundle(requireArguments()).isSharedTripsModeActive());
+            tripsRecyclerView.setAdapter(tripAdapter);
             progressIndicator.hide();
         });
     }
