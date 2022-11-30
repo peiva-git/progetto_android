@@ -10,6 +10,7 @@ import android.os.Bundle;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.Fragment;
@@ -19,6 +20,14 @@ import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.preference.PreferenceManager;
+import androidx.recyclerview.selection.BandPredicate;
+import androidx.recyclerview.selection.ItemDetailsLookup;
+import androidx.recyclerview.selection.ItemKeyProvider;
+import androidx.recyclerview.selection.OnContextClickListener;
+import androidx.recyclerview.selection.OnItemActivatedListener;
+import androidx.recyclerview.selection.SelectionTracker;
+import androidx.recyclerview.selection.StableIdKeyProvider;
+import androidx.recyclerview.selection.StorageStrategy;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
@@ -26,6 +35,7 @@ import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -54,6 +64,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import it.units.simandroid.progetto.R;
 import it.units.simandroid.progetto.Trip;
+import it.units.simandroid.progetto.TripDetailsLookup;
+import it.units.simandroid.progetto.TripKeyProvider;
 import it.units.simandroid.progetto.TripsViewModel;
 import it.units.simandroid.progetto.adapters.OnTripClickListener;
 import it.units.simandroid.progetto.adapters.TripAdapter;
@@ -75,6 +87,9 @@ public class TripsFragment extends Fragment {
     private LinearProgressIndicator progressIndicator;
     private TripsViewModel viewModel;
     private List<Trip> trips;
+    private SelectionTracker<String> selectionTracker;
+    private MaterialToolbar toolbar;
+    private ActionMode actionMode;
 
     public TripsFragment() {
         // Required empty public constructor
@@ -102,6 +117,7 @@ public class TripsFragment extends Fragment {
         tripsRecyclerView = fragmentView.findViewById(R.id.trips_recycler_view);
         newTripButton = fragmentView.findViewById(R.id.new_trip_button);
         progressIndicator = requireActivity().findViewById(R.id.progress_indicator);
+        toolbar = requireActivity().findViewById(R.id.toolbar);
 
         boolean isSizeAtLeastLarge = getResources().getConfiguration().isLayoutSizeAtLeast(Configuration.SCREENLAYOUT_SIZE_LARGE);
         if (isSizeAtLeastLarge) {
@@ -202,6 +218,40 @@ public class TripsFragment extends Fragment {
             tripAdapter = new TripAdapter(getContext(), trips);
             tripAdapter.setSharedModeOn(TripsFragmentArgs.fromBundle(requireArguments()).isSharedTripsModeActive());
             tripsRecyclerView.setAdapter(tripAdapter);
+            selectionTracker = new SelectionTracker.Builder<>(
+                    "trip-selection",
+                    tripsRecyclerView,
+                    new TripKeyProvider(ItemKeyProvider.SCOPE_MAPPED, trips),
+                    new TripDetailsLookup(tripsRecyclerView),
+                    StorageStrategy.createStringStorage())
+                    .withOnItemActivatedListener((item, motionEvent) -> {
+                        if (item.getSelectionKey() != null) {
+                            TripsFragmentDirections.ViewTripDetailsAction action = TripsFragmentDirections.actionViewTripDetails();
+                            action.setTripId(item.getSelectionKey());
+                            NavHostFragment.findNavController(TripsFragment.this).navigate(action);
+                            return true;
+                        }
+                        return false;
+                    })
+                    .build();
+            tripAdapter.setSelectionTracker(selectionTracker);
+            selectionTracker.addObserver(new SelectionTracker.SelectionObserver<String>() {
+                @Override
+                public void onSelectionChanged() {
+                    super.onSelectionChanged();
+                    if (selectionTracker.hasSelection() && actionMode == null) {
+                        actionMode = toolbar.startActionMode(new ActionModeCallback(TripsFragment.this.getContext(), selectionTracker));
+                        actionMode.setTitle(selectionTracker.getSelection().size() + " " + getString(R.string.select_trips_mode_title));
+                    } else if (!selectionTracker.hasSelection() && actionMode != null) {
+                        actionMode.finish();
+                        actionMode = null;
+                    } else {
+                        if (actionMode != null) {
+                            actionMode.setTitle(selectionTracker.getSelection().size() + " " + getString(R.string.select_trips_mode_title));
+                        }
+                    }
+                }
+            });
             progressIndicator.hide();
         });
     }
@@ -248,6 +298,40 @@ public class TripsFragment extends Fragment {
             tripAdapter = new TripAdapter(getContext(), trips);
             tripAdapter.setSharedModeOn(TripsFragmentArgs.fromBundle(requireArguments()).isSharedTripsModeActive());
             tripsRecyclerView.setAdapter(tripAdapter);
+            selectionTracker = new SelectionTracker.Builder<>(
+                    "trip-selection",
+                    tripsRecyclerView,
+                    new TripKeyProvider(ItemKeyProvider.SCOPE_MAPPED, trips),
+                    new TripDetailsLookup(tripsRecyclerView),
+                    StorageStrategy.createStringStorage())
+                    .withOnItemActivatedListener((item, motionEvent) -> {
+                        if (item.getSelectionKey() != null) {
+                            TripsFragmentDirections.ViewTripDetailsAction action = TripsFragmentDirections.actionViewTripDetails();
+                            action.setTripId(item.getSelectionKey());
+                            NavHostFragment.findNavController(TripsFragment.this).navigate(action);
+                            return true;
+                        }
+                        return false;
+                    })
+                    .build();
+            tripAdapter.setSelectionTracker(selectionTracker);
+            selectionTracker.addObserver(new SelectionTracker.SelectionObserver<String>() {
+                @Override
+                public void onSelectionChanged() {
+                    super.onSelectionChanged();
+                    if (selectionTracker.hasSelection() && actionMode == null) {
+                        actionMode = toolbar.startActionMode(new ActionModeCallback(TripsFragment.this.getContext(), selectionTracker));
+                        actionMode.setTitle(selectionTracker.getSelection().size() + " " + getString(R.string.select_trips_mode_title));
+                    } else if (!selectionTracker.hasSelection() && actionMode != null) {
+                        actionMode.finish();
+                        actionMode = null;
+                    } else {
+                        if (actionMode != null) {
+                            actionMode.setTitle(selectionTracker.getSelection().size() + " " + getString(R.string.select_trips_mode_title));
+                        }
+                    }
+                }
+            });
             progressIndicator.hide();
         });
     }
@@ -269,5 +353,40 @@ public class TripsFragment extends Fragment {
         SharedPreferences.Editor editor = preferences.edit();
         editor.putBoolean(PERMISSION_DIALOG_SHOWN, false);
         editor.apply();
+    }
+
+    private class ActionModeCallback implements ActionMode.Callback {
+        private Context context;
+        private SelectionTracker<String> tracker;
+
+        public ActionModeCallback(Context context, SelectionTracker<String> tracker) {
+            this.context = context;
+            this.tracker = tracker;
+        }
+
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            mode.getMenuInflater().inflate(R.menu.top_app_bar_contextual_pick_trips, menu);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem menuItem) {
+            if (menuItem.getItemId() == R.id.delete_trip) {
+                Log.d("DELETE_TRIP", "Button clicked");
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            tracker.clearSelection();
+        }
     }
 }

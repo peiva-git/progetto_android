@@ -11,6 +11,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.selection.ItemDetailsLookup;
+import androidx.recyclerview.selection.SelectionTracker;
+import androidx.recyclerview.selection.StableIdKeyProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.card.MaterialCardView;
@@ -27,6 +31,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ItemViewHolder
     private final Context context;
     private final List<Trip> trips;
     private boolean isSharedModeOn = false;
+    private SelectionTracker<String> tracker;
 
     public TripAdapter(Context context, List<Trip> trips) {
         this.context = context;
@@ -39,6 +44,10 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ItemViewHolder
 
     public void setSharedModeOn(boolean sharedModeOn) {
         isSharedModeOn = sharedModeOn;
+    }
+
+    public void setSelectionTracker(SelectionTracker<String> tracker) {
+        this.tracker = tracker;
     }
 
     @NonNull
@@ -70,6 +79,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ItemViewHolder
         } else {
             holder.tripMainPicture.setImageResource(R.drawable.ic_baseline_image_24);
         }
+        holder.bind(trip, tracker.isSelected(trip.getId()));
     }
 
     @Override
@@ -77,13 +87,14 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ItemViewHolder
         return trips.size();
     }
 
-    public static class ItemViewHolder extends RecyclerView.ViewHolder {
+    public class ItemViewHolder extends RecyclerView.ViewHolder {
         private final ImageView tripMainPicture;
         private final TextView tripName;
         private final TextView tripDestination;
         private final TextView tripDescription;
         private final TextView tripStartEndDate;
         private final CheckBox isTripFavorite;
+        private final MaterialCardView cardView;
 
         public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -93,6 +104,27 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ItemViewHolder
             tripDestination = itemView.findViewById(R.id.trip_location);
             tripStartEndDate = itemView.findViewById(R.id.trip_start_end_date);
             isTripFavorite = itemView.findViewById(R.id.favorite_trip);
+            cardView = itemView.findViewById(R.id.trip_card);
+        }
+
+        public final void bind(Trip trip, boolean isActive)  {
+            itemView.setActivated(isActive);
+            cardView.setChecked(tracker.isSelected(trip.getId()));
+        }
+
+        public ItemDetailsLookup.ItemDetails<String> getItemDetails() {
+            return new ItemDetailsLookup.ItemDetails<String>() {
+                @Override
+                public int getPosition() {
+                    return getAdapterPosition();
+                }
+
+                @NonNull
+                @Override
+                public String getSelectionKey() {
+                    return trips.get(getPosition()).getId();
+                }
+            };
         }
     }
 }
