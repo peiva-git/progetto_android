@@ -32,6 +32,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 
 import com.google.android.flexbox.FlexDirection;
 import com.google.android.flexbox.FlexboxLayoutManager;
@@ -60,13 +61,14 @@ import it.units.simandroid.progetto.MainActivity;
 import it.units.simandroid.progetto.R;
 import it.units.simandroid.progetto.Trip;
 import it.units.simandroid.progetto.TripsViewModel;
+import it.units.simandroid.progetto.adapters.OnFavoriteStateChangedListener;
 import it.units.simandroid.progetto.adapters.OnTripClickListener;
 import it.units.simandroid.progetto.adapters.TripAdapter;
 import it.units.simandroid.progetto.fragments.directions.TripsFragmentArgs;
 import it.units.simandroid.progetto.fragments.directions.TripsFragmentDirections;
 
 
-public class TripsFragment extends Fragment implements OnTripClickListener {
+public class TripsFragment extends Fragment implements OnTripClickListener, OnFavoriteStateChangedListener {
 
     public static final String PERMISSION_ASKED = "PERMISSION_ASKED";
     public static final String PERMISSION_DIALOG_SHOWN = "PERMISSION_DIALOG_SHOWN";
@@ -118,6 +120,9 @@ public class TripsFragment extends Fragment implements OnTripClickListener {
         }
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+        tripAdapter = new TripAdapter(getContext(), Collections.emptyList(), this, this);
+        tripAdapter.setSharedModeOn(TripsFragmentArgs.fromBundle(requireArguments()).isSharedTripsModeActive());
+        tripsRecyclerView.setAdapter(tripAdapter);
         tripsRecyclerView.setLayoutManager(layoutManager);
         tripsRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
@@ -207,9 +212,7 @@ public class TripsFragment extends Fragment implements OnTripClickListener {
             }
         }
         Tasks.whenAllComplete(imagesDownloadTasks).addOnCompleteListener(task -> {
-            tripAdapter = new TripAdapter(getContext(), trips, this);
-            tripAdapter.setSharedModeOn(TripsFragmentArgs.fromBundle(requireArguments()).isSharedTripsModeActive());
-            tripsRecyclerView.setAdapter(tripAdapter);
+            tripAdapter.setAdapterTrips(trips);
             progressIndicator.hide();
         });
     }
@@ -253,9 +256,7 @@ public class TripsFragment extends Fragment implements OnTripClickListener {
             }
         }
         Tasks.whenAllComplete(imagesDownloadTasks).addOnCompleteListener(task -> {
-            tripAdapter = new TripAdapter(getContext(), trips, this);
-            tripAdapter.setSharedModeOn(TripsFragmentArgs.fromBundle(requireArguments()).isSharedTripsModeActive());
-            tripsRecyclerView.setAdapter(tripAdapter);
+            tripAdapter.setAdapterTrips(trips);
             progressIndicator.hide();
         });
     }
@@ -283,6 +284,7 @@ public class TripsFragment extends Fragment implements OnTripClickListener {
     public void onTripClick(int position) {
         if (actionMode != null) {
             toggleTripSelection(position);
+            Log.d("SELECTION", "Toggled trip at position " + position + " out of " + trips.size());
         } else {
             String tripId = tripAdapter.getAdapterTrip(position).getId();
             TripsFragmentDirections.ViewTripDetailsAction action = TripsFragmentDirections.actionViewTripDetails();
@@ -297,6 +299,7 @@ public class TripsFragment extends Fragment implements OnTripClickListener {
             actionMode = toolbar.startActionMode(actionModeCallback);
         }
         toggleTripSelection(position);
+        Log.d("SELECTION", "Trip at position " + position + " out of " + trips.size() + " added to selection");
         return true;
     }
 
@@ -307,6 +310,27 @@ public class TripsFragment extends Fragment implements OnTripClickListener {
         } else {
             actionMode.setTitle(tripAdapter.getSelectedTripsCount() + " " + getString(R.string.select_trips_mode_title));
             actionMode.invalidate();
+        }
+    }
+
+    @Override
+    public void onFavoriteStateChanged(int position, CompoundButton compoundButton, boolean isChecked) {
+        String tripId = tripAdapter.getAdapterTrip(position).getId();
+        viewModel.setTripFavorite(tripId, isChecked);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        // remove deleted trips from database as well when the fragment is no longer visible
+        for (Trip trip : trips) {
+            if (!tripAdapter.getAdapterTrips().contains(trip)) {
+                viewModel.deleteTrip(trip.getId())
+                        .addOnSuccessListener(task -> Log.d("DELETE_TRIP", "Trip " + trip.getId() + " removed from database"))
+                        .addOnFailureListener(exception -> Log.w("DELETE_TRIP", exception));
+                Tasks.whenAllComplete(viewModel.deleteTripImages(trip))
+                        .addOnCompleteListener(task -> Log.d("DELETE_TRIP", "Images removed for trip " + trip.getId()));
+            }
         }
     }
 
@@ -326,17 +350,7 @@ public class TripsFragment extends Fragment implements OnTripClickListener {
         @Override
         public boolean onActionItemClicked(ActionMode mode, MenuItem menuItem) {
             if (menuItem.getItemId() == R.id.delete_trip) {
-                List<Trip> selectedTrips = new ArrayList<>();
-                for (Integer position : tripAdapter.getSelectedTripsPositions()) {
-                    selectedTrips.add(tripAdapter.getAdapterTrip(position));
-                }
-                for (Trip selectedTrip : selectedTrips) {
-                    viewModel.deleteTrip(selectedTrip.getId())
-                            .addOnSuccessListener(task -> Log.d("DELETE_TRIP", "Trip " + selectedTrip.getId() + " removed from database"))
-                            .addOnFailureListener(exception -> Log.w("DELETE_TRIP", exception));
-                    Tasks.whenAllComplete(viewModel.deleteTripImages(selectedTrip))
-                            .addOnCompleteListener(task -> Log.d("DELETE_TRIP", "Images removed for trip " + selectedTrip.getId()));
-                }
+                // remove trips from view only
                 tripAdapter.removeTripsByPositions(tripAdapter.getSelectedTripsPositions());
                 mode.finish();
                 return true;

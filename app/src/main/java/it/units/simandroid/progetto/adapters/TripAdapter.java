@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,7 +18,6 @@ import com.google.android.material.card.MaterialCardView;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -27,15 +27,17 @@ import it.units.simandroid.progetto.Trip;
 public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ItemViewHolder> {
 
     private final Context context;
-    private final List<Trip> trips;
+    private List<Trip> trips;
     private final OnTripClickListener clickListener;
-    private SparseBooleanArray selectedTrips;
+    private final SparseBooleanArray selectedTrips;
     private boolean isSharedModeOn = false;
+    private final OnFavoriteStateChangedListener favoriteChangedListener;
 
-    public TripAdapter(Context context, List<Trip> trips, OnTripClickListener clickListener) {
+    public TripAdapter(Context context, List<Trip> trips, OnTripClickListener clickListener, OnFavoriteStateChangedListener favoriteChangedListener) {
         this.context = context;
-        this.trips = trips;
+        this.trips = new ArrayList<>(trips);
         this.clickListener = clickListener;
+        this.favoriteChangedListener = favoriteChangedListener;
         selectedTrips = new SparseBooleanArray();
     }
 
@@ -45,6 +47,15 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ItemViewHolder
 
     public void setSharedModeOn(boolean sharedModeOn) {
         isSharedModeOn = sharedModeOn;
+    }
+
+    public List<Trip> getAdapterTrips() {
+        return trips;
+    }
+
+    public void setAdapterTrips(List<Trip> trips) {
+        this.trips = new ArrayList<>(trips);
+        notifyDataSetChanged();
     }
 
     public List<Integer> getSelectedTripsPositions() {
@@ -123,7 +134,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ItemViewHolder
     @Override
     public ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_trip, parent, false);
-        return new ItemViewHolder(view, clickListener);
+        return new ItemViewHolder(view, clickListener, favoriteChangedListener);
     }
 
     @Override
@@ -156,7 +167,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ItemViewHolder
         return trips.size();
     }
 
-    public static class ItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
+    public static class ItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener, CompoundButton.OnCheckedChangeListener {
         private final ImageView tripMainPicture;
         private final TextView tripName;
         private final TextView tripDestination;
@@ -164,9 +175,10 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ItemViewHolder
         private final TextView tripStartEndDate;
         private final CheckBox isTripFavorite;
         private final MaterialCardView cardView;
-        private final OnTripClickListener listener;
+        private final OnTripClickListener selectListener;
+        private final OnFavoriteStateChangedListener favoriteListener;
 
-        public ItemViewHolder(@NonNull View itemView, OnTripClickListener listener) {
+        public ItemViewHolder(@NonNull View itemView, OnTripClickListener selectListener, OnFavoriteStateChangedListener favoriteListener) {
             super(itemView);
             tripMainPicture = itemView.findViewById(R.id.main_trip_picture);
             tripDescription = itemView.findViewById(R.id.trip_description);
@@ -175,25 +187,34 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ItemViewHolder
             tripStartEndDate = itemView.findViewById(R.id.trip_start_end_date);
             isTripFavorite = itemView.findViewById(R.id.favorite_trip);
             cardView = itemView.findViewById(R.id.trip_card);
-            this.listener = listener;
+            this.selectListener = selectListener;
+            this.favoriteListener = favoriteListener;
 
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);
+            isTripFavorite.setOnCheckedChangeListener(this);
         }
 
         @Override
         public void onClick(View view) {
-            if (listener != null) {
-                listener.onTripClick(getAdapterPosition());
+            if (selectListener != null) {
+                selectListener.onTripClick(getBindingAdapterPosition());
             }
         }
 
         @Override
         public boolean onLongClick(View view) {
-            if (listener != null) {
-                return listener.onTripLongClick(getAdapterPosition());
+            if (selectListener != null) {
+                return selectListener.onTripLongClick(getBindingAdapterPosition());
             }
             return false;
+        }
+
+        @Override
+        public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+            if (favoriteListener != null) {
+                favoriteListener.onFavoriteStateChanged(getBindingAdapterPosition(), compoundButton, isChecked);
+            }
         }
     }
 }

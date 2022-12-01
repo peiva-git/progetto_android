@@ -5,5 +5,5 @@ import android.widget.CompoundButton;
 import it.units.simandroid.progetto.Trip;
 
 public interface OnFavoriteStateChangedListener {
-    void onFavoriteStateChanged(Trip trip, CompoundButton compoundButton, boolean isChecked);
+    void onFavoriteStateChanged(int position, CompoundButton compoundButton, boolean isChecked);
 }
