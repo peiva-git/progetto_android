@@ -35,11 +35,9 @@ import java.text.DateFormat;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 import it.units.simandroid.progetto.R;
-import it.units.simandroid.progetto.Trip;
-import it.units.simandroid.progetto.TripsViewModel;
+import it.units.simandroid.progetto.viewmodels.TripsViewModel;
 
 public class NewTripFragment extends Fragment {
 

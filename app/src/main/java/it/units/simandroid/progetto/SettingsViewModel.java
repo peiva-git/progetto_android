@@ -1,7 +1,7 @@
 package it.units.simandroid.progetto;
 
 import static it.units.simandroid.progetto.RealtimeDatabase.DB_URL;
-import static it.units.simandroid.progetto.TripsViewModel.USERS;
+import static it.units.simandroid.progetto.viewmodels.TripsViewModel.USERS;
 
 import android.util.Log;
 

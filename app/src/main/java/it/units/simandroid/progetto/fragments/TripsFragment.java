@@ -10,14 +10,11 @@ import android.os.Bundle;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
-import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.preference.PreferenceManager;
@@ -34,12 +31,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 
-import com.google.android.flexbox.FlexDirection;
-import com.google.android.flexbox.FlexboxLayoutManager;
-import com.google.android.flexbox.JustifyContent;
 import com.google.android.gms.tasks.Tasks;
 import com.google.android.material.appbar.MaterialToolbar;
-import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
@@ -55,12 +48,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
 
-import it.units.simandroid.progetto.MainActivity;
 import it.units.simandroid.progetto.R;
 import it.units.simandroid.progetto.Trip;
-import it.units.simandroid.progetto.TripsViewModel;
+import it.units.simandroid.progetto.viewmodels.TripsViewModel;
 import it.units.simandroid.progetto.adapters.OnFavoriteStateChangedListener;
 import it.units.simandroid.progetto.adapters.OnTripClickListener;
 import it.units.simandroid.progetto.adapters.TripAdapter;
@@ -295,11 +286,13 @@ public class TripsFragment extends Fragment implements OnTripClickListener, OnFa
 
     @Override
     public boolean onTripLongClick(int position) {
-        if (actionMode == null) {
-            actionMode = toolbar.startActionMode(actionModeCallback);
+        if (!TripsFragmentArgs.fromBundle(requireArguments()).isSharedTripsModeActive()) {
+            if (actionMode == null) {
+                actionMode = toolbar.startActionMode(actionModeCallback);
+            }
+            toggleTripSelection(position);
+            Log.d("SELECTION", "Trip at position " + position + " out of " + trips.size() + " added to selection");
         }
-        toggleTripSelection(position);
-        Log.d("SELECTION", "Trip at position " + position + " out of " + trips.size() + " added to selection");
         return true;
     }
 

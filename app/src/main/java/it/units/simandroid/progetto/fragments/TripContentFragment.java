@@ -35,7 +35,7 @@ import java.util.Map;
 
 import it.units.simandroid.progetto.R;
 import it.units.simandroid.progetto.Trip;
-import it.units.simandroid.progetto.TripsViewModel;
+import it.units.simandroid.progetto.viewmodels.TripsViewModel;
 import it.units.simandroid.progetto.adapters.SlideshowPagerAdapter;
 import it.units.simandroid.progetto.fragments.directions.TripContentFragmentArgs;
 import it.units.simandroid.progetto.fragments.directions.TripContentFragmentDirections;

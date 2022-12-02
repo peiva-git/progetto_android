@@ -1,4 +1,4 @@
-package it.units.simandroid.progetto;
+package it.units.simandroid.progetto.viewmodels;
 
 import static it.units.simandroid.progetto.RealtimeDatabase.DB_URL;
 
@@ -33,6 +33,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
+import it.units.simandroid.progetto.Trip;
 import it.units.simandroid.progetto.exceptions.TripNotFoundException;
 
 public class TripsViewModel extends ViewModel {

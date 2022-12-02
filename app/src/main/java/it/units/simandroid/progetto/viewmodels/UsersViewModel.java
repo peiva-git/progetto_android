@@ -1,7 +1,7 @@
-package it.units.simandroid.progetto;
+package it.units.simandroid.progetto.viewmodels;
 
 import static it.units.simandroid.progetto.RealtimeDatabase.DB_URL;
-import static it.units.simandroid.progetto.TripsViewModel.USERS;
+import static it.units.simandroid.progetto.viewmodels.TripsViewModel.USERS;
 
 import android.util.Log;
 
@@ -19,6 +19,8 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import it.units.simandroid.progetto.User;
 
 public class UsersViewModel extends ViewModel {
     public static final String GET_USERS_TAG = "GET_USERS";

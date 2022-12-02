@@ -28,9 +28,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 import it.units.simandroid.progetto.R;
-import it.units.simandroid.progetto.TripsViewModel;
+import it.units.simandroid.progetto.viewmodels.TripsViewModel;
 import it.units.simandroid.progetto.User;
-import it.units.simandroid.progetto.UsersViewModel;
+import it.units.simandroid.progetto.viewmodels.UsersViewModel;
 import it.units.simandroid.progetto.adapters.OnUserClickListener;
 import it.units.simandroid.progetto.adapters.SelectUserAdapter;
 import it.units.simandroid.progetto.fragments.directions.SelectUsersFragmentArgs;
