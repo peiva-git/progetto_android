@@ -10,7 +10,7 @@
     <string name="registration_password_confirm">Confirm password</string>
     <string name="registration_button">Register</string>
     <string name="registration_cancel">Cancel</string>
-    <string name="email_required">Field required</string>
+    <string name="field_required">Field required</string>
     <string name="email_mismatch">Emails not matching</string>
     <string name="password_required">Field required</string>
     <string name="password_mismatch">Passwords not matching</string>

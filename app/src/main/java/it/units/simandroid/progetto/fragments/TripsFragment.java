@@ -317,14 +317,16 @@ public class TripsFragment extends Fragment implements OnTripClickListener, OnFa
     public void onStop() {
         super.onStop();
         // remove deleted trips from database as well when the fragment is no longer visible
-        for (Trip trip : trips) {
-            if (!tripAdapter.getAdapterTrips().contains(trip)) {
-                viewModel.deleteTrip(trip.getId())
-                        .addOnSuccessListener(task -> Log.d("DELETE_TRIP", "Trip " + trip.getId() + " removed from database"))
-                        .addOnFailureListener(exception -> Log.w("DELETE_TRIP", exception));
-                Tasks.whenAllComplete(viewModel.deleteTripImages(trip))
-                        .addOnCompleteListener(task -> Log.d("DELETE_TRIP", "Images removed for trip " + trip.getId()));
-                deleteLocallyStoredImages(trip);
+        if (trips != null) {
+            for (Trip trip : trips) {
+                if (!tripAdapter.getAdapterTrips().contains(trip)) {
+                    viewModel.deleteTrip(trip.getId())
+                            .addOnSuccessListener(task -> Log.d("DELETE_TRIP", "Trip " + trip.getId() + " removed from database"))
+                            .addOnFailureListener(exception -> Log.w("DELETE_TRIP", exception));
+                    Tasks.whenAllComplete(viewModel.deleteTripImages(trip))
+                            .addOnCompleteListener(task -> Log.d("DELETE_TRIP", "Images removed for trip " + trip.getId()));
+                    deleteLocallyStoredImages(trip);
+                }
             }
         }
     }

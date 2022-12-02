@@ -4,13 +4,12 @@ import static it.units.simandroid.progetto.RealtimeDatabase.DB_URL;
 import static it.units.simandroid.progetto.fragments.LoginFragment.AUTH_TAG;
 
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,10 +18,10 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
-
-import java.util.Collections;
 
 import it.units.simandroid.progetto.R;
 import it.units.simandroid.progetto.User;
@@ -30,16 +29,22 @@ import it.units.simandroid.progetto.fragments.directions.RegistrationFragmentDir
 
 public class RegistrationFragment extends Fragment {
 
-    private EditText userEmail;
-    private EditText userEmailConfirm;
-    private EditText userPassword;
-    private EditText userPasswordConfirm;
-    private Button registrationButton;
+    private TextInputEditText userEmail;
+    private TextInputEditText userEmailConfirm;
+    private TextInputEditText userPassword;
+    private TextInputEditText userPasswordConfirm;
+    private MaterialButton registrationButton;
     private FirebaseAuth authentication;
-    private EditText userName;
-    private EditText userSurname;
+    private TextInputEditText userName;
+    private TextInputEditText userSurname;
     private FirebaseDatabase database;
     private MaterialButton cancelButton;
+    private TextInputLayout userNameLayout;
+    private TextInputLayout userSurnameLayout;
+    private TextInputLayout userEmailLayout;
+    private TextInputLayout userEmailConfirmLayout;
+    private TextInputLayout userPasswordLayout;
+    private TextInputLayout userPasswordConfirmLayout;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -54,11 +59,17 @@ public class RegistrationFragment extends Fragment {
         View fragmentView = inflater.inflate(R.layout.fragment_registration, container, false);
 
         userName = fragmentView.findViewById(R.id.user_name);
+        userNameLayout = fragmentView.findViewById(R.id.user_name_layout);
         userSurname = fragmentView.findViewById(R.id.user_surname);
+        userSurnameLayout = fragmentView.findViewById(R.id.user_surname_layout);
         userEmail = fragmentView.findViewById(R.id.registration_email);
+        userEmailLayout = fragmentView.findViewById(R.id.registration_email_layout);
         userEmailConfirm = fragmentView.findViewById(R.id.registration_email_confirm);
+        userEmailConfirmLayout = fragmentView.findViewById(R.id.registration_email_confirm_layout);
         userPassword = fragmentView.findViewById(R.id.registration_password);
+        userPasswordLayout = fragmentView.findViewById(R.id.registration_password_layout);
         userPasswordConfirm = fragmentView.findViewById(R.id.registration_password_confirm);
+        userPasswordConfirmLayout = fragmentView.findViewById(R.id.registration_password_confirm_layout);
         registrationButton = fragmentView.findViewById(R.id.registration_button);
         cancelButton = fragmentView.findViewById(R.id.cancel_registration_button);
 
@@ -92,48 +103,48 @@ public class RegistrationFragment extends Fragment {
 
     private boolean validateForm() {
         boolean isFormValid = true;
-        String name = userName.getText().toString();
-        String surname = userSurname.getText().toString();
-        String email = userEmail.getText().toString();
-        String confirmEmail = userEmailConfirm.getText().toString();
-        String password = userPassword.getText().toString();
-        String confirmPassword = userPasswordConfirm.getText().toString();
+        Editable name = userName.getText();
+        Editable surname = userSurname.getText();
+        Editable email = userEmail.getText();
+        Editable confirmEmail = userEmailConfirm.getText();
+        Editable password = userPassword.getText();
+        Editable confirmPassword = userPasswordConfirm.getText();
 
         if (TextUtils.isEmpty(name)) {
-            userName.setError(getString(R.string.email_required));
+            userNameLayout.setError(getString(R.string.field_required));
             isFormValid = false;
         } else {
-            userName.setError(null);
+            userNameLayout.setError(null);
         }
         if (TextUtils.isEmpty(surname)) {
-            userSurname.setError(getString(R.string.email_required));
+            userSurnameLayout.setError(getString(R.string.field_required));
             isFormValid = false;
         } else {
-            userSurname.setError(null);
+            userSurnameLayout.setError(null);
         }
         if (TextUtils.isEmpty(email)) {
-            userEmail.setError(getString(R.string.email_required));
+            userEmailLayout.setError(getString(R.string.field_required));
             isFormValid = false;
         } else {
-            userEmail.setError(null);
-        }
-        if (!email.equals(confirmEmail)) {
-            userEmail.setError(getString(R.string.email_mismatch));
-            isFormValid = false;
-        } else {
-            userEmail.setError(null);
+            userEmailLayout.setError(null);
+            if (!TextUtils.equals(email, confirmEmail)) {
+                userEmailLayout.setError(getString(R.string.email_mismatch));
+                isFormValid = false;
+            } else {
+                userEmailLayout.setError(null);
+            }
         }
         if (TextUtils.isEmpty(password)) {
-            userPassword.setError(getString(R.string.password_required));
+            userPasswordLayout.setError(getString(R.string.field_required));
             isFormValid = false;
         } else {
-            userPassword.setError(null);
-        }
-        if (!password.equals(confirmPassword)) {
-            userPassword.setError(getString(R.string.password_mismatch));
-            isFormValid = false;
-        } else {
-            userPassword.setError(null);
+            userPasswordLayout.setError(null);
+            if (!TextUtils.equals(password, confirmPassword)) {
+                userPasswordLayout.setError(getString(R.string.password_mismatch));
+                isFormValid = false;
+            } else {
+                userPasswordLayout.setError(null);
+            }
         }
         return isFormValid;
     }
