@@ -118,6 +118,7 @@ public class TripContentFragment extends Fragment {
                 } else if (menuItem.getItemId() == R.id.delete_trip) {
                     viewModel.deleteTrip(tripId).addOnSuccessListener(task -> Log.d(TRIP_CONTENT_TAG, "Trip " + tripId + " removed from database"));
                     viewModel.deleteTripImages(trip);
+                    deleteLocallyStoredImages(tripId);
                     NavHostFragment.findNavController(TripContentFragment.this).navigateUp();
                     return true;
                 }
@@ -126,6 +127,22 @@ public class TripContentFragment extends Fragment {
         }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
 
         return fragmentView;
+    }
+
+    private void deleteLocallyStoredImages(String tripId) {
+        if (trip.getImagesUris() != null) {
+            File tripDirectory = TripContentFragment.this.requireContext().getDir(tripId, Context.MODE_PRIVATE);
+            for (String imageId : trip.getImagesUris().keySet()) {
+                File storedImage = new File(tripDirectory, imageId);
+                if (storedImage.exists()) {
+                    Log.d("DELETE_TRIP", storedImage.delete() ?
+                            "Successfully deleted image " + imageId + " from trip " + tripId :
+                            "Can't delete image " + imageId + " from trip " + tripId);
+                } else {
+                    Log.d("DELETE_TRIP", "No image found at " + storedImage.getPath());
+                }
+            }
+        }
     }
 
     private void updateUI(Trip trip) {

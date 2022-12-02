@@ -324,6 +324,23 @@ public class TripsFragment extends Fragment implements OnTripClickListener, OnFa
                         .addOnFailureListener(exception -> Log.w("DELETE_TRIP", exception));
                 Tasks.whenAllComplete(viewModel.deleteTripImages(trip))
                         .addOnCompleteListener(task -> Log.d("DELETE_TRIP", "Images removed for trip " + trip.getId()));
+                deleteLocallyStoredImages(trip);
+            }
+        }
+    }
+
+    private void deleteLocallyStoredImages(Trip trip) {
+        if (trip.getImagesUris() != null) {
+            File tripDirectory = requireContext().getDir(trip.getId(), Context.MODE_PRIVATE);
+            for (String imageId : trip.getImagesUris().keySet()) {
+                File storedImage = new File(tripDirectory, imageId);
+                if (storedImage.exists()) {
+                    Log.d("DELETE_TRIP", storedImage.delete() ?
+                            "Successfully deleted image " + imageId + " from trip " + trip.getId() :
+                            "Can't delete image " + imageId + " from trip " + trip.getId());
+                } else {
+                    Log.d("DELETE_TRIP", "No image found at " + storedImage.getPath());
+                }
             }
         }
     }
