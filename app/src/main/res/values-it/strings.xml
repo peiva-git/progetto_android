@@ -77,4 +77,6 @@
     <string name="delete">Elimina</string>
     <string name="insert_user_name">Inserire nuovo nome utente</string>
     <string name="insert_user_surname">Inserire nuovo cognome utente</string>
+    <string name="email_bad_format">L\'indirizzo email ha un formato non valido</string>
+    <string name="password_weak">La password deve avere almeno 6 caratteri</string>
 </resources>

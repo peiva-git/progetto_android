@@ -77,4 +77,6 @@
     <string name="delete">Delete</string>
     <string name="insert_user_name">Insert new user name here</string>
     <string name="insert_user_surname">Insert new user surname here</string>
+    <string name="email_bad_format">The email address is badly formatted</string>
+    <string name="password_weak">Password has to be at least 6 characters long</string>
 </resources>

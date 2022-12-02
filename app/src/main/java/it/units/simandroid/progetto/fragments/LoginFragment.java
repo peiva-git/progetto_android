@@ -6,6 +6,8 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,8 +16,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
+
+import java.util.Objects;
 
 import it.units.simandroid.progetto.fragments.directions.LoginFragmentDirections;
 import it.units.simandroid.progetto.R;
@@ -25,10 +32,12 @@ public class LoginFragment extends Fragment {
     public static final String AUTH_TAG = "AUTH";
 
     private FirebaseAuth firebaseInstance;
-    private Button loginButton;
-    private Button registrationButton;
-    private EditText userEmail;
-    private EditText userPassword;
+    private MaterialButton loginButton;
+    private MaterialButton registrationButton;
+    private TextInputEditText userEmail;
+    private TextInputEditText userPassword;
+    private TextInputLayout userEmailLayout;
+    private TextInputLayout userPasswordLayout;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -39,18 +48,21 @@ public class LoginFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_login, container, false);
+        View fragmentView = inflater.inflate(R.layout.fragment_login, container, false);
 
-        loginButton = view.findViewById(R.id.login_button);
-        registrationButton = view.findViewById(R.id.sign_up_button);
-        userEmail = view.findViewById(R.id.login_username_text);
-        userPassword = view.findViewById(R.id.login_password_text);
+        loginButton = fragmentView.findViewById(R.id.login_button);
+        registrationButton = fragmentView.findViewById(R.id.sign_up_button);
+        userEmail = fragmentView.findViewById(R.id.login_username_text);
+        userEmailLayout = fragmentView.findViewById(R.id.login_username_layout);
+        userPassword = fragmentView.findViewById(R.id.login_password_text);
+        userPasswordLayout = fragmentView.findViewById(R.id.login_password_layout);
 
-        registrationButton.setOnClickListener(registrationButtonView -> {
-            NavHostFragment.findNavController(this)
-                    .navigate(LoginFragmentDirections.actionLoginFragmentToRegistrationFragment());
-        });
+        registrationButton.setOnClickListener(registrationButtonView ->
+                NavHostFragment.findNavController(this).navigate(LoginFragmentDirections.actionLoginFragmentToRegistrationFragment()));
         loginButton.setOnClickListener(loginButtonView -> {
+            if (!inputValidation()) {
+                return;
+            }
             firebaseInstance.signInWithEmailAndPassword(userEmail.getText().toString(), userPassword.getText().toString())
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
@@ -58,11 +70,31 @@ public class LoginFragment extends Fragment {
                             NavHostFragment.findNavController(LoginFragment.this).navigate(LoginFragmentDirections.actionLoginFragmentToTripsFragment());
                         } else {
                             Log.w(AUTH_TAG, "Sign-in failed", task.getException());
-                            Snackbar.make(LoginFragment.this.requireView(), R.string.login_failed, Snackbar.LENGTH_LONG).show();
+                            Snackbar.make(LoginFragment.this.requireView(), Objects.requireNonNull(Objects.requireNonNull(task.getException()).getLocalizedMessage()), Snackbar.LENGTH_LONG).show();
                         }
                     });
         });
 
-        return view;
+        return fragmentView;
+    }
+
+    private boolean inputValidation() {
+        boolean isInputValid = true;
+        Editable email = userEmail.getText();
+        Editable password = userPassword.getText();
+
+        if (TextUtils.isEmpty(email)) {
+            userEmailLayout.setError(getString(R.string.field_required));
+            isInputValid = false;
+        } else {
+            userEmailLayout.setError(null);
+        }
+        if (TextUtils.isEmpty(password)) {
+            userPasswordLayout.setError(getString(R.string.field_required));
+            isInputValid = false;
+        } else {
+            userPasswordLayout.setError(null);
+        }
+        return isInputValid;
     }
 }

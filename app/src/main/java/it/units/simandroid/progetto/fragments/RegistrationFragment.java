@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,8 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.Objects;
 
 import it.units.simandroid.progetto.R;
 import it.units.simandroid.progetto.User;
@@ -77,7 +80,7 @@ public class RegistrationFragment extends Fragment {
             if (!validateForm()) {
                 return;
             }
-            authentication.createUserWithEmailAndPassword(userEmail.getText().toString(), userPassword.getText().toString())
+            authentication.createUserWithEmailAndPassword(Objects.requireNonNull(userEmail.getText()).toString(), userPassword.getText().toString())
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             Log.d(AUTH_TAG, "User created successfully");
@@ -94,7 +97,7 @@ public class RegistrationFragment extends Fragment {
                                     .navigate(RegistrationFragmentDirections.actionRegistrationFragmentToTripsFragment());
                         } else {
                             Log.w(AUTH_TAG, "Failed to create new user", task.getException());
-                            Snackbar.make(requireView(), R.string.new_user_failed, Snackbar.LENGTH_SHORT).show();
+                            Snackbar.make(requireView(), task.getException().getLocalizedMessage(), Snackbar.LENGTH_LONG).show();
                             // updateUI(null)
                         }
                     });
@@ -135,6 +138,12 @@ public class RegistrationFragment extends Fragment {
                 isFormValid = false;
             } else {
                 userEmailLayout.setError(null);
+                if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                    userEmailLayout.setError(getString(R.string.email_bad_format));
+                    isFormValid = false;
+                } else {
+                    userEmailLayout.setError(null);
+                }
             }
         }
         if (TextUtils.isEmpty(password)) {
@@ -147,6 +156,12 @@ public class RegistrationFragment extends Fragment {
                 isFormValid = false;
             } else {
                 userPasswordLayout.setError(null);
+                if (password.length() < 6) {
+                    userPasswordLayout.setError(getString(R.string.password_weak));
+                    isFormValid = false;
+                } else {
+                    userPasswordLayout.setError(null);
+                }
             }
         }
         return isFormValid;
