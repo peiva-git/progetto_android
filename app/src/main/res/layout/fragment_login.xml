@@ -41,6 +41,7 @@
         android:minWidth="200dp"
         android:minHeight="48dp"
         android:layout_marginBottom="5dp"
+        app:endIconMode="password_toggle"
         app:layout_constraintBottom_toTopOf="@+id/login_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
