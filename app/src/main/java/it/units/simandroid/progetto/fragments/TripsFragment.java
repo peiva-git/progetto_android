@@ -280,6 +280,7 @@ public class TripsFragment extends Fragment implements OnTripClickListener, OnFa
             String tripId = tripAdapter.getAdapterTrip(position).getId();
             TripsFragmentDirections.ViewTripDetailsAction action = TripsFragmentDirections.actionViewTripDetails();
             action.setTripId(tripId);
+            action.setSharedTripsModeActive(TripsFragmentArgs.fromBundle(requireArguments()).isSharedTripsModeActive());
             NavHostFragment.findNavController(TripsFragment.this).navigate(action);
         }
     }

@@ -88,7 +88,7 @@ public class TripContentFragment extends Fragment {
             tripDates.setText(String.format("%s - %s", trip.getStartDate(), trip.getEndDate()));
             tripDescription.setText(trip.getDescription());
             this.trip = trip;
-            updateUI(this.trip);
+            updateUI(trip);
         });
 
         isTripFavorite.setOnCheckedChangeListener((compoundButton, isChecked) -> viewModel.setTripFavorite(tripId, isChecked));
@@ -99,6 +99,12 @@ public class TripContentFragment extends Fragment {
                 MenuItem userAccount = menu.findItem(R.id.user_account);
                 userAccount.setVisible(false);
                 menuInflater.inflate(R.menu.top_app_bar_trip_content, menu);
+                MenuItem deleteTrip = menu.findItem(R.id.delete_trip);
+                MenuItem shareTrip = menu.findItem(R.id.share_trip);
+                if (TripContentFragmentArgs.fromBundle(requireArguments()).isSharedTripsModeActive()) {
+                    deleteTrip.setVisible(false);
+                    shareTrip.setVisible(false);
+                }
             }
 
             @Override
