@@ -1,25 +1,23 @@
 package it.units.simandroid.progetto.adapters;
 
 import android.content.Context;
-import android.content.res.Configuration;
 import android.net.Uri;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.recyclerview.selection.ItemDetailsLookup;
-import androidx.recyclerview.selection.SelectionTracker;
-import androidx.recyclerview.selection.StableIdKeyProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.card.MaterialCardView;
 
-import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -29,13 +27,18 @@ import it.units.simandroid.progetto.Trip;
 public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ItemViewHolder> {
 
     private final Context context;
-    private final List<Trip> trips;
+    private List<Trip> trips;
+    private final OnTripClickListener clickListener;
+    private final SparseBooleanArray selectedTrips;
     private boolean isSharedModeOn = false;
-    private SelectionTracker<String> tracker;
+    private final OnFavoriteStateChangedListener favoriteChangedListener;
 
-    public TripAdapter(Context context, List<Trip> trips) {
+    public TripAdapter(Context context, List<Trip> trips, OnTripClickListener clickListener, OnFavoriteStateChangedListener favoriteChangedListener) {
         this.context = context;
-        this.trips = trips;
+        this.trips = new ArrayList<>(trips);
+        this.clickListener = clickListener;
+        this.favoriteChangedListener = favoriteChangedListener;
+        selectedTrips = new SparseBooleanArray();
     }
 
     public boolean isSharedModeOn() {
@@ -46,15 +49,92 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ItemViewHolder
         isSharedModeOn = sharedModeOn;
     }
 
-    public void setSelectionTracker(SelectionTracker<String> tracker) {
-        this.tracker = tracker;
+    public List<Trip> getAdapterTrips() {
+        return trips;
+    }
+
+    public void setAdapterTrips(List<Trip> trips) {
+        this.trips = new ArrayList<>(trips);
+        notifyDataSetChanged();
+    }
+
+    public List<Integer> getSelectedTripsPositions() {
+        List<Integer> items = new ArrayList<>(selectedTrips.size());
+        for (int i = 0; i < selectedTrips.size(); i++) {
+            items.add(selectedTrips.keyAt(i));
+        }
+        return items;
+    }
+    public boolean isTripAtPositionSelected(int position) {
+        return getSelectedTripsPositions().contains(position);
+    }
+
+    public void toggleTripSelection(int position) {
+        if (selectedTrips.get(position, false)) {
+            selectedTrips.delete(position);
+        } else {
+            selectedTrips.put(position, true);
+        }
+        notifyItemChanged(position);
+    }
+
+    public int getSelectedTripsCount() {
+        return selectedTrips.size();
+    }
+
+    public void clearTripSelection() {
+        List<Integer> selection = getSelectedTripsPositions();
+        selectedTrips.clear();
+        for (Integer i : selection) {
+            notifyItemChanged(i);
+        }
+    }
+
+    public void removeTripByPosition(int position) {
+        trips.remove(position);
+        notifyItemRemoved(position);
+    }
+
+    public void removeTripsByPositions(List<Integer> positions) {
+        // reverse sort
+        Collections.sort(positions, (lhs, rhs) -> rhs - lhs);
+        while (!positions.isEmpty()) {
+            if (positions.size() == 1) {
+                removeTripByPosition(positions.get(0));
+                positions.remove(0);
+            } else {
+                int count = 1;
+                while (positions.size() > count && positions.get(count).equals(positions.get(count - 1) - 1)) {
+                    ++count;
+                }
+                if (count == 1) {
+                    removeTripByPosition(positions.get(0));
+                } else {
+                    removeRange(positions.get(count - 1), count);
+                }
+                if (count > 0) {
+                    positions.subList(0, count).clear();
+                }
+            }
+        }
+    }
+
+    private void removeRange(int positionStart, int itemCount) {
+        for (int i = 0; i < itemCount; ++i) {
+            trips.remove(positionStart);
+        }
+        notifyItemRangeRemoved(positionStart, itemCount);
+    }
+
+    public Trip getAdapterTrip(int position) {
+        return trips.get(position);
     }
 
     @NonNull
     @Override
     public ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_trip, parent, false);
-        return new ItemViewHolder(view);
+        return new ItemViewHolder(view, clickListener, favoriteChangedListener);
     }
 
     @Override
@@ -79,7 +159,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ItemViewHolder
         } else {
             holder.tripMainPicture.setImageResource(R.drawable.ic_baseline_image_24);
         }
-        holder.bind(trip, tracker.isSelected(trip.getId()));
+        holder.cardView.setChecked(isTripAtPositionSelected(position));
     }
 
     @Override
@@ -87,7 +167,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ItemViewHolder
         return trips.size();
     }
 
-    public class ItemViewHolder extends RecyclerView.ViewHolder {
+    public static class ItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener, CompoundButton.OnCheckedChangeListener {
         private final ImageView tripMainPicture;
         private final TextView tripName;
         private final TextView tripDestination;
@@ -95,8 +175,10 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ItemViewHolder
         private final TextView tripStartEndDate;
         private final CheckBox isTripFavorite;
         private final MaterialCardView cardView;
+        private final OnTripClickListener selectListener;
+        private final OnFavoriteStateChangedListener favoriteListener;
 
-        public ItemViewHolder(@NonNull View itemView) {
+        public ItemViewHolder(@NonNull View itemView, OnTripClickListener selectListener, OnFavoriteStateChangedListener favoriteListener) {
             super(itemView);
             tripMainPicture = itemView.findViewById(R.id.main_trip_picture);
             tripDescription = itemView.findViewById(R.id.trip_description);
@@ -105,26 +187,34 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ItemViewHolder
             tripStartEndDate = itemView.findViewById(R.id.trip_start_end_date);
             isTripFavorite = itemView.findViewById(R.id.favorite_trip);
             cardView = itemView.findViewById(R.id.trip_card);
+            this.selectListener = selectListener;
+            this.favoriteListener = favoriteListener;
+
+            itemView.setOnClickListener(this);
+            itemView.setOnLongClickListener(this);
+            isTripFavorite.setOnCheckedChangeListener(this);
         }
 
-        public final void bind(Trip trip, boolean isActive)  {
-            itemView.setActivated(isActive);
-            cardView.setChecked(tracker.isSelected(trip.getId()));
+        @Override
+        public void onClick(View view) {
+            if (selectListener != null) {
+                selectListener.onTripClick(getBindingAdapterPosition());
+            }
         }
 
-        public ItemDetailsLookup.ItemDetails<String> getItemDetails() {
-            return new ItemDetailsLookup.ItemDetails<String>() {
-                @Override
-                public int getPosition() {
-                    return getAdapterPosition();
-                }
+        @Override
+        public boolean onLongClick(View view) {
+            if (selectListener != null) {
+                return selectListener.onTripLongClick(getBindingAdapterPosition());
+            }
+            return false;
+        }
 
-                @NonNull
-                @Override
-                public String getSelectionKey() {
-                    return trips.get(getPosition()).getId();
-                }
-            };
+        @Override
+        public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+            if (favoriteListener != null) {
+                favoriteListener.onFavoriteStateChanged(getBindingAdapterPosition(), compoundButton, isChecked);
+            }
         }
     }
 }
