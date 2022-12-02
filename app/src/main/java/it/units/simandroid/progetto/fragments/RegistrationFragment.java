@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.material.button.MaterialButton;
@@ -26,6 +27,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import it.units.simandroid.progetto.R;
 import it.units.simandroid.progetto.User;
 import it.units.simandroid.progetto.fragments.directions.RegistrationFragmentDirections;
+import it.units.simandroid.progetto.viewmodels.UsersViewModel;
 
 public class RegistrationFragment extends Fragment {
 
@@ -37,7 +39,6 @@ public class RegistrationFragment extends Fragment {
     private FirebaseAuth authentication;
     private TextInputEditText userName;
     private TextInputEditText userSurname;
-    private FirebaseDatabase database;
     private MaterialButton cancelButton;
     private TextInputLayout userNameLayout;
     private TextInputLayout userSurnameLayout;
@@ -49,7 +50,6 @@ public class RegistrationFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        database = FirebaseDatabase.getInstance(DB_URL);
         authentication = FirebaseAuth.getInstance();
     }
 
@@ -86,7 +86,10 @@ public class RegistrationFragment extends Fragment {
                                     userName.getText().toString(),
                                     userSurname.getText().toString(),
                                     authentication.getUid());
-                            database.getReference("users").child(newUser.getId()).setValue(newUser);
+                            UsersViewModel viewModel = new ViewModelProvider(RegistrationFragment.this).get(UsersViewModel.class);
+                            viewModel.setUser(newUser)
+                                    .addOnSuccessListener(newUserTask -> Log.d(AUTH_TAG, "User " + newUser.getId() + " added to database"))
+                                    .addOnFailureListener(exception -> Log.w(AUTH_TAG, exception));
                             NavHostFragment.findNavController(this)
                                     .navigate(RegistrationFragmentDirections.actionRegistrationFragmentToTripsFragment());
                         } else {

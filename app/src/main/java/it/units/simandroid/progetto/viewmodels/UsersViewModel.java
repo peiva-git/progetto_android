@@ -10,6 +10,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -60,6 +61,12 @@ public class UsersViewModel extends ViewModel {
 
     public LiveData<List<User>> getUsers() {
         return databaseUsers;
+    }
+
+    public Task<Void> setUser(User newUser) {
+        return database.getReference(USERS)
+                .child(newUser.getId())
+                .setValue(newUser);
     }
 
     @Override
