@@ -17,6 +17,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
@@ -38,6 +39,7 @@ public class RegistrationFragment extends Fragment {
     private EditText userName;
     private EditText userSurname;
     private FirebaseDatabase database;
+    private MaterialButton cancelButton;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -49,15 +51,16 @@ public class RegistrationFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_registration, container, false);
+        View fragmentView = inflater.inflate(R.layout.fragment_registration, container, false);
 
-        userName = view.findViewById(R.id.user_name);
-        userSurname = view.findViewById(R.id.user_surname);
-        userEmail = view.findViewById(R.id.registration_email);
-        userEmailConfirm = view.findViewById(R.id.registration_email_confirm);
-        userPassword = view.findViewById(R.id.registration_password);
-        userPasswordConfirm = view.findViewById(R.id.registration_password_confirm);
-        registrationButton = view.findViewById(R.id.registration_button);
+        userName = fragmentView.findViewById(R.id.user_name);
+        userSurname = fragmentView.findViewById(R.id.user_surname);
+        userEmail = fragmentView.findViewById(R.id.registration_email);
+        userEmailConfirm = fragmentView.findViewById(R.id.registration_email_confirm);
+        userPassword = fragmentView.findViewById(R.id.registration_password);
+        userPasswordConfirm = fragmentView.findViewById(R.id.registration_password_confirm);
+        registrationButton = fragmentView.findViewById(R.id.registration_button);
+        cancelButton = fragmentView.findViewById(R.id.cancel_registration_button);
 
         registrationButton.setOnClickListener(registrationButtonView -> {
             if (!validateForm()) {
@@ -82,8 +85,9 @@ public class RegistrationFragment extends Fragment {
                         }
                     });
         });
+        cancelButton.setOnClickListener(view -> NavHostFragment.findNavController(this).navigateUp());
 
-        return view;
+        return fragmentView;
     }
 
     private boolean validateForm() {
