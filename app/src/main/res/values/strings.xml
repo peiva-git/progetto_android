@@ -75,4 +75,6 @@
     <string name="trips_fragment_shared_label">Shared with me</string>
     <string name="select_trips_mode_title">picked</string>
     <string name="delete">Delete</string>
+    <string name="insert_user_name">Insert new user name here</string>
+    <string name="insert_user_surname">Insert new user surname here</string>
 </resources>
