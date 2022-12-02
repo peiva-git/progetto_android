@@ -1,10 +1,7 @@
 package it.units.simandroid.progetto.fragments;
 
-import static it.units.simandroid.progetto.RealtimeDatabase.DB_URL;
-
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,17 +14,8 @@ import androidx.preference.EditTextPreference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
-import java.util.Objects;
-
 import it.units.simandroid.progetto.R;
-import it.units.simandroid.progetto.SettingsViewModel;
+import it.units.simandroid.progetto.viewmodels.SettingsViewModel;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
 

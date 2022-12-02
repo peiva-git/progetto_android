@@ -1,4 +1,4 @@
-package it.units.simandroid.progetto;
+package it.units.simandroid.progetto.viewmodels;
 
 import static it.units.simandroid.progetto.RealtimeDatabase.DB_URL;
 import static it.units.simandroid.progetto.viewmodels.TripsViewModel.USERS;
