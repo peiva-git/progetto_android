@@ -91,6 +91,9 @@ public class TripContentFragment extends Fragment {
             updateUI(trip);
         });
 
+        if (TripContentFragmentArgs.fromBundle(requireArguments()).isSharedTripsModeActive()) {
+            isTripFavorite.setVisibility(View.INVISIBLE);
+        }
         isTripFavorite.setOnCheckedChangeListener((compoundButton, isChecked) -> viewModel.setTripFavorite(tripId, isChecked));
 
         requireActivity().addMenuProvider(new MenuProvider() {

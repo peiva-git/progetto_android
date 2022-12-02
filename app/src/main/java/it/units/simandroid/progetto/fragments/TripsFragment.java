@@ -109,6 +109,10 @@ public class TripsFragment extends Fragment implements OnTripClickListener, OnFa
         if (isSizeAtLeastLarge) {
             newTripButton.setVisibility(View.GONE);
         }
+        if (TripsFragmentArgs.fromBundle(requireArguments()).isSharedTripsModeActive()
+                || TripsFragmentArgs.fromBundle(requireArguments()).isFilteringActive()) {
+            newTripButton.setVisibility(View.GONE);
+        }
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         tripAdapter = new TripAdapter(getContext(), Collections.emptyList(), this, this);
