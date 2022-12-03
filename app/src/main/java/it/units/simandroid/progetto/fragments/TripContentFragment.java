@@ -2,7 +2,10 @@ package it.units.simandroid.progetto.fragments;
 
 import static it.units.simandroid.progetto.fragments.TripsFragment.GET_IMAGE_TAG;
 
+import android.content.ContentResolver;
 import android.content.Context;
+import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -78,7 +81,16 @@ public class TripContentFragment extends Fragment {
         tripDescription = fragmentView.findViewById(R.id.content_trip_description);
         progressIndicator = requireActivity().findViewById(R.id.progress_indicator);
 
-        pagerAdapter = new SlideshowPagerAdapter(this, Collections.emptyList());
+        Resources resources = getResources();
+        Uri defaultImage = new Uri.Builder()
+                .scheme(ContentResolver.SCHEME_ANDROID_RESOURCE)
+                .authority(resources.getResourcePackageName(R.drawable.ic_baseline_image_not_supported_24))
+                .appendPath(resources.getResourceTypeName(R.drawable.ic_baseline_image_not_supported_24))
+                .appendPath(resources.getResourceEntryName(R.drawable.ic_baseline_image_not_supported_24))
+                .build();
+        List<String> defaultImages = new ArrayList<>(1);
+        defaultImages.add(defaultImage.toString());
+        pagerAdapter = new SlideshowPagerAdapter(this, getContext(), defaultImages);
         viewPager.setAdapter(pagerAdapter);
 
         viewModel = new ViewModelProvider(this).get(TripsViewModel.class);
@@ -184,6 +196,7 @@ public class TripContentFragment extends Fragment {
             });
         } else {
             progressIndicator.hide();
+            Log.d(GET_IMAGE_TAG, "No images for trip " + trip.getId());
         }
     }
 }
