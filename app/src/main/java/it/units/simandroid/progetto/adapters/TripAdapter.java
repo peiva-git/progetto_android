@@ -15,6 +15,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.checkbox.MaterialCheckBox;
+import com.google.android.material.textview.MaterialTextView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -140,12 +142,14 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ItemViewHolder
     @Override
     public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
         Trip trip = trips.get(position);
+        String from = context.getResources().getString(R.string.from);
+        String until = context.getResources().getString(R.string.until);
         // need to set everything, otherwise old data is going to stay there when the holder is recycled
         holder.tripName.setText(trip.getName());
         holder.tripDescription.setText(trip.getDescription());
         holder.tripDestination.setText(trip.getDestination());
-        StringBuilder sb = new StringBuilder(trip.getStartDate());
-        holder.tripStartEndDate.setText(sb.append(" - ").append(trip.getEndDate()).toString());
+        holder.tripStartDate.setText(String.format("%s: %s", from, trip.getStartDate()));
+        holder.tripEndDate.setText(String.format("%s: %s", until, trip.getEndDate()));
         if (isSharedModeOn) {
             holder.isTripFavorite.setVisibility(View.INVISIBLE);
         } else {
@@ -157,7 +161,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ItemViewHolder
             Uri mainImageUri = Uri.parse(iterator.next());
             holder.tripMainPicture.setImageURI(mainImageUri);
         } else {
-            holder.tripMainPicture.setImageResource(R.drawable.ic_baseline_image_24);
+            holder.tripMainPicture.setImageResource(R.drawable.ic_baseline_image_not_supported_24);
         }
         holder.cardView.setChecked(isTripAtPositionSelected(position));
     }
@@ -169,14 +173,15 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ItemViewHolder
 
     public static class ItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener, CompoundButton.OnCheckedChangeListener {
         private final ImageView tripMainPicture;
-        private final TextView tripName;
-        private final TextView tripDestination;
-        private final TextView tripDescription;
-        private final TextView tripStartEndDate;
-        private final CheckBox isTripFavorite;
+        private final MaterialTextView tripName;
+        private final MaterialTextView tripDestination;
+        private final MaterialTextView tripDescription;
+        private final MaterialTextView tripStartDate;
+        private final MaterialCheckBox isTripFavorite;
         private final MaterialCardView cardView;
         private final OnTripClickListener selectListener;
         private final OnFavoriteStateChangedListener favoriteListener;
+        private final MaterialTextView tripEndDate;
 
         public ItemViewHolder(@NonNull View itemView, OnTripClickListener selectListener, OnFavoriteStateChangedListener favoriteListener) {
             super(itemView);
@@ -184,7 +189,8 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ItemViewHolder
             tripDescription = itemView.findViewById(R.id.trip_description);
             tripName = itemView.findViewById(R.id.trip_name);
             tripDestination = itemView.findViewById(R.id.trip_location);
-            tripStartEndDate = itemView.findViewById(R.id.trip_start_end_date);
+            tripStartDate = itemView.findViewById(R.id.trip_card_start_date);
+            tripEndDate = itemView.findViewById(R.id.trip_card_end_date);
             isTripFavorite = itemView.findViewById(R.id.favorite_trip);
             cardView = itemView.findViewById(R.id.trip_card);
             this.selectListener = selectListener;

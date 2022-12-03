@@ -79,4 +79,6 @@
     <string name="insert_user_surname">Insert new user surname here</string>
     <string name="email_bad_format">The email address is badly formatted</string>
     <string name="password_weak">Password has to be at least 6 characters long</string>
+    <string name="from">From</string>
+    <string name="until">Until</string>
 </resources>
