@@ -98,18 +98,16 @@ public class NewTripFragmentAndDatabaseValuesTest {
                 .perform(ViewActions.typeText(TRIP_DESTINATION))
                 .perform(ViewActions.closeSoftKeyboard());
         // can't test with PickerActions, MaterialDatePicker uses complex custom layout
-        Espresso.onView(ViewMatchers.withId(R.id.trip_start_date))
+        Espresso.onView(ViewMatchers.withId(R.id.trip_dates))
                 .perform(ViewActions.click());
-        Espresso.onView(ViewMatchers.withText("OK"))
-                .perform(ViewActions.click());
-        Espresso.onView(ViewMatchers.withId(R.id.trip_end_date))
-                .perform(ViewActions.click());
-        Espresso.onView(ViewMatchers.withText("OK"))
+        Espresso.onView(ViewMatchers.withText("Save"))
                 .perform(ViewActions.click());
         Espresso.onView(ViewMatchers.withId(R.id.trip_description))
                 .perform(ViewActions.typeText(TRIP_DESCRIPTION))
                 .perform(ViewActions.closeSoftKeyboard());
         Espresso.onView(ViewMatchers.withId(R.id.save_new_trip_button))
+                .perform(ViewActions.click());
+        Espresso.onView(ViewMatchers.withText("Yes"))
                 .perform(ViewActions.click());
     }
 

@@ -81,4 +81,9 @@
     <string name="password_weak">La password deve avere almeno 6 caratteri</string>
     <string name="from">Partenza</string>
     <string name="until">Ritorno</string>
+    <string name="no_picked_images_dialog_title">Nessuna immagine selezionate</string>
+    <string name="no_picked_images_dialog_message">Non è stata aggiunta nessuna immagine al viaggio! Sicuro di voler continuare?</string>
+    <string name="yes">Sì</string>
+    <string name="picked_images_dialog_no">Ripensandoci…</string>
+    <string name="date_picker_title">Selezionare le date del viaggio</string>
 </resources>
