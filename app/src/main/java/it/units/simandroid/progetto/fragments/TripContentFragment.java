@@ -83,6 +83,7 @@ public class TripContentFragment extends Fragment {
 
         viewModel = new ViewModelProvider(this).get(TripsViewModel.class);
         viewModel.getTripById(tripId).observe(getViewLifecycleOwner(), trip -> {
+            Log.d(TRIP_CONTENT_TAG, "Trip " + trip.getId() + " received, updating UI");
             tripName.setText(trip.getName());
             isTripFavorite.setChecked(trip.isFavorite());
             tripDestination.setText(trip.getDestination());
@@ -181,6 +182,8 @@ public class TripContentFragment extends Fragment {
                 pagerAdapter.setTripImageUris(tripImages);
                 progressIndicator.hide();
             });
+        } else {
+            progressIndicator.hide();
         }
     }
 }
