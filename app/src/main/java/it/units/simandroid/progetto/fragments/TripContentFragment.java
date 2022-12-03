@@ -84,6 +84,7 @@ public class TripContentFragment extends Fragment {
         viewModel = new ViewModelProvider(this).get(TripsViewModel.class);
         viewModel.getTripById(tripId).observe(getViewLifecycleOwner(), trip -> {
             tripName.setText(trip.getName());
+            isTripFavorite.setChecked(trip.isFavorite());
             tripDestination.setText(trip.getDestination());
             tripDates.setText(String.format("%s - %s", trip.getStartDate(), trip.getEndDate()));
             tripDescription.setText(trip.getDescription());
