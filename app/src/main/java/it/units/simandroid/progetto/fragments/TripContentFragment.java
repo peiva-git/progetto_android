@@ -23,16 +23,15 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.google.android.gms.tasks.Tasks;
 import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
+import com.google.android.material.textview.MaterialTextView;
 import com.google.firebase.storage.FileDownloadTask;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -48,14 +47,15 @@ public class TripContentFragment extends Fragment {
     public static final String TRIP_CONTENT_TAG = "TRIP_CONTENT";
     private ViewPager2 viewPager;
     private SlideshowPagerAdapter pagerAdapter;
-    private TextView tripName;
-    private TextView tripDates;
-    private TextView tripDestination;
-    private TextView tripDescription;
+    private MaterialTextView tripName;
+    private MaterialTextView tripStartDate;
+    private MaterialTextView tripDestination;
+    private MaterialTextView tripDescription;
     private TripsViewModel viewModel;
     private MaterialCheckBox isTripFavorite;
     private Trip trip;
     private LinearProgressIndicator progressIndicator;
+    private MaterialTextView tripEndDate;
 
     public TripContentFragment() {
         // Required empty public constructor
@@ -77,7 +77,8 @@ public class TripContentFragment extends Fragment {
         tripName = fragmentView.findViewById(R.id.content_trip_name);
         isTripFavorite = fragmentView.findViewById(R.id.content_favorite_trip);
         tripDestination = fragmentView.findViewById(R.id.content_trip_destination);
-        tripDates = fragmentView.findViewById(R.id.content_trip_dates);
+        tripStartDate = fragmentView.findViewById(R.id.content_trip_start_date);
+        tripEndDate = fragmentView.findViewById(R.id.content_trip_end_date);
         tripDescription = fragmentView.findViewById(R.id.content_trip_description);
         progressIndicator = requireActivity().findViewById(R.id.progress_indicator);
 
@@ -99,7 +100,8 @@ public class TripContentFragment extends Fragment {
             tripName.setText(trip.getName());
             isTripFavorite.setChecked(trip.isFavorite());
             tripDestination.setText(trip.getDestination());
-            tripDates.setText(String.format("%s - %s", trip.getStartDate(), trip.getEndDate()));
+            tripStartDate.setText(String.format("%s: %s", getString(R.string.from), trip.getStartDate()));
+            tripEndDate.setText(String.format("%s: %s", getString(R.string.until), trip.getEndDate()));
             tripDescription.setText(trip.getDescription());
             this.trip = trip;
             updateUI(trip);
