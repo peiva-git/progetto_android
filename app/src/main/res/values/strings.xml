@@ -81,4 +81,9 @@
     <string name="password_weak">Password has to be at least 6 characters long</string>
     <string name="from">From</string>
     <string name="until">Until</string>
+    <string name="no_picked_images_dialog_title">No images picked</string>
+    <string name="no_picked_images_dialog_message">You haven\'t picked any images for this trip! Are you sure you want to save it anyway?</string>
+    <string name="yes">Yes</string>
+    <string name="picked_images_dialog_no">On second thought...</string>
+    <string name="date_picker_title">Select trip dates</string>
 </resources>
