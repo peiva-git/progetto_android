@@ -35,7 +35,7 @@ import it.units.simandroid.progetto.adapters.OnUserClickListener;
 import it.units.simandroid.progetto.adapters.SelectUserAdapter;
 import it.units.simandroid.progetto.fragments.directions.SelectUsersFragmentArgs;
 
-public class SelectUsersFragment extends Fragment {
+public class SelectUsersFragment extends Fragment implements OnUserClickListener {
 
     public static final String SELECT_USER_TAG = "SELECT_USER";
     private RecyclerView recyclerView;
@@ -66,7 +66,8 @@ public class SelectUsersFragment extends Fragment {
         negativeButton = fragmentView.findViewById(R.id.dialog_negative_button);
         positiveButton = fragmentView.findViewById(R.id.dialog_positive_button);
 
-        selectUserAdapter = new SelectUserAdapter(getContext(), Collections.emptyList(), selectedUserIds, new OnUserClickListener() {
+        selectUserAdapter = new SelectUserAdapter(getContext(), Collections.emptyList(), selectedUserIds, this);
+  /*
             @Override
             public void onUserClick(User user) {
             }
@@ -84,8 +85,7 @@ public class SelectUsersFragment extends Fragment {
                     }
                 }
             }
-        });
-
+*/
         recyclerView.setAdapter(selectUserAdapter);
         MaterialDividerItemDecoration divider = new MaterialDividerItemDecoration(recyclerView.getContext(), LinearLayoutManager.VERTICAL);
         recyclerView.addItemDecoration(divider);
@@ -94,16 +94,6 @@ public class SelectUsersFragment extends Fragment {
 
         UsersViewModel usersViewModel = new ViewModelProvider(this).get(UsersViewModel.class);
         TripsViewModel tripsViewModel = new ViewModelProvider(this).get(TripsViewModel.class);
-        usersViewModel.getUsers().observe(getViewLifecycleOwner(), users -> {
-            for (User user : users) {
-                if (user.getId().equals(authentication.getUid())) {
-                    users.remove(user);
-                    break;
-                }
-            }
-            Log.d(SELECT_USER_TAG, "New list of users available, setting up adapter");
-            selectUserAdapter.setAvailableUsers(users);
-        });
         tripsViewModel.getAuthorizedUserIds(tripId).observe(getViewLifecycleOwner(), authorizationsByUserId -> {
             Log.d(SELECT_USER_TAG, "Authorized users database data changed, setting up selected users list");
             if (authorizationsByUserId != null) {
@@ -116,6 +106,16 @@ public class SelectUsersFragment extends Fragment {
                     }
                 }
             }
+        });
+        usersViewModel.getUsers().observe(getViewLifecycleOwner(), users -> {
+            for (User user : users) {
+                if (user.getId().equals(authentication.getUid())) {
+                    users.remove(user);
+                    break;
+                }
+            }
+            Log.d(SELECT_USER_TAG, "New list of users available, setting up adapter");
+            selectUserAdapter.setAvailableUsers(users);
         });
 
         searchField.addTextChangedListener(new TextWatcher() {
@@ -146,5 +146,24 @@ public class SelectUsersFragment extends Fragment {
             NavHostFragment.findNavController(this).navigateUp();
         }));
         return fragmentView;
+    }
+
+    @Override
+    public void onUserClick(int position) {
+    }
+
+    @Override
+    public void onUserCheckedStateChanged(int position, CompoundButton compoundButton, boolean isChecked) {
+        User selectedUser = selectUserAdapter.getVisibleUsers().get(position);
+        if (isChecked) {
+            selectedUserIds.add(selectedUser.getId());
+            Log.d(SELECT_USER_TAG, "User " + selectedUser.getId() + " added to candidates list");
+        } else {
+            if (selectedUserIds.remove(selectedUser.getId())) {
+                Log.d(SELECT_USER_TAG, "User " + selectedUser.getId() + " removed from candidates list");
+            } else {
+                Log.d(SELECT_USER_TAG, "User " + selectedUser.getId() + " already not in candidates list");
+            }
+        }
     }
 }

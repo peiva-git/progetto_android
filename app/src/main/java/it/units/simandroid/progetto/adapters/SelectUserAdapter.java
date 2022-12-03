@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.Filter;
 import android.widget.Filterable;
 
@@ -42,11 +43,15 @@ public class SelectUserAdapter extends RecyclerView.Adapter<SelectUserAdapter.It
         notifyDataSetChanged();
     }
 
+    public List<User> getVisibleUsers() {
+        return filteredUsers;
+    }
+
     @NonNull
     @Override
     public ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.user_info, parent, false);
-        return new ItemViewHolder(view);
+        return new ItemViewHolder(view, listener);
     }
 
     @Override
@@ -54,18 +59,7 @@ public class SelectUserAdapter extends RecyclerView.Adapter<SelectUserAdapter.It
         User user = filteredUsers.get(position);
         holder.userEmail.setText(user.getEmail());
         holder.userNameSurname.setText(String.format("%s %s", user.getName(), user.getSurname()));
-
-        if (authorizedUserIds.contains(user.getId())) {
-            holder.userSelected.setChecked(true);
-        }
-
-        holder.userSelected.setOnCheckedChangeListener(
-                (compoundButton, isChecked) -> listener.onUserCheckedStateChanged(user, compoundButton, isChecked));
-
-        holder.itemView.setOnClickListener(view -> {
-            holder.userSelected.setChecked(!holder.userSelected.isChecked());
-            listener.onUserClick(user);
-        });
+        holder.userSelected.setChecked(authorizedUserIds.contains(user.getId()));
     }
 
     @Override
@@ -103,16 +97,36 @@ public class SelectUserAdapter extends RecyclerView.Adapter<SelectUserAdapter.It
         };
     }
 
-    public static class ItemViewHolder extends RecyclerView.ViewHolder {
+    public static class ItemViewHolder extends RecyclerView.ViewHolder implements CompoundButton.OnCheckedChangeListener, View.OnClickListener {
         private final MaterialTextView userNameSurname;
         private final MaterialTextView userEmail;
         private final MaterialCheckBox userSelected;
+        private final OnUserClickListener listener;
 
-        public ItemViewHolder(@NonNull View itemView) {
+        public ItemViewHolder(@NonNull View itemView, OnUserClickListener listener) {
             super(itemView);
             userNameSurname = itemView.findViewById(R.id.user_name_surname);
             userEmail = itemView.findViewById(R.id.user_email);
             userSelected = itemView.findViewById(R.id.user_selected_checkbox);
+
+            this.listener = listener;
+            itemView.setOnClickListener(this);
+            userSelected.setOnCheckedChangeListener(this);
+        }
+
+        @Override
+        public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+            if (listener != null) {
+                listener.onUserCheckedStateChanged(getBindingAdapterPosition(), compoundButton, isChecked);
+            }
+        }
+
+        @Override
+        public void onClick(View view) {
+            if (listener != null) {
+                userSelected.setChecked(!userSelected.isChecked());
+                listener.onUserClick(getBindingAdapterPosition());
+            }
         }
     }
 }
