@@ -63,6 +63,8 @@ public class NewTripFragment extends Fragment {
     private TextInputLayout tripNameLayout;
     private TextInputLayout tripDestinationLayout;
     private TextInputLayout tripDescriptionLayout;
+    private MaterialDatePicker<Pair<Long, Long>> datePicker;
+    private LinearProgressIndicator progressIndicator;
 
     public NewTripFragment() {
         // Required empty public constructor
@@ -103,11 +105,12 @@ public class NewTripFragment extends Fragment {
         tripDescription = fragmentView.findViewById(R.id.trip_description);
         tripDescriptionLayout = fragmentView.findViewById(R.id.trip_description_layout);
         saveTripButton = fragmentView.findViewById(R.id.save_new_trip_button);
+        progressIndicator = requireActivity().findViewById(R.id.progress_indicator);
 
         newImageButton.setOnClickListener(view -> pickTripImages.launch(new String[]{"image/*"}));
 
         tripDates.setOnClickListener(view -> {
-            MaterialDatePicker<Pair<Long, Long>> datePicker = MaterialDatePicker.Builder.dateRangePicker()
+            datePicker = MaterialDatePicker.Builder.dateRangePicker()
                     .setSelection(new Pair<>(
                             MaterialDatePicker.todayInUtcMilliseconds(),
                             MaterialDatePicker.todayInUtcMilliseconds()))
@@ -156,14 +159,19 @@ public class NewTripFragment extends Fragment {
     }
 
     private void uploadNewTripData() {
-        LinearProgressIndicator progressIndicator = requireActivity().findViewById(R.id.progress_indicator);
         progressIndicator.show();
-        CharSequence datesText = tripDates.getText();
-        int indexOfDash = datesText.toString().indexOf("-");
-        int fromResourceLength = getString(R.string.from).length();
-        int untilResourceLength = getString(R.string.until).length();
-        String startDate = datesText.subSequence(fromResourceLength + 2, indexOfDash - 1).toString();
-        String endDate = datesText.subSequence(indexOfDash + 1 + untilResourceLength + 3, datesText.length()).toString();
+        String formattedStartDate;
+        String formattedEndDate;
+        if (datePicker.getSelection() != null) {
+            Date startDate = new Date(datePicker.getSelection().first);
+            Date endDate = new Date(datePicker.getSelection().second);
+            formattedStartDate = DateFormat.getDateInstance().format(startDate);
+            formattedEndDate = DateFormat.getDateInstance().format(endDate);
+
+        } else {
+            formattedStartDate = DateFormat.getDateInstance().format(new Date(MaterialDatePicker.todayInUtcMilliseconds()));
+            formattedEndDate = DateFormat.getDateInstance().format(new Date(MaterialDatePicker.todayInUtcMilliseconds()));
+        }
         String newTripName = tripName.getText().toString();
         String newTripDestination = tripDestination.getText().toString();
         String newTripDescription = tripDescription.getText().toString();
@@ -171,8 +179,8 @@ public class NewTripFragment extends Fragment {
         TripsViewModel viewModel = new ViewModelProvider(this).get(TripsViewModel.class);
         List<UploadTask> tasks = viewModel.uploadTripData(pickedImages,
                 newTripName,
-                startDate,
-                endDate,
+                formattedStartDate,
+                formattedEndDate,
                 newTripDescription,
                 newTripDestination,
                 authentication.getUid());
