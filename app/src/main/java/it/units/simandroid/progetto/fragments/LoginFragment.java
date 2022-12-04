@@ -12,9 +12,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Toast;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -31,7 +28,7 @@ public class LoginFragment extends Fragment {
 
     public static final String AUTH_TAG = "AUTH";
 
-    private FirebaseAuth firebaseInstance;
+    private FirebaseAuth authentication;
     private MaterialButton loginButton;
     private MaterialButton registrationButton;
     private TextInputEditText userEmail;
@@ -42,7 +39,7 @@ public class LoginFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        firebaseInstance = FirebaseAuth.getInstance();
+        authentication = FirebaseAuth.getInstance();
     }
 
     @Nullable
@@ -63,7 +60,8 @@ public class LoginFragment extends Fragment {
             if (!inputValidation()) {
                 return;
             }
-            firebaseInstance.signInWithEmailAndPassword(userEmail.getText().toString(), userPassword.getText().toString())
+            // always non-null on user input, checked with inputValidation
+            authentication.signInWithEmailAndPassword(Objects.requireNonNull(userEmail.getText()).toString(), Objects.requireNonNull(userPassword.getText()).toString())
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             Log.d(AUTH_TAG, "Sign-in successful");
