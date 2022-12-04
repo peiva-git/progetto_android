@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import it.units.simandroid.progetto.R;
 import it.units.simandroid.progetto.Trip;
@@ -46,6 +47,7 @@ import it.units.simandroid.progetto.fragments.directions.TripContentFragmentDire
 public class TripContentFragment extends Fragment {
 
     public static final String TRIP_CONTENT_TAG = "TRIP_CONTENT";
+    public static final String DELETE_TRIP_TAG = "DELETE_TRIP";
     private ViewPager2 viewPager;
     private SlideshowPagerAdapter pagerAdapter;
     private MaterialTextView tripName;
@@ -146,17 +148,17 @@ public class TripContentFragment extends Fragment {
             for (String imageId : trip.getImagesUris().keySet()) {
                 File storedImage = new File(tripDirectory, imageId);
                 if (storedImage.exists()) {
-                    Log.d("DELETE_TRIP", storedImage.delete() ?
+                    Log.d(DELETE_TRIP_TAG, storedImage.delete() ?
                             "Successfully deleted image " + imageId + " from trip " + tripId :
                             "Can't delete image " + imageId + " from trip " + tripId);
                 } else {
-                    Log.d("DELETE_TRIP", "No image found at " + storedImage.getPath());
+                    Log.d(DELETE_TRIP_TAG, "No image found at " + storedImage.getPath());
                 }
             }
         }
     }
 
-    private void updateUI(Trip trip) {
+    private void updateUI(@NonNull Trip trip) {
         progressIndicator.show();
         List<FileDownloadTask> imagesDownloadTasks = new ArrayList<>();
         if (trip.getImagesUris() != null) {
@@ -176,7 +178,8 @@ public class TripContentFragment extends Fragment {
                             Log.d(GET_IMAGE_TAG, "Downloaded image " + imageUriById.getKey() + " for trip " + trip.getId());
                         } else {
                             trip.getImagesUris().remove(imageUriById.getKey());
-                            Log.d(GET_IMAGE_TAG, "Error downloading image " + imageUriById.getKey() + " for trip " + trip.getId() + ": " + getImage.getException().getMessage());
+                            // not-null, checked if task was successful
+                            Log.d(GET_IMAGE_TAG, "Error downloading image " + imageUriById.getKey() + " for trip " + trip.getId() + ": " + Objects.requireNonNull(getImage.getException()).getMessage());
                         }
                     });
                     imagesDownloadTasks.add(task);
