@@ -3,7 +3,6 @@ package it.units.simandroid.progetto;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -29,7 +28,16 @@ public class Trip {
     @NotNull
     private String ownerId;
 
-    public Trip(@Nullable Map<String, String> imagesUris, @NotNull String name, @NotNull String startDate, @NotNull String endDate, @NotNull String description, @NotNull String destination, @NotNull String tripId, @Nullable Map<String, Boolean> authorizedUsers, @NotNull String ownerId) {
+    public Trip(
+            @Nullable Map<String, String> imagesUris,
+            @NotNull String name,
+            @NotNull String startDate,
+            @NotNull String endDate,
+            @NotNull String description,
+            @NotNull String destination,
+            @NotNull String tripId,
+            @Nullable Map<String, Boolean> authorizedUsers,
+            @NotNull String ownerId) {
         this.imagesUris = imagesUris;
         this.name = name;
         this.startDate = startDate;
