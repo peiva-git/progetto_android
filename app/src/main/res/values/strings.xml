@@ -84,7 +84,7 @@
     <string name="no_picked_images_dialog_title">No images picked</string>
     <string name="no_picked_images_dialog_message">You haven\'t picked any images for this trip! Are you sure you want to save it anyway?</string>
     <string name="yes">Yes</string>
-    <string name="picked_images_dialog_no">On second thought...</string>
+    <string name="picked_images_dialog_no">On second thought…</string>
     <string name="date_picker_title">Select trip dates</string>
     <string name="no_dates_picked_dialog_title">No dates picked</string>
     <string name="no_dates_picked_dialog_message">It looks like you didn\'t pick any dates for this trip! You need to select the dates before proceeding</string>

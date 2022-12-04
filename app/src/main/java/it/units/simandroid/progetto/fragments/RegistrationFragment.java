@@ -18,12 +18,14 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import it.units.simandroid.progetto.R;
 import it.units.simandroid.progetto.User;
@@ -47,6 +49,7 @@ public class RegistrationFragment extends Fragment {
     private TextInputLayout userEmailConfirmLayout;
     private TextInputLayout userPasswordLayout;
     private TextInputLayout userPasswordConfirmLayout;
+    private LinearProgressIndicator progressIndicator;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -73,34 +76,44 @@ public class RegistrationFragment extends Fragment {
         userPasswordConfirmLayout = fragmentView.findViewById(R.id.registration_password_confirm_layout);
         registrationButton = fragmentView.findViewById(R.id.registration_button);
         cancelButton = fragmentView.findViewById(R.id.cancel_registration_button);
+        progressIndicator = requireActivity().findViewById(R.id.progress_indicator);
 
         registrationButton.setOnClickListener(registrationButtonView -> {
             if (!validateForm()) {
                 return;
             }
-            authentication.createUserWithEmailAndPassword(Objects.requireNonNull(userEmail.getText()).toString(), userPassword.getText().toString())
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            Log.d(AUTH_TAG, "User " + authentication.getUid() + " created successfully");
-                            // always non-null, checked with formValidation and user has signed-in
-                            User newUser = new User(
-                                    userEmail.getText().toString(),
-                                    userName.getText().toString(),
-                                    userSurname.getText().toString(),
-                                    authentication.getUid());
-                            UsersViewModel viewModel = new ViewModelProvider(RegistrationFragment.this).get(UsersViewModel.class);
-                            viewModel.setUser(newUser)
-                                    .addOnSuccessListener(newUserTask -> Log.d(AUTH_TAG, "User " + newUser.getId() + " added to the database"))
-                                    .addOnFailureListener(exception -> Log.w(AUTH_TAG, "Unable to add user " + newUser.getId() + " to the database", exception));
-                            NavHostFragment.findNavController(this)
-                                    .navigate(RegistrationFragmentDirections.actionRegistrationFragmentToTripsFragment());
-                        } else {
-                            Log.w(AUTH_TAG, "Failed to create new user", task.getException());
-                            // always non-null, checked if task has failed
-                            Snackbar.make(requireView(), task.getException().getLocalizedMessage(), Snackbar.LENGTH_LONG).show();
-                            // updateUI(null)
-                        }
-                    });
+            progressIndicator.show();
+            AtomicBoolean alreadySentOnce = new AtomicBoolean(false);
+            if (!alreadySentOnce.get()) {
+                alreadySentOnce.set(true);
+                authentication.createUserWithEmailAndPassword(Objects.requireNonNull(userEmail.getText()).toString(), userPassword.getText().toString())
+                        .addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                Log.d(AUTH_TAG, "User " + authentication.getUid() + " created successfully");
+                                // always non-null, checked with formValidation and user has signed-in
+                                User newUser = new User(
+                                        userEmail.getText().toString(),
+                                        userName.getText().toString(),
+                                        userSurname.getText().toString(),
+                                        authentication.getUid());
+                                UsersViewModel viewModel = new ViewModelProvider(RegistrationFragment.this).get(UsersViewModel.class);
+                                viewModel.setUser(newUser)
+                                        .addOnSuccessListener(newUserTask -> Log.d(AUTH_TAG, "User " + newUser.getId() + " added to the database"))
+                                        .addOnFailureListener(exception -> Log.w(AUTH_TAG, "Unable to add user " + newUser.getId() + " to the database", exception));
+                                NavHostFragment.findNavController(this)
+                                        .navigate(RegistrationFragmentDirections.actionRegistrationFragmentToTripsFragment());
+                            } else {
+                                Log.w(AUTH_TAG, "Failed to create new user", task.getException());
+                                // always non-null, checked if task has failed
+                                Snackbar.make(requireView(), task.getException().getLocalizedMessage(), Snackbar.LENGTH_LONG).show();
+                                alreadySentOnce.set(false);
+                                // updateUI(null)
+                            }
+                            progressIndicator.hide();
+                        });
+            } else {
+                Log.d(AUTH_TAG, "Sign-up request already sent once without failing, waiting for response");
+            }
         });
         cancelButton.setOnClickListener(view -> NavHostFragment.findNavController(this).navigateUp());
 
