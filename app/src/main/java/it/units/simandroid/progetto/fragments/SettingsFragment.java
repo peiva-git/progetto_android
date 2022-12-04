@@ -46,11 +46,13 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(requireContext());
         preferences.registerOnSharedPreferenceChangeListener((sharedPreferences, key) -> {
             if (key.equals(USER_NAME_KEY)) {
-                viewModel.setUserName(sharedPreferences.getString(key, ""));
-                Log.i(SETTINGS_TAG, "Preference value was updated to: " + sharedPreferences.getString(key, ""));
+                viewModel.setUserName(sharedPreferences.getString(key, ""))
+                        .addOnSuccessListener(task -> Log.i(SETTINGS_TAG, "Preference value was updated to: " + sharedPreferences.getString(key, "")))
+                        .addOnFailureListener(exception -> Log.w(SETTINGS_TAG, "Couldn't update preference value " + USER_NAME_KEY, exception));
             } else if (key.equals(USER_SURNAME_KEY)) {
-                viewModel.setUserSurname(sharedPreferences.getString(key, ""));
-                Log.i(SETTINGS_TAG, "Preference value was updated to: " + sharedPreferences.getString(key, ""));
+                viewModel.setUserSurname(sharedPreferences.getString(key, ""))
+                        .addOnSuccessListener(task -> Log.i(SETTINGS_TAG, "Preference value was updated to: " + sharedPreferences.getString(key, "")))
+                        .addOnFailureListener(exception -> Log.w(SETTINGS_TAG, "Couldn't update preference value " + USER_SURNAME_KEY, exception));
             } else {
                 Log.w(SETTINGS_TAG, "No preference key matching");
             }

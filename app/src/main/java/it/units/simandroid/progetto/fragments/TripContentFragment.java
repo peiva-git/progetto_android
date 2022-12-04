@@ -104,8 +104,10 @@ public class TripContentFragment extends Fragment {
         if (TripContentFragmentArgs.fromBundle(requireArguments()).isSharedTripsModeActive()) {
             isTripFavorite.setVisibility(View.INVISIBLE);
         }
-        isTripFavorite.setOnCheckedChangeListener((compoundButton, isChecked) -> viewModel.setTripFavorite(tripId, isChecked));
-
+        isTripFavorite.setOnCheckedChangeListener((compoundButton, isChecked) ->
+                viewModel.setTripFavorite(tripId, isChecked)
+                        .addOnSuccessListener(task -> Log.d(TRIP_CONTENT_TAG, "Trip " + tripId + " set as favorite"))
+                        .addOnFailureListener(exception -> Log.w(TRIP_CONTENT_TAG, "Unable to set trip " + tripId + " as favorite", exception)));
         requireActivity().addMenuProvider(new MenuProvider() {
             @Override
             public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
