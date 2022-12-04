@@ -32,6 +32,7 @@ import com.google.firebase.storage.FileDownloadTask;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -82,16 +83,7 @@ public class TripContentFragment extends Fragment {
         tripDescription = fragmentView.findViewById(R.id.content_trip_description);
         progressIndicator = requireActivity().findViewById(R.id.progress_indicator);
 
-        Resources resources = getResources();
-        Uri defaultImage = new Uri.Builder()
-                .scheme(ContentResolver.SCHEME_ANDROID_RESOURCE)
-                .authority(resources.getResourcePackageName(R.drawable.ic_baseline_image_not_supported_24))
-                .appendPath(resources.getResourceTypeName(R.drawable.ic_baseline_image_not_supported_24))
-                .appendPath(resources.getResourceEntryName(R.drawable.ic_baseline_image_not_supported_24))
-                .build();
-        List<String> defaultImages = new ArrayList<>(1);
-        defaultImages.add(defaultImage.toString());
-        pagerAdapter = new SlideshowPagerAdapter(this, getContext(), defaultImages);
+        pagerAdapter = new SlideshowPagerAdapter(this, getContext(), Collections.emptyList());
         viewPager.setAdapter(pagerAdapter);
 
         viewModel = new ViewModelProvider(this).get(TripsViewModel.class);

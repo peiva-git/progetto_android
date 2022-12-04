@@ -34,7 +34,6 @@ import java.util.Set;
 import java.util.UUID;
 
 import it.units.simandroid.progetto.Trip;
-import it.units.simandroid.progetto.exceptions.TripNotFoundException;
 
 public class TripsViewModel extends ViewModel {
     public static final String USERS = "users";
@@ -83,14 +82,14 @@ public class TripsViewModel extends ViewModel {
         return databaseTrips;
     }
 
-    public LiveData<Trip> getTripById(String tripId) throws TripNotFoundException {
+    public LiveData<Trip> getTripById(String tripId) {
         return Transformations.map(databaseTrips, trips -> {
             for (Trip trip : trips) {
                 if (trip.getId().equals(tripId)) {
                     return trip;
                 }
             }
-            throw new TripNotFoundException("Unable to find trip with specified id");
+            return null;
         });
     }
 
@@ -221,14 +220,14 @@ public class TripsViewModel extends ViewModel {
                 .setValue(isFavorite);
     }
 
-    public LiveData<Map<String, Boolean>> getAuthorizedUserIds(String tripId) throws TripNotFoundException {
+    public LiveData<Map<String, Boolean>> getAuthorizedUserIds(String tripId) {
         return Transformations.map(databaseTrips, trips -> {
             for (Trip trip : trips) {
                 if (trip.getId().equals(tripId)) {
                     return trip.getAuthorizedUsers();
                 }
             }
-            throw new TripNotFoundException("Unable to find trip with specified id");
+            return null;
         });
     }
 

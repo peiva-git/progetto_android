@@ -40,6 +40,7 @@ import it.units.simandroid.progetto.fragments.directions.TripsFragmentDirections
 public class MainActivity extends AppCompatActivity {
 
     public static final String FAVORITE_TRIPS_TAG = "FAV_TRIPS";
+    public static final String SHARED_TRIPS_TAG = "SHARED_TRIPS";
     private AppBarConfiguration appBarConfiguration;
     private MaterialToolbar toolbar;
     private DrawerLayout navigationDrawer;
@@ -142,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
                 } else if (item.getItemId() == R.id.shared_trips) {
                     TripsFragmentDirections.FilterTripsAction action = TripsFragmentDirections.actionFilterTrips();
                     action.setSharedTripsModeActive(true);
-                    Log.d("SHARED_TRIPS", "Filtering by shared trips");
+                    Log.d(SHARED_TRIPS_TAG, "Filtering by shared trips");
                     navigationDrawer.close();
                     navController.navigate(action);
                     return true;
@@ -172,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
                 } else if (item.getItemId() == R.id.shared_trips) {
                     TripsFragmentDirections.FilterTripsAction action = TripsFragmentDirections.actionFilterTrips();
                     action.setSharedTripsModeActive(true);
-                    Log.d("SHARED_TRIPS_TAG", "Filtering by shared trips");
+                    Log.d(SHARED_TRIPS_TAG, "Filtering by shared trips");
                     navController.navigate(action);
                     return true;
                 }
