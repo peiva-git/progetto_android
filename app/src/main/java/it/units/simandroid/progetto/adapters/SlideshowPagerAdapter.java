@@ -1,9 +1,6 @@
 package it.units.simandroid.progetto.adapters;
 
-import android.content.ContentResolver;
 import android.content.Context;
-import android.content.res.Resources;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -13,7 +10,6 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import java.util.List;
 
-import it.units.simandroid.progetto.R;
 import it.units.simandroid.progetto.fragments.TripContentImageFragment;
 
 public class SlideshowPagerAdapter extends FragmentStateAdapter {
