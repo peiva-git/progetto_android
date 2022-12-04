@@ -134,7 +134,6 @@ public class NewTripFragment extends Fragment {
                         .setPositiveButton(R.string.yes, (dialogInterface, i) -> {
                             uploadNewTripData();
                             NavHostFragment.findNavController(this).navigateUp();
-                            Snackbar.make(NewTripFragment.this.requireActivity().findViewById(R.id.activity_layout), R.string.trip_saved, Snackbar.LENGTH_LONG).show();
                         })
                         .setNegativeButton(R.string.picked_images_dialog_no, (dialogInterface, i) -> {
                         })
@@ -142,7 +141,6 @@ public class NewTripFragment extends Fragment {
             } else {
                 uploadNewTripData();
                 NavHostFragment.findNavController(this).navigateUp();
-                Snackbar.make(NewTripFragment.this.requireActivity().findViewById(R.id.activity_layout), R.string.trip_saved, Snackbar.LENGTH_LONG).show();
             }
         });
 
