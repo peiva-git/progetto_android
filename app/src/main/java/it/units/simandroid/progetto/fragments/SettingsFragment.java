@@ -21,6 +21,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
     public static final String USER_NAME_KEY = "user_name";
     public static final String USER_SURNAME_KEY = "user_surname";
+    public static final String SETTINGS_TAG = "SETTINGS";
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -46,12 +47,12 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         preferences.registerOnSharedPreferenceChangeListener((sharedPreferences, key) -> {
             if (key.equals(USER_NAME_KEY)) {
                 viewModel.setUserName(sharedPreferences.getString(key, ""));
-                Log.i("SETTINGS", "Preference value was updated to: " + sharedPreferences.getString(key, ""));
+                Log.i(SETTINGS_TAG, "Preference value was updated to: " + sharedPreferences.getString(key, ""));
             } else if (key.equals(USER_SURNAME_KEY)) {
                 viewModel.setUserSurname(sharedPreferences.getString(key, ""));
-                Log.i("SETTINGS", "Preference value was updated to: " + sharedPreferences.getString(key, ""));
+                Log.i(SETTINGS_TAG, "Preference value was updated to: " + sharedPreferences.getString(key, ""));
             } else {
-                Log.w("SETTINGS", "No preference key matching");
+                Log.w(SETTINGS_TAG, "No preference key matching");
             }
         });
 
