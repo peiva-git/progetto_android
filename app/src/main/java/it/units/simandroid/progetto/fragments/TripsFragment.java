@@ -1,5 +1,7 @@
 package it.units.simandroid.progetto.fragments;
 
+import static it.units.simandroid.progetto.fragments.TripContentFragment.DELETE_TRIP_TAG;
+
 import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -7,21 +9,6 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.core.content.ContextCompat;
-import androidx.documentfile.provider.DocumentFile;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.fragment.NavHostFragment;
-import androidx.preference.PreferenceManager;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.util.Log;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
@@ -30,6 +17,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.core.content.ContextCompat;
+import androidx.documentfile.provider.DocumentFile;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
+import androidx.preference.PreferenceManager;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.Tasks;
 import com.google.android.material.appbar.MaterialToolbar;
@@ -51,20 +50,21 @@ import java.util.Objects;
 
 import it.units.simandroid.progetto.R;
 import it.units.simandroid.progetto.Trip;
-import it.units.simandroid.progetto.viewmodels.TripsViewModel;
 import it.units.simandroid.progetto.adapters.OnFavoriteStateChangedListener;
 import it.units.simandroid.progetto.adapters.OnTripClickListener;
 import it.units.simandroid.progetto.adapters.TripAdapter;
 import it.units.simandroid.progetto.fragments.directions.TripsFragmentArgs;
 import it.units.simandroid.progetto.fragments.directions.TripsFragmentDirections;
+import it.units.simandroid.progetto.viewmodels.TripsViewModel;
 
 
 public class TripsFragment extends Fragment implements OnTripClickListener, OnFavoriteStateChangedListener {
 
-    public static final String PERMISSION_ASKED = "PERMISSION_ASKED";
     public static final String PERMISSION_DIALOG_SHOWN = "PERMISSION_DIALOG_SHOWN";
     public static final String DATA_UPDATE_TAG = "TRIP_DATA_UPDATE";
     public static final String GET_IMAGE_TAG = "GET_IMAGE";
+    public static final String TRIPS_TAG = "TRIPS";
+    public static final String SELECTION_TAG = "SELECTION";
     private FirebaseAuth authentication;
     private RecyclerView tripsRecyclerView;
     private FloatingActionButton newTripButton;
@@ -74,7 +74,7 @@ public class TripsFragment extends Fragment implements OnTripClickListener, OnFa
     private TripsViewModel viewModel;
     private List<Trip> trips;
     private MaterialToolbar toolbar;
-    private ActionModeCallback actionModeCallback = new ActionModeCallback();
+    private final ActionModeCallback actionModeCallback = new ActionModeCallback();
     private ActionMode actionMode;
 
     public TripsFragment() {
@@ -122,10 +122,9 @@ public class TripsFragment extends Fragment implements OnTripClickListener, OnFa
         tripsRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
         if (newTripButton != null) {
-            newTripButton.setOnClickListener(view -> {
-                NavController navController = Navigation.findNavController(view);
-                navController.navigate(TripsFragmentDirections.actionTripsFragmentToNewTripFragment());
-            });
+            newTripButton.setOnClickListener(view ->
+                    NavHostFragment.findNavController(TripsFragment.this)
+                            .navigate(TripsFragmentDirections.actionTripsFragmentToNewTripFragment()));
         }
 
         if (TripsFragmentArgs.fromBundle(requireArguments()).isSharedTripsModeActive()) {
@@ -269,6 +268,7 @@ public class TripsFragment extends Fragment implements OnTripClickListener, OnFa
     @Override
     public void onDestroy() {
         super.onDestroy();
+        // show dialog again next time the fragment is shown
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(requireActivity());
         SharedPreferences.Editor editor = preferences.edit();
         editor.putBoolean(PERMISSION_DIALOG_SHOWN, false);
@@ -279,7 +279,7 @@ public class TripsFragment extends Fragment implements OnTripClickListener, OnFa
     public void onTripClick(int position) {
         if (actionMode != null) {
             toggleTripSelection(position);
-            Log.d("SELECTION", "Toggled trip at position " + position + " out of " + trips.size());
+            Log.d(SELECTION_TAG, "Toggled trip at position " + position + " out of " + trips.size());
         } else {
             String tripId = tripAdapter.getAdapterTrip(position).getId();
             TripsFragmentDirections.ViewTripDetailsAction action = TripsFragmentDirections.actionViewTripDetails();
@@ -296,7 +296,7 @@ public class TripsFragment extends Fragment implements OnTripClickListener, OnFa
                 actionMode = toolbar.startActionMode(actionModeCallback);
             }
             toggleTripSelection(position);
-            Log.d("SELECTION", "Trip at position " + position + " out of " + trips.size() + " added to selection");
+            Log.d(SELECTION_TAG, "Trip at position " + position + " out of " + trips.size() + " added to selection");
         }
         return true;
     }
@@ -314,7 +314,9 @@ public class TripsFragment extends Fragment implements OnTripClickListener, OnFa
     @Override
     public void onFavoriteStateChanged(int position, CompoundButton compoundButton, boolean isChecked) {
         String tripId = tripAdapter.getAdapterTrip(position).getId();
-        viewModel.setTripFavorite(tripId, isChecked);
+        viewModel.setTripFavorite(tripId, isChecked)
+                .addOnSuccessListener(task -> Log.d(TRIPS_TAG, "Trip " + tripId + " set as favorite"))
+                .addOnFailureListener(exception -> Log.w(TRIPS_TAG, "Unable to set trip " + tripId + " as favorite", exception));
     }
 
     @Override
@@ -325,13 +327,15 @@ public class TripsFragment extends Fragment implements OnTripClickListener, OnFa
             for (Trip trip : trips) {
                 if (!tripAdapter.getAdapterTrips().contains(trip)) {
                     viewModel.deleteTrip(trip.getId())
-                            .addOnSuccessListener(task -> Log.d("DELETE_TRIP", "Trip " + trip.getId() + " removed from database"))
-                            .addOnFailureListener(exception -> Log.w("DELETE_TRIP", exception));
+                            .addOnSuccessListener(task -> Log.d(DELETE_TRIP_TAG, "Trip " + trip.getId() + " removed from database"))
+                            .addOnFailureListener(exception -> Log.w(DELETE_TRIP_TAG, exception));
                     Tasks.whenAllComplete(viewModel.deleteTripImages(trip))
-                            .addOnCompleteListener(task -> Log.d("DELETE_TRIP", "Images removed for trip " + trip.getId()));
+                            .addOnCompleteListener(task -> Log.d(DELETE_TRIP_TAG, "Images removed for trip " + trip.getId()));
                     deleteLocallyStoredImages(trip);
                 }
             }
+        } else {
+            Log.d(DELETE_TRIP_TAG, "No trips currently loaded");
         }
     }
 
@@ -341,13 +345,15 @@ public class TripsFragment extends Fragment implements OnTripClickListener, OnFa
             for (String imageId : trip.getImagesUris().keySet()) {
                 File storedImage = new File(tripDirectory, imageId);
                 if (storedImage.exists()) {
-                    Log.d("DELETE_TRIP", storedImage.delete() ?
+                    Log.d(DELETE_TRIP_TAG, storedImage.delete() ?
                             "Successfully deleted image " + imageId + " from trip " + trip.getId() :
                             "Can't delete image " + imageId + " from trip " + trip.getId());
                 } else {
-                    Log.d("DELETE_TRIP", "No image found at " + storedImage.getPath());
+                    Log.d(DELETE_TRIP_TAG, "No image found at " + storedImage.getPath());
                 }
             }
+        } else {
+            Log.d(DELETE_TRIP_TAG, "No images for trip " + trip.getId());
         }
     }
 
