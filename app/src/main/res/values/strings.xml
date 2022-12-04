@@ -86,4 +86,6 @@
     <string name="yes">Yes</string>
     <string name="picked_images_dialog_no">On second thought...</string>
     <string name="date_picker_title">Select trip dates</string>
+    <string name="no_dates_picked_dialog_title">No dates picked</string>
+    <string name="no_dates_picked_dialog_message">It looks like you didn\'t pick any dates for this trip! You need to select the dates before proceeding</string>
 </resources>

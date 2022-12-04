@@ -1,7 +1,5 @@
 package it.units.simandroid.progetto.fragments;
 
-import static it.units.simandroid.progetto.RealtimeDatabase.DB_URL;
-
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -24,8 +22,6 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.gms.tasks.Tasks;
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.datepicker.CalendarConstraints;
-import com.google.android.material.datepicker.DateValidatorPointForward;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -34,15 +30,13 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.UploadTask;
 
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import it.units.simandroid.progetto.R;
 import it.units.simandroid.progetto.viewmodels.TripsViewModel;
@@ -111,9 +105,6 @@ public class NewTripFragment extends Fragment {
 
         tripDates.setOnClickListener(view -> {
             datePicker = MaterialDatePicker.Builder.dateRangePicker()
-                    .setSelection(new Pair<>(
-                            MaterialDatePicker.todayInUtcMilliseconds(),
-                            MaterialDatePicker.todayInUtcMilliseconds()))
                     .setTitleText(R.string.date_picker_title)
                     .build();
             datePicker.addOnPositiveButtonClickListener(selection -> {
@@ -160,21 +151,16 @@ public class NewTripFragment extends Fragment {
 
     private void uploadNewTripData() {
         progressIndicator.show();
-        String formattedStartDate;
-        String formattedEndDate;
-        if (datePicker.getSelection() != null) {
-            Date startDate = new Date(datePicker.getSelection().first);
-            Date endDate = new Date(datePicker.getSelection().second);
-            formattedStartDate = DateFormat.getDateInstance().format(startDate);
-            formattedEndDate = DateFormat.getDateInstance().format(endDate);
+        // will always be non-null on user input, checked with formValidation
+        Date startDate = new Date(Objects.requireNonNull(datePicker.getSelection()).first);
+        Date endDate = new Date(datePicker.getSelection().second);
+        String formattedStartDate = DateFormat.getDateInstance().format(startDate);
+        String formattedEndDate = DateFormat.getDateInstance().format(endDate);
 
-        } else {
-            formattedStartDate = DateFormat.getDateInstance().format(new Date(MaterialDatePicker.todayInUtcMilliseconds()));
-            formattedEndDate = DateFormat.getDateInstance().format(new Date(MaterialDatePicker.todayInUtcMilliseconds()));
-        }
-        String newTripName = tripName.getText().toString();
-        String newTripDestination = tripDestination.getText().toString();
-        String newTripDescription = tripDescription.getText().toString();
+        // will always be non-null on user input, checked with form validation
+        String newTripName = Objects.requireNonNull(tripName.getText()).toString();
+        String newTripDestination = Objects.requireNonNull(tripDestination.getText()).toString();
+        String newTripDescription = Objects.requireNonNull(tripDescription.getText()).toString();
 
         TripsViewModel viewModel = new ViewModelProvider(this).get(TripsViewModel.class);
         List<UploadTask> tasks = viewModel.uploadTripData(pickedImages,
@@ -210,6 +196,18 @@ public class NewTripFragment extends Fragment {
             isFormValid = false;
         } else {
             tripDescriptionLayout.setError(null);
+        }
+
+        if (datePicker == null
+                || datePicker.getSelection() == null
+                || datePicker.getSelection().equals(new Pair<>(null, null))) {
+            new MaterialAlertDialogBuilder(requireContext())
+                    .setTitle(R.string.no_dates_picked_dialog_title)
+                    .setMessage(R.string.no_dates_picked_dialog_message)
+                    .setPositiveButton(R.string.got_it,
+                            (dialogInterface, i) -> dialogInterface.dismiss())
+                    .show();
+            isFormValid = false;
         }
         return isFormValid;
     }
