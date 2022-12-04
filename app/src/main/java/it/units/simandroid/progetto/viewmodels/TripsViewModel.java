@@ -1,7 +1,5 @@
 package it.units.simandroid.progetto.viewmodels;
 
-import static it.units.simandroid.progetto.RealtimeDatabase.DB_URL;
-
 import android.net.Uri;
 import android.util.Log;
 
@@ -41,6 +39,7 @@ public class TripsViewModel extends ViewModel {
     public static final String NEW_TRIP_DB_TAG = "NEW_TRIP_DB";
     public static final String IS_FAVORITE_FIELD_NAME = "favorite";
     public static final String AUTHORIZED_USERS_FIELD_NAME = "authorizedUsers";
+    public static final String DB_URL = "https://progetto-android-653cd-default-rtdb.europe-west1.firebasedatabase.app/";
     private final MutableLiveData<List<Trip>> databaseTrips;
     private final FirebaseDatabase database;
     private final FirebaseStorage storage;
@@ -131,7 +130,7 @@ public class TripsViewModel extends ViewModel {
         });
     }
 
-    public FileDownloadTask getTripImage(Trip trip, String imageId, File image) {
+    public FileDownloadTask getTripImage(@NonNull Trip trip, String imageId, File image) {
         return storage.getReference(USERS)
                 .child(trip.getOwnerId())
                 .child(trip.getId())
@@ -145,7 +144,7 @@ public class TripsViewModel extends ViewModel {
                 .removeValue();
     }
 
-    public List<Task<Void>> deleteTrips(List<String> tripIds) {
+    public List<Task<Void>> deleteTrips(@NonNull List<String> tripIds) {
         List<Task<Void>> tasks = new ArrayList<>(tripIds.size());
         for (String tripId : tripIds) {
             tasks.add(deleteTrip(tripId));
@@ -153,7 +152,7 @@ public class TripsViewModel extends ViewModel {
         return tasks;
     }
 
-    public List<Task<Void>> deleteTripImages(Trip trip) {
+    public List<Task<Void>> deleteTripImages(@NonNull Trip trip) {
         List<Task<Void>> tasks = new ArrayList<>();
         if (trip.getImagesUris() != null) {
             for (String imageKey : trip.getImagesUris().keySet()) {
@@ -168,13 +167,13 @@ public class TripsViewModel extends ViewModel {
         return tasks;
     }
 
-    public List<UploadTask> uploadTripData(List<Uri> tripImages,
-                               String tripName,
-                               String tripStartDate,
-                               String tripEndDate,
-                               String tripDescription,
-                               String tripDestination,
-                               String tripOwner) {
+    public List<UploadTask> uploadTripData(@NonNull List<Uri> tripImages,
+                                           String tripName,
+                                           String tripStartDate,
+                                           String tripEndDate,
+                                           String tripDescription,
+                                           String tripDestination,
+                                           String tripOwner) {
         DatabaseReference tripReference = database.getReference(TRIPS).push();
         Map<String, String> imagesById = new HashMap<>();
         for (Uri tripImage : tripImages) {
@@ -198,6 +197,7 @@ public class TripsViewModel extends ViewModel {
         return imageTasks;
     }
 
+    @NonNull
     private List<UploadTask> uploadTripImages(@NonNull Trip trip) {
         List<UploadTask> tasks = new ArrayList<>();
         if (trip.getImagesUris() != null) {
@@ -231,7 +231,7 @@ public class TripsViewModel extends ViewModel {
         });
     }
 
-    public Task<Void> shareTripWithUsers(String tripId, Set<String> userIds) {
+    public Task<Void> shareTripWithUsers(String tripId, @NonNull Set<String> userIds) {
         Map<String, Boolean> tripAuthorizations = new HashMap<>(userIds.size());
         for (String userId : userIds) {
             tripAuthorizations.put(userId, true);
@@ -242,28 +242,12 @@ public class TripsViewModel extends ViewModel {
                 .setValue(tripAuthorizations);
     }
 
-    public List<Task<Void>> shareTripsWithUsers(List<String> tripIds, Set<String> userIds) {
+    public List<Task<Void>> shareTripsWithUsers(@NonNull List<String> tripIds, Set<String> userIds) {
         List<Task<Void>> tasks = new ArrayList<>();
         for (String tripId : tripIds) {
             tasks.add(shareTripWithUsers(tripId, userIds));
         }
         return tasks;
-    }
-
-    public void shareTripWithUser(String tripId, String userId) {
-        database.getReference(TRIPS)
-                .child(tripId)
-                .child(AUTHORIZED_USERS_FIELD_NAME)
-                .child(userId)
-                .setValue(true);
-    }
-
-    public void unshareTripWithUser(String tripId, String userId) {
-        database.getReference(TRIPS)
-                .child(tripId)
-                .child(AUTHORIZED_USERS_FIELD_NAME)
-                .child(userId)
-                .setValue(false);
     }
 
     @Override

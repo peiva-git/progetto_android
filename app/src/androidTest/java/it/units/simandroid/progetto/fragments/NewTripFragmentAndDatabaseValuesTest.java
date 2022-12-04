@@ -27,8 +27,8 @@ import java.util.Objects;
 
 import it.units.simandroid.progetto.MainActivity;
 import it.units.simandroid.progetto.R;
-import it.units.simandroid.progetto.RealtimeDatabase;
 import it.units.simandroid.progetto.Trip;
+import it.units.simandroid.progetto.viewmodels.TripsViewModel;
 
 @LargeTest
 public class NewTripFragmentAndDatabaseValuesTest {
@@ -47,7 +47,7 @@ public class NewTripFragmentAndDatabaseValuesTest {
 
     @Before
     public void init() {
-        database = FirebaseDatabase.getInstance(RealtimeDatabase.DB_URL);
+        database = FirebaseDatabase.getInstance(TripsViewModel.DB_URL);
         authentication = FirebaseAuth.getInstance();
         listener = new ValueEventListener() {
             private boolean isFirstEvent = true;

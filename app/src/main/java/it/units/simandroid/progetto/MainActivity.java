@@ -1,22 +1,13 @@
 package it.units.simandroid.progetto;
 
-import static it.units.simandroid.progetto.RealtimeDatabase.DB_URL;
-import static it.units.simandroid.progetto.fragments.SettingsFragment.USER_NAME_KEY;
-import static it.units.simandroid.progetto.fragments.SettingsFragment.USER_SURNAME_KEY;
-import static it.units.simandroid.progetto.fragments.TripsFragment.PERMISSION_DIALOG_SHOWN;
-
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-import androidx.preference.PreferenceManager;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -28,11 +19,8 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.navigationrail.NavigationRailView;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.FirebaseDatabase;
 
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Objects;
 
 import it.units.simandroid.progetto.fragments.directions.TripsFragmentArgs;
 import it.units.simandroid.progetto.fragments.directions.TripsFragmentDirections;

@@ -1,6 +1,5 @@
 package it.units.simandroid.progetto.fragments;
 
-import static it.units.simandroid.progetto.RealtimeDatabase.DB_URL;
 import static it.units.simandroid.progetto.fragments.LoginFragment.AUTH_TAG;
 
 import android.os.Bundle;
@@ -23,7 +22,6 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Objects;
 
@@ -84,6 +82,7 @@ public class RegistrationFragment extends Fragment {
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             Log.d(AUTH_TAG, "User " + authentication.getUid() + " created successfully");
+                            // always non-null, checked with formValidation and user has signed-in
                             User newUser = new User(
                                     userEmail.getText().toString(),
                                     userName.getText().toString(),
@@ -97,6 +96,7 @@ public class RegistrationFragment extends Fragment {
                                     .navigate(RegistrationFragmentDirections.actionRegistrationFragmentToTripsFragment());
                         } else {
                             Log.w(AUTH_TAG, "Failed to create new user", task.getException());
+                            // always non-null, checked if task has failed
                             Snackbar.make(requireView(), task.getException().getLocalizedMessage(), Snackbar.LENGTH_LONG).show();
                             // updateUI(null)
                         }
