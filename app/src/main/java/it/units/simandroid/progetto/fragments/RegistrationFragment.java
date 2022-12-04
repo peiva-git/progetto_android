@@ -83,7 +83,7 @@ public class RegistrationFragment extends Fragment {
             authentication.createUserWithEmailAndPassword(Objects.requireNonNull(userEmail.getText()).toString(), userPassword.getText().toString())
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
-                            Log.d(AUTH_TAG, "User created successfully");
+                            Log.d(AUTH_TAG, "User " + authentication.getUid() + " created successfully");
                             User newUser = new User(
                                     userEmail.getText().toString(),
                                     userName.getText().toString(),
@@ -91,8 +91,8 @@ public class RegistrationFragment extends Fragment {
                                     authentication.getUid());
                             UsersViewModel viewModel = new ViewModelProvider(RegistrationFragment.this).get(UsersViewModel.class);
                             viewModel.setUser(newUser)
-                                    .addOnSuccessListener(newUserTask -> Log.d(AUTH_TAG, "User " + newUser.getId() + " added to database"))
-                                    .addOnFailureListener(exception -> Log.w(AUTH_TAG, exception));
+                                    .addOnSuccessListener(newUserTask -> Log.d(AUTH_TAG, "User " + newUser.getId() + " added to the database"))
+                                    .addOnFailureListener(exception -> Log.w(AUTH_TAG, "Unable to add user " + newUser.getId() + " to the database", exception));
                             NavHostFragment.findNavController(this)
                                     .navigate(RegistrationFragmentDirections.actionRegistrationFragmentToTripsFragment());
                         } else {
@@ -135,9 +135,11 @@ public class RegistrationFragment extends Fragment {
             userEmailLayout.setError(null);
             if (!TextUtils.equals(email, confirmEmail)) {
                 userEmailLayout.setError(getString(R.string.email_mismatch));
+                userEmailConfirmLayout.setError(getString(R.string.email_mismatch));
                 isFormValid = false;
             } else {
                 userEmailLayout.setError(null);
+                userEmailConfirmLayout.setError(null);
                 if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
                     userEmailLayout.setError(getString(R.string.email_bad_format));
                     isFormValid = false;
@@ -153,9 +155,11 @@ public class RegistrationFragment extends Fragment {
             userPasswordLayout.setError(null);
             if (!TextUtils.equals(password, confirmPassword)) {
                 userPasswordLayout.setError(getString(R.string.password_mismatch));
+                userPasswordConfirmLayout.setError(getString(R.string.password_mismatch));
                 isFormValid = false;
             } else {
                 userPasswordLayout.setError(null);
+                userPasswordConfirmLayout.setError(null);
                 if (password.length() < 6) {
                     userPasswordLayout.setError(getString(R.string.password_weak));
                     isFormValid = false;
