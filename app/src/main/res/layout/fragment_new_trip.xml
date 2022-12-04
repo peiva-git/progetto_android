@@ -29,7 +29,7 @@
                 android:contentDescription="@string/new_images_button_description"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_baseline_add_photo_alternate_24"
-                app:layout_constraintBottom_toTopOf="@+id/trip_destination_layout"
+                app:layout_constraintBottom_toTopOf="@+id/trip_dates"
                 app:layout_constraintEnd_toEndOf="@+id/trip_name_layout"
                 app:layout_constraintStart_toEndOf="@+id/trip_name_layout"
                 app:layout_constraintTop_toTopOf="parent"
