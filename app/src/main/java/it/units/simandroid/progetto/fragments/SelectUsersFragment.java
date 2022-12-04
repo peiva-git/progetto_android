@@ -20,7 +20,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.divider.MaterialDividerItemDecoration;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.Collections;
@@ -28,16 +27,17 @@ import java.util.HashSet;
 import java.util.Set;
 
 import it.units.simandroid.progetto.R;
-import it.units.simandroid.progetto.viewmodels.TripsViewModel;
 import it.units.simandroid.progetto.User;
-import it.units.simandroid.progetto.viewmodels.UsersViewModel;
 import it.units.simandroid.progetto.adapters.OnUserClickListener;
 import it.units.simandroid.progetto.adapters.SelectUserAdapter;
 import it.units.simandroid.progetto.fragments.directions.SelectUsersFragmentArgs;
+import it.units.simandroid.progetto.viewmodels.TripsViewModel;
+import it.units.simandroid.progetto.viewmodels.UsersViewModel;
 
 public class SelectUsersFragment extends Fragment implements OnUserClickListener {
 
     public static final String SELECT_USER_TAG = "SELECT_USER";
+    public static final String FILTER_USERS_TAG = "FILTER_USERS";
     private RecyclerView recyclerView;
     private EditText searchField;
     private MaterialButton negativeButton;
@@ -67,25 +67,6 @@ public class SelectUsersFragment extends Fragment implements OnUserClickListener
         positiveButton = fragmentView.findViewById(R.id.dialog_positive_button);
 
         selectUserAdapter = new SelectUserAdapter(getContext(), Collections.emptyList(), selectedUserIds, this);
-  /*
-            @Override
-            public void onUserClick(User user) {
-            }
-
-            @Override
-            public void onUserCheckedStateChanged(User user, CompoundButton compoundButton, boolean isChecked) {
-                if (isChecked) {
-                    selectedUserIds.add(user.getId());
-                    Log.d(SELECT_USER_TAG, "User " + user.getId() + " added to candidates list");
-                } else {
-                    if (selectedUserIds.remove(user.getId())) {
-                        Log.d(SELECT_USER_TAG, "User " + user.getId() + " removed from candidates list");
-                    } else {
-                        Log.d(SELECT_USER_TAG, "User " + user.getId() + " already not in candidates list");
-                    }
-                }
-            }
-*/
         recyclerView.setAdapter(selectUserAdapter);
         MaterialDividerItemDecoration divider = new MaterialDividerItemDecoration(recyclerView.getContext(), LinearLayoutManager.VERTICAL);
         recyclerView.addItemDecoration(divider);
@@ -129,7 +110,7 @@ public class SelectUsersFragment extends Fragment implements OnUserClickListener
 
             @Override
             public void afterTextChanged(Editable editable) {
-                Log.d("FILTER", "Filter string is: " + editable);
+                Log.d(FILTER_USERS_TAG, "Filter string is: " + editable);
                 selectUserAdapter.getFilter().filter(editable.toString());
             }
         });
@@ -139,9 +120,9 @@ public class SelectUsersFragment extends Fragment implements OnUserClickListener
                 tripsViewModel.shareTripWithUsers(tripId, selectedUserIds)
                 .addOnCompleteListener(setAuthorizedUsersTask -> {
             if (setAuthorizedUsersTask.isSuccessful()) {
-                Snackbar.make(SelectUsersFragment.this.requireActivity().findViewById(R.id.activity_layout), R.string.trip_shared, Snackbar.LENGTH_SHORT).show();
+                Log.d(SELECT_USER_TAG, "Trip " + tripId + " shared successfully with selected users");
             } else {
-                Snackbar.make(SelectUsersFragment.this.requireActivity().findViewById(R.id.activity_layout), R.string.trip_shared_error, Snackbar.LENGTH_SHORT).show();
+                Log.w(SELECT_USER_TAG, "Unable to share trip " + tripId + " with selected users", setAuthorizedUsersTask.getException());
             }
             NavHostFragment.findNavController(this).navigateUp();
         }));
