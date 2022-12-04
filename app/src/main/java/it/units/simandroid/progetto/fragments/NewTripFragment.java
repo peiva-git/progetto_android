@@ -44,6 +44,7 @@ import it.units.simandroid.progetto.viewmodels.TripsViewModel;
 public class NewTripFragment extends Fragment {
 
     public static final String DATES_PICKER_TAG = "DATES_PICKER";
+    public static final String NEW_TRIP_TAG = "NEW_TRIP";
     private ActivityResultLauncher<String[]> pickTripImages;
     public static final String IMAGE_PICKER_TAG = "IMG_PICK";
     private FirebaseAuth authentication;
@@ -117,7 +118,7 @@ public class NewTripFragment extends Fragment {
                         formattedStartDate,
                         getString(R.string.until),
                         formattedEndDate);
-                Log.d("NEW_TRIP", "Trip dates picked, setting button text to " + result);
+                Log.d(NEW_TRIP_TAG, "Trip dates picked, setting button text to " + result);
                 tripDates.setText(result);
             });
             datePicker.show(NewTripFragment.this.requireActivity().getSupportFragmentManager(), DATES_PICKER_TAG);
