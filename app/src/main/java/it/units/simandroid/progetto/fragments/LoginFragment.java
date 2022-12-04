@@ -13,13 +13,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import it.units.simandroid.progetto.fragments.directions.LoginFragmentDirections;
 import it.units.simandroid.progetto.R;
@@ -35,6 +40,7 @@ public class LoginFragment extends Fragment {
     private TextInputEditText userPassword;
     private TextInputLayout userEmailLayout;
     private TextInputLayout userPasswordLayout;
+    private LinearProgressIndicator progressIndicator;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -53,6 +59,7 @@ public class LoginFragment extends Fragment {
         userEmailLayout = fragmentView.findViewById(R.id.login_username_layout);
         userPassword = fragmentView.findViewById(R.id.login_password_text);
         userPasswordLayout = fragmentView.findViewById(R.id.login_password_layout);
+        progressIndicator = requireActivity().findViewById(R.id.progress_indicator);
 
         registrationButton.setOnClickListener(registrationButtonView ->
                 NavHostFragment.findNavController(this).navigate(LoginFragmentDirections.actionLoginFragmentToRegistrationFragment()));
@@ -60,17 +67,26 @@ public class LoginFragment extends Fragment {
             if (!inputValidation()) {
                 return;
             }
-            // always non-null on user input, checked with inputValidation
-            authentication.signInWithEmailAndPassword(Objects.requireNonNull(userEmail.getText()).toString(), Objects.requireNonNull(userPassword.getText()).toString())
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            Log.d(AUTH_TAG, "Sign-in successful");
-                            NavHostFragment.findNavController(LoginFragment.this).navigate(LoginFragmentDirections.actionLoginFragmentToTripsFragment());
-                        } else {
-                            Log.w(AUTH_TAG, "Sign-in failed", task.getException());
-                            Snackbar.make(LoginFragment.this.requireView(), Objects.requireNonNull(Objects.requireNonNull(task.getException()).getLocalizedMessage()), Snackbar.LENGTH_LONG).show();
-                        }
-                    });
+            progressIndicator.show();
+            AtomicBoolean alreadySentOnce = new AtomicBoolean(false);
+            if (!alreadySentOnce.get()) {
+                alreadySentOnce.set(true);
+                // always non-null on user input, checked with inputValidation
+                authentication.signInWithEmailAndPassword(Objects.requireNonNull(userEmail.getText()).toString(), Objects.requireNonNull(userPassword.getText()).toString())
+                        .addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                Log.d(AUTH_TAG, "Sign-in successful");
+                                NavHostFragment.findNavController(LoginFragment.this).navigate(LoginFragmentDirections.actionLoginFragmentToTripsFragment());
+                            } else {
+                                Log.w(AUTH_TAG, "Sign-in failed", task.getException());
+                                Snackbar.make(LoginFragment.this.requireView(), Objects.requireNonNull(Objects.requireNonNull(task.getException()).getLocalizedMessage()), Snackbar.LENGTH_LONG).show();
+                                alreadySentOnce.set(false);
+                            }
+                            progressIndicator.hide();
+                        });
+            } else {
+                Log.d(AUTH_TAG, "Sign-in request already sent once without failing, waiting for response");
+            }
         });
 
         return fragmentView;

@@ -188,9 +188,10 @@ public class MainActivity extends AppCompatActivity {
         // automatic navigation if the menu item and the fragment item in the graph have the same id
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
 
-        if (item.getItemId() == R.id.loginFragment) {
+        if (item.getItemId() == R.id.logout) {
             FirebaseAuth authentication = FirebaseAuth.getInstance();
             authentication.signOut();
+            navController.navigate(R.id.action_global_loginFragment);
         } else if (item.getTitle().equals(getString(R.string.settings))) {
             navController.navigate(R.id.action_global_settings);
         }
