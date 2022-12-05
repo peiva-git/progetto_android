@@ -20,6 +20,7 @@ import android.widget.CompoundButton;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.Fragment;
@@ -35,6 +36,7 @@ import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FileDownloadTask;
@@ -149,7 +151,10 @@ public class TripsFragment extends Fragment implements OnTripClickListener, OnFa
         return fragmentView;
     }
 
-    private void updateUI(List<Trip> trips) {
+    private void updateUI(@NonNull List<Trip> trips) {
+        if (trips.isEmpty()) {
+            Snackbar.make(requireView(), R.string.no_trips, Snackbar.LENGTH_LONG).show();
+        }
         if (ContextCompat.checkSelfPermission(TripsFragment.this.requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
                 == PackageManager.PERMISSION_GRANTED) {
             getTripsImagesWithPermissionAndUpdateAdapter(trips);
@@ -177,7 +182,7 @@ public class TripsFragment extends Fragment implements OnTripClickListener, OnFa
         }
     }
 
-    private void getTripsImagesWithoutPermissionAndUpdateAdapter(List<Trip> trips) {
+    private void getTripsImagesWithoutPermissionAndUpdateAdapter(@NonNull List<Trip> trips) {
         progressIndicator.show();
         List<FileDownloadTask> imagesDownloadTasks = new ArrayList<>();
         for (Trip trip : trips) {
@@ -211,7 +216,7 @@ public class TripsFragment extends Fragment implements OnTripClickListener, OnFa
         });
     }
 
-    private void getTripsImagesWithPermissionAndUpdateAdapter(List<Trip> trips) {
+    private void getTripsImagesWithPermissionAndUpdateAdapter(@NonNull List<Trip> trips) {
         progressIndicator.show();
         List<FileDownloadTask> imagesDownloadTasks = new ArrayList<>();
         for (Trip trip : trips) {

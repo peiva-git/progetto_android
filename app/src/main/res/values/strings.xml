@@ -67,7 +67,7 @@
     <string name="trip_shared">Trip successfully shared</string>
     <string name="trip_shared_error">Unable to share trip</string>
     <string name="get_images_error">Unable to download some images</string>
-    <string name="no_trips">No trips found</string>
+    <string name="no_trips">No trips found, check your Internet connection</string>
     <string name="educational_permission_request_title">Permission to read device storage</string>
     <string name="educational_permission_request_content">Access to the device storage is needed to check for possible trip images. If it\'s not granted, some images may be missing</string>
     <string name="got_it">Understood</string>

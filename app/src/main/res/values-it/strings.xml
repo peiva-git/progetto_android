@@ -67,7 +67,7 @@
     <string name="trip_shared">Viaggio condiviso con successo</string>
     <string name="trip_shared_error">Impossibile condividere viaggio</string>
     <string name="get_images_error">Impossibile scaricare alcune immagini</string>
-    <string name="no_trips">Nessun viaggio trovato</string>
+    <string name="no_trips">Nessun viaggio trovato, verifica la connessione</string>
     <string name="educational_permission_request_title">Richiesta d\'accesso all\'archivio</string>
     <string name="educational_permission_request_content">L\'accesso all\'archivio è necessario per recuperare le eventuali immagini dei viaggi. Se non consentito, alcune immagini potrebbero essere mancanti</string>
     <string name="got_it">Capito</string>
