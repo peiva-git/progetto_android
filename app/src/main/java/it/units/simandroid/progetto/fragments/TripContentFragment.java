@@ -90,6 +90,10 @@ public class TripContentFragment extends Fragment {
 
         viewModel = new ViewModelProvider(this).get(TripsViewModel.class);
         viewModel.getTripById(tripId).observe(getViewLifecycleOwner(), trip -> {
+            if (trip == null) {
+                Log.d(TRIP_CONTENT_TAG, "No trip found for id " + tripId);
+                return;
+            }
             Log.d(TRIP_CONTENT_TAG, "Trip " + trip.getId() + " received, updating UI");
             tripName.setText(trip.getName());
             isTripFavorite.setChecked(trip.isFavorite());

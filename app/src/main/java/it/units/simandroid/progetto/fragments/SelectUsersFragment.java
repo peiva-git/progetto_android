@@ -86,6 +86,8 @@ public class SelectUsersFragment extends Fragment implements OnUserClickListener
                         selectedUserIds.remove(userId);
                     }
                 }
+            } else {
+                Log.d(SELECT_USER_TAG, "No authorizations found for trip " + tripId);
             }
         });
         usersViewModel.getUsers().observe(getViewLifecycleOwner(), users -> {
