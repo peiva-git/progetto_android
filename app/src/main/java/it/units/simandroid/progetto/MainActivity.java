@@ -66,7 +66,9 @@ public class MainActivity extends AppCompatActivity {
 
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
             // check destination id and handle accordingly
-            if (destination.getId() == R.id.loginFragment || destination.getId() == R.id.selectUsersFragment) {
+            if (destination.getId() == R.id.loginFragment
+                    || destination.getId() == R.id.selectUsersFragment
+                    || destination.getId() == R.id.registrationFragment) {
                 toolbar.setVisibility(View.GONE);
                 if (navigationView != null) {
                     navigationView.setVisibility(View.GONE);
