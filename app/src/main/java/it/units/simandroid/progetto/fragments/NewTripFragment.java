@@ -134,7 +134,7 @@ public class NewTripFragment extends Fragment {
                 }
             }
             return null;
-        }, new InputFilter.LengthFilter(200)});
+        }, new InputFilter.LengthFilter(getResources().getInteger(R.integer.max_description_text_length))});
 
         saveTripButton.setOnClickListener(view -> {
             if (!formValidation()) {

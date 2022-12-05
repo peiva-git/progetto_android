@@ -20,7 +20,7 @@
         android:minHeight="48dp"
         app:errorEnabled="true"
         app:counterEnabled="true"
-        app:counterMaxLength="20"
+        app:counterMaxLength="@integer/max_email_text_length"
         app:layout_constraintVertical_chainStyle="packed"
         app:layout_constraintBottom_toTopOf="@+id/login_password_layout"
         app:layout_constraintEnd_toEndOf="@id/sign_up_button"
@@ -32,7 +32,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:inputType="textEmailAddress"
-            android:maxLength="20">
+            android:maxLength="@integer/max_email_text_length">
 
         </com.google.android.material.textfield.TextInputEditText>
     </com.google.android.material.textfield.TextInputLayout>
@@ -49,7 +49,7 @@
         android:layout_marginBottom="5dp"
         app:errorEnabled="true"
         app:counterEnabled="true"
-        app:counterMaxLength="50"
+        app:counterMaxLength="@integer/max_password_text_length"
         app:endIconMode="password_toggle"
         app:layout_constraintBottom_toTopOf="@+id/login_button"
         app:layout_constraintEnd_toEndOf="@id/sign_up_button"
@@ -61,7 +61,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:inputType="textPassword"
-            android:maxLength="50">
+            android:maxLength="@integer/max_password_text_length">
 
         </com.google.android.material.textfield.TextInputEditText>
     </com.google.android.material.textfield.TextInputLayout>
