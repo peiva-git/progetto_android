@@ -63,29 +63,33 @@ public class LoginFragment extends Fragment {
 
         registrationButton.setOnClickListener(registrationButtonView ->
                 NavHostFragment.findNavController(this).navigate(LoginFragmentDirections.actionLoginFragmentToRegistrationFragment()));
-        loginButton.setOnClickListener(loginButtonView -> {
-            if (!inputValidation()) {
-                return;
-            }
-            progressIndicator.show();
-            AtomicBoolean alreadySentOnce = new AtomicBoolean(false);
-            if (!alreadySentOnce.get()) {
-                alreadySentOnce.set(true);
-                // always non-null on user input, checked with inputValidation
-                authentication.signInWithEmailAndPassword(Objects.requireNonNull(userEmail.getText()).toString(), Objects.requireNonNull(userPassword.getText()).toString())
-                        .addOnCompleteListener(task -> {
-                            if (task.isSuccessful()) {
-                                Log.d(AUTH_TAG, "Sign-in successful");
-                                NavHostFragment.findNavController(LoginFragment.this).navigate(LoginFragmentDirections.actionLoginFragmentToTripsFragment());
-                            } else {
-                                Log.w(AUTH_TAG, "Sign-in failed", task.getException());
-                                Snackbar.make(LoginFragment.this.requireView(), Objects.requireNonNull(Objects.requireNonNull(task.getException()).getLocalizedMessage()), Snackbar.LENGTH_LONG).show();
-                                alreadySentOnce.set(false);
-                            }
-                            progressIndicator.hide();
-                        });
-            } else {
-                Log.d(AUTH_TAG, "Sign-in request already sent once without failing, waiting for response");
+        loginButton.setOnClickListener(new View.OnClickListener() {
+            private final AtomicBoolean alreadySentOnce = new AtomicBoolean(false);
+
+            @Override
+            public void onClick(View loginButtonView) {
+                if (!LoginFragment.this.inputValidation()) {
+                    return;
+                }
+                progressIndicator.show();
+                if (!alreadySentOnce.get()) {
+                    alreadySentOnce.set(true);
+                    // always non-null on user input, checked with inputValidation
+                    authentication.signInWithEmailAndPassword(Objects.requireNonNull(userEmail.getText()).toString(), Objects.requireNonNull(userPassword.getText()).toString())
+                            .addOnCompleteListener(task -> {
+                                if (task.isSuccessful()) {
+                                    Log.d(AUTH_TAG, "Sign-in successful");
+                                    NavHostFragment.findNavController(LoginFragment.this).navigate(LoginFragmentDirections.actionLoginFragmentToTripsFragment());
+                                } else {
+                                    Log.w(AUTH_TAG, "Sign-in failed", task.getException());
+                                    Snackbar.make(LoginFragment.this.requireView(), Objects.requireNonNull(Objects.requireNonNull(task.getException()).getLocalizedMessage()), Snackbar.LENGTH_LONG).show();
+                                    alreadySentOnce.set(false);
+                                }
+                                progressIndicator.hide();
+                            });
+                } else {
+                    Log.d(AUTH_TAG, "Sign-in request already sent once without failing, waiting for response");
+                }
             }
         });
 
