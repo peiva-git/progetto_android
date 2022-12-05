@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -123,6 +125,16 @@ public class NewTripFragment extends Fragment {
             });
             datePicker.show(NewTripFragment.this.requireActivity().getSupportFragmentManager(), DATES_PICKER_TAG);
         });
+
+        tripDescription.setFilters(new InputFilter[] {(source, start, end, destination, destinationStart, destinationEnd) -> {
+            if (source != null) {
+                String text = source.toString();
+                if (text.contains("\n")) {
+                    return text.replaceAll("\n", "");
+                }
+            }
+            return null;
+        }, new InputFilter.LengthFilter(200)});
 
         saveTripButton.setOnClickListener(view -> {
             if (!formValidation()) {
