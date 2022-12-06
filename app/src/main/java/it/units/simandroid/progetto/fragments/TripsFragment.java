@@ -153,7 +153,7 @@ public class TripsFragment extends Fragment implements OnTripClickListener, OnFa
 
     private void updateUI(@NonNull List<Trip> trips) {
         if (trips.isEmpty()) {
-            Snackbar.make(requireView(), R.string.no_trips, Snackbar.LENGTH_LONG).show();
+            Snackbar.make(requireView(), R.string.no_trips, Snackbar.LENGTH_SHORT).show();
         }
         if (ContextCompat.checkSelfPermission(TripsFragment.this.requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
                 == PackageManager.PERMISSION_GRANTED) {
