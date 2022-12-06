@@ -113,10 +113,13 @@ public class TripsFragment extends Fragment implements OnTripClickListener, OnFa
         boolean isSizeAtLeastLarge = getResources().getConfiguration().isLayoutSizeAtLeast(Configuration.SCREENLAYOUT_SIZE_LARGE);
         if (isSizeAtLeastLarge) {
             newTripButton.setVisibility(View.GONE);
-            StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL);
+            StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(
+                    getResources().getInteger(R.integer.grid_layout_spans),
+                    StaggeredGridLayoutManager.VERTICAL);
             tripsRecyclerView.setLayoutManager(layoutManager);
         } else {
-            LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+            LinearLayoutManager layoutManager = new LinearLayoutManager(
+                    getContext(), LinearLayoutManager.VERTICAL, false);
             tripsRecyclerView.setLayoutManager(layoutManager);
         }
         if (TripsFragmentArgs.fromBundle(requireArguments()).isSharedTripsModeActive()
