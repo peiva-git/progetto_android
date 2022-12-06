@@ -68,6 +68,7 @@ public class LoginFragment extends Fragment {
 
             @Override
             public void onClick(View loginButtonView) {
+                hideKeyboard();
                 if (!LoginFragment.this.inputValidation()) {
                     return;
                 }
@@ -94,6 +95,13 @@ public class LoginFragment extends Fragment {
         });
 
         return fragmentView;
+    }
+
+    private void hideKeyboard() {
+        userEmailLayout.setEnabled(false);
+        userEmailLayout.setEnabled(true);
+        userPasswordLayout.setEnabled(false);
+        userPasswordLayout.setEnabled(true);
     }
 
     private boolean inputValidation() {

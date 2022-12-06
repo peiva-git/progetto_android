@@ -84,6 +84,7 @@ public class RegistrationFragment extends Fragment {
 
             @Override
             public void onClick(View registrationButtonView) {
+                hideKeyboard();
                 if (!RegistrationFragment.this.validateForm()) {
                     return;
                 }
@@ -122,6 +123,21 @@ public class RegistrationFragment extends Fragment {
         cancelButton.setOnClickListener(view -> NavHostFragment.findNavController(this).navigateUp());
 
         return fragmentView;
+    }
+
+    private void hideKeyboard() {
+        userNameLayout.setEnabled(false);
+        userNameLayout.setEnabled(true);
+        userSurnameLayout.setEnabled(false);
+        userSurnameLayout.setEnabled(true);
+        userEmailLayout.setEnabled(false);
+        userEmailLayout.setEnabled(true);
+        userEmailConfirmLayout.setEnabled(false);
+        userEmailConfirmLayout.setEnabled(true);
+        userPasswordLayout.setEnabled(false);
+        userPasswordLayout.setEnabled(true);
+        userPasswordConfirmLayout.setEnabled(false);
+        userPasswordConfirmLayout.setEnabled(true);
     }
 
     private boolean validateForm() {
