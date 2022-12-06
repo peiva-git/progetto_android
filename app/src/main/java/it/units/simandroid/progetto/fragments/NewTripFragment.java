@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputFilter;
-import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,7 +27,6 @@ import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
@@ -40,6 +38,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+import it.units.simandroid.progetto.NewTripViewModel;
 import it.units.simandroid.progetto.R;
 import it.units.simandroid.progetto.viewmodels.TripsViewModel;
 
@@ -62,6 +61,7 @@ public class NewTripFragment extends Fragment {
     private TextInputLayout tripDescriptionLayout;
     private MaterialDatePicker<Pair<Long, Long>> datePicker;
     private LinearProgressIndicator progressIndicator;
+    private NewTripViewModel stateModel;
 
     public NewTripFragment() {
         // Required empty public constructor
@@ -104,25 +104,51 @@ public class NewTripFragment extends Fragment {
         saveTripButton = fragmentView.findViewById(R.id.save_new_trip_button);
         progressIndicator = requireActivity().findViewById(R.id.progress_indicator);
 
-        newImageButton.setOnClickListener(view -> pickTripImages.launch(new String[]{"image/*"}));
-
-        tripDates.setOnClickListener(view -> {
+        stateModel = new ViewModelProvider(this).get(NewTripViewModel.class);
+        if (stateModel.getStartDate() != null && stateModel.getEndDate() != null) {
+            datePicker = MaterialDatePicker.Builder.dateRangePicker()
+                    .setTitleText(R.string.date_picker_title)
+                    .setSelection(new Pair<>(stateModel.getStartDate(), stateModel.getEndDate()))
+                    .build();
+            Date startDate = new Date(stateModel.getStartDate());
+            Date endDate = new Date(stateModel.getEndDate());
+            String formattedStartDate = DateFormat.getDateInstance().format(startDate);
+            String formattedEndDate = DateFormat.getDateInstance().format(endDate);
+            String result = String.format("%s: %s - %s: %s",
+                    getString(R.string.from),
+                    formattedStartDate,
+                    getString(R.string.until),
+                    formattedEndDate);
+            Log.d(NEW_TRIP_TAG, "Trip dates picked, setting button text to " + result);
+            tripDates.setText(result);
+        } else {
             datePicker = MaterialDatePicker.Builder.dateRangePicker()
                     .setTitleText(R.string.date_picker_title)
                     .build();
-            datePicker.addOnPositiveButtonClickListener(selection -> {
-                Date startDate = new Date(selection.first);
-                Date endDate = new Date(selection.second);
-                String formattedStartDate = DateFormat.getDateInstance().format(startDate);
-                String formattedEndDate = DateFormat.getDateInstance().format(endDate);
-                String result = String.format("%s: %s - %s: %s",
-                        getString(R.string.from),
-                        formattedStartDate,
-                        getString(R.string.until),
-                        formattedEndDate);
-                Log.d(NEW_TRIP_TAG, "Trip dates picked, setting button text to " + result);
-                tripDates.setText(result);
-            });
+        }
+        if (stateModel.getPickedImages() != null && !stateModel.getPickedImages().isEmpty()) {
+            pickedImages = stateModel.getPickedImages();
+            newImageButton.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            newImageButton.setImageURI(pickedImages.get(0));
+        }
+
+        datePicker.addOnPositiveButtonClickListener(selection -> {
+            Date startDate = new Date(selection.first);
+            Date endDate = new Date(selection.second);
+            String formattedStartDate = DateFormat.getDateInstance().format(startDate);
+            String formattedEndDate = DateFormat.getDateInstance().format(endDate);
+            String result = String.format("%s: %s - %s: %s",
+                    getString(R.string.from),
+                    formattedStartDate,
+                    getString(R.string.until),
+                    formattedEndDate);
+            Log.d(NEW_TRIP_TAG, "Trip dates picked, setting button text to " + result);
+            tripDates.setText(result);
+        });
+
+        newImageButton.setOnClickListener(view -> pickTripImages.launch(new String[]{"image/*"}));
+
+        tripDates.setOnClickListener(view -> {
             datePicker.show(NewTripFragment.this.requireActivity().getSupportFragmentManager(), DATES_PICKER_TAG);
         });
 
@@ -146,14 +172,14 @@ public class NewTripFragment extends Fragment {
                         .setMessage(R.string.no_picked_images_dialog_message)
                         .setPositiveButton(R.string.yes, (dialogInterface, i) -> {
                             uploadNewTripData();
-                            NavHostFragment.findNavController(this).navigateUp();
+                            NavHostFragment.findNavController(NewTripFragment.this).navigateUp();
                         })
                         .setNegativeButton(R.string.picked_images_dialog_no, (dialogInterface, i) -> {
                         })
                         .show();
             } else {
                 uploadNewTripData();
-                NavHostFragment.findNavController(this).navigateUp();
+                NavHostFragment.findNavController(NewTripFragment.this).navigateUp();
             }
         });
 
@@ -221,5 +247,20 @@ public class NewTripFragment extends Fragment {
             isFormValid = false;
         }
         return isFormValid;
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (datePicker != null && datePicker.getSelection() != null) {
+            Pair<Long, Long> dates = datePicker.getSelection();
+            try {
+                stateModel.saveStartDate(dates.first);
+                stateModel.saveEndDate(dates.second);
+            } catch (NullPointerException e) {
+                Log.d(NEW_TRIP_TAG, "Date picker selection is not null, but its values are!");
+            }
+        }
+        stateModel.savePickedImages(pickedImages);
     }
 }
