@@ -8,7 +8,7 @@
     tools:context=".fragments.RegistrationFragment">
 
     <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="0dp"
+        android:layout_width="@dimen/user_name_layout_width"
         android:layout_height="wrap_content"
         android:id="@+id/user_name_layout"
         android:layout_margin="5dp"
@@ -18,7 +18,8 @@
         app:counterMaxLength="@integer/max_name_text_length"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/user_surname_layout"
-        app:layout_constraintBaseline_toBaselineOf="@+id/user_surname_layout">
+        app:layout_constraintBaseline_toBaselineOf="@+id/user_surname_layout"
+        app:layout_constraintHorizontal_chainStyle="packed">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
@@ -29,7 +30,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="0dp"
+        android:layout_width="@dimen/user_surname_layout_width"
         android:layout_height="wrap_content"
         android:id="@+id/user_surname_layout"
         android:layout_margin="5dp"
@@ -51,7 +52,7 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/registration_email_layout"
-        android:layout_width="0dp"
+        android:layout_width="@dimen/registration_email_layout_width"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
         android:hint="@string/registration_email"
@@ -60,7 +61,8 @@
         app:counterMaxLength="@integer/max_email_text_length"
         app:layout_constraintBaseline_toBaselineOf="@+id/registration_email_confirm_layout"
         app:layout_constraintEnd_toStartOf="@+id/registration_email_confirm_layout"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_chainStyle="packed">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/registration_email"
@@ -72,7 +74,7 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/registration_email_confirm_layout"
-        android:layout_width="0dp"
+        android:layout_width="@dimen/registration_email_confirm_layout_width"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
         android:hint="@string/registration_confirm_email"
@@ -93,7 +95,7 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/registration_password_layout"
-        android:layout_width="0dp"
+        android:layout_width="@dimen/registration_password_layout_width"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
         android:hint="@string/registration_password"
@@ -103,7 +105,8 @@
         app:endIconMode="password_toggle"
         app:layout_constraintBaseline_toBaselineOf="@+id/registration_password_confirm_layout"
         app:layout_constraintEnd_toStartOf="@+id/registration_password_confirm_layout"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_chainStyle="packed">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/registration_password"
@@ -115,7 +118,7 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/registration_password_confirm_layout"
-        android:layout_width="0dp"
+        android:layout_width="@dimen/registration_password_confirm_layout_width"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
         android:hint="@string/registration_password_confirm"
@@ -143,7 +146,7 @@
         android:layout_margin="5dp"
         android:text="@string/registration_button"
         app:layout_constraintEnd_toStartOf="@+id/cancel_registration_button"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@id/registration_password_layout"
         app:layout_constraintTop_toBottomOf="@+id/registration_password_layout" />
 
     <com.google.android.material.button.MaterialButton
@@ -153,7 +156,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
         android:text="@string/registration_cancel"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/registration_password_confirm_layout"
         app:layout_constraintStart_toEndOf="@+id/registration_button"
         app:layout_constraintBaseline_toBaselineOf="@+id/registration_button"/>
 

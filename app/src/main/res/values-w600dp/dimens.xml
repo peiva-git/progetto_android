@@ -4,4 +4,10 @@
     <dimen name="trip_name_layout_width">245dp</dimen>
     <dimen name="trip_destination_layout_width">245dp</dimen>
     <dimen name="trip_description_layout_width">245dp</dimen>
+    <dimen name="user_name_layout_width">245dp</dimen>
+    <dimen name="user_surname_layout_width">245dp</dimen>
+    <dimen name="registration_email_layout_width">245dp</dimen>
+    <dimen name="registration_email_confirm_layout_width">245dp</dimen>
+    <dimen name="registration_password_layout_width">245dp</dimen>
+    <dimen name="registration_password_confirm_layout_width">245dp</dimen>
 </resources>
