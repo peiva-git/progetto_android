@@ -175,11 +175,9 @@ public class TripsFragment extends Fragment implements OnTripClickListener, OnFa
                 new MaterialAlertDialogBuilder(requireContext())
                         .setTitle(R.string.educational_permission_request_title)
                         .setMessage(R.string.educational_permission_request_content)
-                        .setPositiveButton(R.string.got_it, (dialogInterface, i) -> {
-                            dialogInterface.dismiss();
-                            getTripsImagesWithoutPermissionAndUpdateAdapter(trips);
-                        })
+                        .setPositiveButton(R.string.got_it, (dialogInterface, i) -> dialogInterface.dismiss())
                         .show();
+                getTripsImagesWithoutPermissionAndUpdateAdapter(trips);
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.putBoolean(PERMISSION_DIALOG_SHOWN, true);
                 editor.apply();
