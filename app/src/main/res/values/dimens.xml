@@ -3,4 +3,7 @@
     <dimen name="login_form_margin">10dp</dimen>
     <dimen name="registrationFormMargin">10dp</dimen>
     <dimen name="trip_card_width">-1dp</dimen>
+    <dimen name="trip_name_layout_width">0dp</dimen>
+    <dimen name="trip_destination_layout_width">0dp</dimen>
+    <dimen name="trip_description_layout_width">0dp</dimen>
 </resources>

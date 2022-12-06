@@ -39,7 +39,7 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/trip_name_layout"
-                android:layout_width="0dp"
+                android:layout_width="@dimen/trip_name_layout_width"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:hint="@string/trip_name"
@@ -48,7 +48,8 @@
                 app:counterMaxLength="@integer/max_trip_name_text_length"
                 app:layout_constraintBaseline_toBaselineOf="@+id/trip_destination_layout"
                 app:layout_constraintEnd_toStartOf="@+id/trip_destination_layout"
-                app:layout_constraintStart_toStartOf="parent">
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintHorizontal_chainStyle="packed">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/trip_name"
@@ -60,7 +61,7 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/trip_destination_layout"
-                android:layout_width="0dp"
+                android:layout_width="@dimen/trip_destination_layout_width"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:hint="@string/trip_destination"
@@ -92,11 +93,12 @@
                 app:icon="@drawable/ic_baseline_calendar_today_24"
                 app:layout_constraintBottom_toTopOf="@+id/trip_destination_layout"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/trip_images_button" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/trip_description_layout"
-                android:layout_width="0dp"
+                android:layout_width="@dimen/trip_description_layout_width"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:autofillHints="none"
