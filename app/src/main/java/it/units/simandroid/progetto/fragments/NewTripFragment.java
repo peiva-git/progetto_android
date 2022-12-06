@@ -38,7 +38,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import it.units.simandroid.progetto.NewTripViewModel;
+import it.units.simandroid.progetto.viewmodels.NewTripViewModel;
 import it.units.simandroid.progetto.R;
 import it.units.simandroid.progetto.viewmodels.TripsViewModel;
 
