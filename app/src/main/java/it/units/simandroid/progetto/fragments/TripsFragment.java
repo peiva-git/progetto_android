@@ -5,6 +5,7 @@ import static it.units.simandroid.progetto.fragments.TripContentFragment.DELETE_
 import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.Uri;
@@ -28,8 +29,10 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.google.android.gms.tasks.Tasks;
 import com.google.android.material.appbar.MaterialToolbar;
@@ -110,17 +113,20 @@ public class TripsFragment extends Fragment implements OnTripClickListener, OnFa
         boolean isSizeAtLeastLarge = getResources().getConfiguration().isLayoutSizeAtLeast(Configuration.SCREENLAYOUT_SIZE_LARGE);
         if (isSizeAtLeastLarge) {
             newTripButton.setVisibility(View.GONE);
+            StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL);
+            tripsRecyclerView.setLayoutManager(layoutManager);
+        } else {
+            LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+            tripsRecyclerView.setLayoutManager(layoutManager);
         }
         if (TripsFragmentArgs.fromBundle(requireArguments()).isSharedTripsModeActive()
                 || TripsFragmentArgs.fromBundle(requireArguments()).isFilteringActive()) {
             newTripButton.setVisibility(View.GONE);
         }
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         tripAdapter = new TripAdapter(getContext(), Collections.emptyList(), this, this);
         tripAdapter.setSharedModeOn(TripsFragmentArgs.fromBundle(requireArguments()).isSharedTripsModeActive());
         tripsRecyclerView.setAdapter(tripAdapter);
-        tripsRecyclerView.setLayoutManager(layoutManager);
         tripsRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
         if (newTripButton != null) {
