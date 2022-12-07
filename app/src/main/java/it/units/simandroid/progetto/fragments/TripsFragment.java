@@ -388,6 +388,7 @@ public class TripsFragment extends Fragment implements OnTripClickListener, OnFa
                 // remove trips from view only
                 tripAdapter.removeTripsByPositions(tripAdapter.getSelectedTripsPositions());
                 mode.finish();
+                Snackbar.make(TripsFragment.this.requireView(), R.string.trips_deleted, Snackbar.LENGTH_SHORT).show();
                 return true;
             }
             return false;

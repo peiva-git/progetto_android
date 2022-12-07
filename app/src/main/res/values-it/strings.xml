@@ -88,4 +88,5 @@
     <string name="date_picker_title">Selezionare le date del viaggio</string>
     <string name="no_dates_picked_dialog_title">Nessuna data selezionata</string>
     <string name="no_dates_picked_dialog_message">Non sono state selezionate le date per il viaggio! Inserire le date prima di procedere</string>
+    <string name="trips_deleted">I viaggi selezionati sono stati eliminati</string>
 </resources>
