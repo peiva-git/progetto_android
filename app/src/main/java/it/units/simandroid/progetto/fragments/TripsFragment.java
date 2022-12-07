@@ -235,8 +235,7 @@ public class TripsFragment extends Fragment implements OnTripClickListener, OnFa
                 counter += trip.getImagesUris().size();
             }
         }
-        final int numberOfImages = counter;
-        return numberOfImages;
+        return counter;
     }
 
     private void getTripsImagesWithPermissionAndUpdateAdapter(@NonNull List<Trip> trips) {
