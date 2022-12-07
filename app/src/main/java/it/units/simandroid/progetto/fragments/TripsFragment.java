@@ -52,6 +52,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import it.units.simandroid.progetto.R;
 import it.units.simandroid.progetto.Trip;
@@ -191,7 +192,9 @@ public class TripsFragment extends Fragment implements OnTripClickListener, OnFa
 
     private void getTripsImagesWithoutPermissionAndUpdateAdapter(@NonNull List<Trip> trips) {
         progressIndicator.show();
+        final int numberOfImages = getTotalNumberOfImages(trips);
         List<FileDownloadTask> imagesDownloadTasks = new ArrayList<>();
+        AtomicInteger progress = new AtomicInteger(0);
         for (Trip trip : trips) {
             if (trip.getImagesUris() != null) {
                 for (Map.Entry<String, String> imageUriById : trip.getImagesUris().entrySet()) {
@@ -205,6 +208,8 @@ public class TripsFragment extends Fragment implements OnTripClickListener, OnFa
                             if (getImage.isSuccessful()) {
                                 trip.getImagesUris().put(imageUriById.getKey(), storedImage.toURI().toString());
                                 Log.d(GET_IMAGE_TAG, "Downloaded image " + imageUriById.getKey() + " for trip " + trip.getId());
+                                progress.addAndGet(100 / numberOfImages);
+                                progressIndicator.setProgressCompat(progress.get(), true);
                             } else {
                                 trip.getImagesUris().remove(imageUriById.getKey());
                                 Log.d(GET_IMAGE_TAG, "Error downloading image " + imageUriById.getKey() + " for trip " + trip.getId() + ": " + getImage.getException().getMessage());
@@ -223,8 +228,21 @@ public class TripsFragment extends Fragment implements OnTripClickListener, OnFa
         });
     }
 
+    private int getTotalNumberOfImages(@NonNull List<Trip> trips) {
+        int counter = 0;
+        for (Trip trip : trips) {
+            if (trip.getImagesUris() != null) {
+                counter += trip.getImagesUris().size();
+            }
+        }
+        final int numberOfImages = counter;
+        return numberOfImages;
+    }
+
     private void getTripsImagesWithPermissionAndUpdateAdapter(@NonNull List<Trip> trips) {
         progressIndicator.show();
+        final int numberOfImages = getTotalNumberOfImages(trips);
+        AtomicInteger progress = new AtomicInteger(0);
         List<FileDownloadTask> imagesDownloadTasks = new ArrayList<>();
         for (Trip trip : trips) {
             if (trip.getImagesUris() != null) {
@@ -248,6 +266,8 @@ public class TripsFragment extends Fragment implements OnTripClickListener, OnFa
                                 if (getImage.isSuccessful()) {
                                     trip.getImagesUris().put(imageUriById.getKey(), storedImage.toURI().toString());
                                     Log.d(GET_IMAGE_TAG, "Downloaded image " + imageUriById.getKey() + " for trip " + trip.getId());
+                                    progress.addAndGet(100 / numberOfImages);
+                                    progressIndicator.setProgressCompat(progress.get(), true);
                                 } else {
                                     trip.getImagesUris().remove(imageUriById.getKey());
                                     Log.d(GET_IMAGE_TAG, "Error downloading image " + imageUriById.getKey() + " for trip " + trip.getId() + ": " + getImage.getException().getMessage());

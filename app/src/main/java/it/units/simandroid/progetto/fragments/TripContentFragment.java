@@ -36,6 +36,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import it.units.simandroid.progetto.R;
 import it.units.simandroid.progetto.Trip;
@@ -167,6 +168,7 @@ public class TripContentFragment extends Fragment {
     private void updateUI(@NonNull Trip trip) {
         progressIndicator.show();
         List<FileDownloadTask> imagesDownloadTasks = new ArrayList<>();
+        AtomicInteger progress = new AtomicInteger(0);
         if (trip.getImagesUris() != null) {
             for (Map.Entry<String, String> imageUriById : trip.getImagesUris().entrySet()) {
                 File tripDirectory = requireContext().getDir(trip.getId(), Context.MODE_PRIVATE);
@@ -182,6 +184,8 @@ public class TripContentFragment extends Fragment {
                         if (getImage.isSuccessful()) {
                             trip.getImagesUris().put(imageUriById.getKey(), storedImage.toURI().toString());
                             Log.d(GET_IMAGE_TAG, "Downloaded image " + imageUriById.getKey() + " for trip " + trip.getId());
+                            progress.addAndGet(100 / trip.getImagesUris().size());
+                            progressIndicator.setProgressCompat(progress.get(), true);
                         } else {
                             trip.getImagesUris().remove(imageUriById.getKey());
                             // not-null, checked if task was successful

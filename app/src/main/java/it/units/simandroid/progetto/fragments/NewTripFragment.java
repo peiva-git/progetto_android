@@ -37,6 +37,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import it.units.simandroid.progetto.viewmodels.NewTripViewModel;
 import it.units.simandroid.progetto.R;
@@ -148,9 +149,7 @@ public class NewTripFragment extends Fragment {
 
         newImageButton.setOnClickListener(view -> pickTripImages.launch(new String[]{"image/*"}));
 
-        tripDates.setOnClickListener(view -> {
-            datePicker.show(NewTripFragment.this.requireActivity().getSupportFragmentManager(), DATES_PICKER_TAG);
-        });
+        tripDates.setOnClickListener(view -> datePicker.show(NewTripFragment.this.requireActivity().getSupportFragmentManager(), DATES_PICKER_TAG));
 
         tripDescription.setFilters(new InputFilter[] {(source, start, end, destination, destinationStart, destinationEnd) -> {
             if (source != null) {
@@ -207,6 +206,14 @@ public class NewTripFragment extends Fragment {
                 newTripDescription,
                 newTripDestination,
                 authentication.getUid());
+        AtomicInteger progress = new AtomicInteger(0);
+        progressIndicator.setProgressCompat(progress.get(), true);
+        for (UploadTask task : tasks) {
+            task.addOnSuccessListener(successTask -> {
+                progress.addAndGet(100 / tasks.size());
+                progressIndicator.setProgressCompat(progress.get(), true);
+            });
+        }
         Tasks.whenAllComplete(tasks).addOnCompleteListener(task -> progressIndicator.hide());
     }
 
@@ -258,7 +265,7 @@ public class NewTripFragment extends Fragment {
                 stateModel.saveStartDate(dates.first);
                 stateModel.saveEndDate(dates.second);
             } catch (NullPointerException e) {
-                Log.d(NEW_TRIP_TAG, "Date picker selection is not null, but its values are!");
+                Log.w(NEW_TRIP_TAG, "Date picker selection is not null, but its values are!", e);
             }
         }
         stateModel.savePickedImages(pickedImages);
