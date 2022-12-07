@@ -17,9 +17,11 @@
         app:counterEnabled="true"
         app:counterMaxLength="@integer/max_name_text_length"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/user_surname_layout"
-        app:layout_constraintBaseline_toBaselineOf="@+id/user_surname_layout"
-        app:layout_constraintHorizontal_chainStyle="packed">
+        app:layout_constraintBottom_toTopOf="@+id/registration_email_layout"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintVertical_chainStyle="packed">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
@@ -38,9 +40,11 @@
         app:errorEnabled="true"
         app:counterEnabled="true"
         app:counterMaxLength="@integer/max_surname_text_length"
+        app:layout_constraintBottom_toTopOf="@+id/registration_email_confirm_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/user_name_layout"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
@@ -59,9 +63,10 @@
         app:errorEnabled="true"
         app:counterEnabled="true"
         app:counterMaxLength="@integer/max_email_text_length"
-        app:layout_constraintBaseline_toBaselineOf="@+id/registration_email_confirm_layout"
         app:layout_constraintEnd_toStartOf="@+id/registration_email_confirm_layout"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/user_name_layout"
+        app:layout_constraintBottom_toTopOf="@+id/registration_password_layout"
         app:layout_constraintHorizontal_chainStyle="packed">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -81,9 +86,10 @@
         app:errorEnabled="true"
         app:counterEnabled="true"
         app:counterMaxLength="@integer/max_email_text_length"
+        app:layout_constraintBottom_toTopOf="@+id/registration_password_confirm_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/registration_email_layout"
-        app:layout_constraintTop_toBottomOf="@+id/user_name_layout">
+        app:layout_constraintTop_toBottomOf="@+id/user_surname_layout">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/registration_email_confirm"
@@ -103,9 +109,10 @@
         app:counterEnabled="true"
         app:counterMaxLength="@integer/max_password_text_length"
         app:endIconMode="password_toggle"
-        app:layout_constraintBaseline_toBaselineOf="@+id/registration_password_confirm_layout"
         app:layout_constraintEnd_toStartOf="@+id/registration_password_confirm_layout"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/registration_button"
+        app:layout_constraintTop_toBottomOf="@+id/registration_email_layout"
         app:layout_constraintHorizontal_chainStyle="packed">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -128,7 +135,8 @@
         app:endIconMode="password_toggle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/registration_password_layout"
-        app:layout_constraintTop_toBottomOf="@+id/registration_email_layout">
+        app:layout_constraintBottom_toTopOf="@+id/cancel_registration_button"
+        app:layout_constraintTop_toBottomOf="@+id/registration_email_confirm_layout">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/registration_password_confirm"
@@ -145,9 +153,10 @@
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
         android:text="@string/registration_button"
+        app:layout_constraintTop_toBottomOf="@+id/registration_password_layout"
         app:layout_constraintEnd_toStartOf="@+id/cancel_registration_button"
-        app:layout_constraintStart_toStartOf="@id/registration_password_layout"
-        app:layout_constraintBaseline_toBaselineOf="@+id/cancel_registration_button"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@id/registration_password_layout" />
 
     <com.google.android.material.button.MaterialButton
         style="@style/Widget.Material3.Button.TonalButton"
@@ -158,6 +167,7 @@
         android:text="@string/registration_cancel"
         app:layout_constraintEnd_toEndOf="@id/registration_password_confirm_layout"
         app:layout_constraintStart_toEndOf="@+id/registration_button"
-        app:layout_constraintTop_toBottomOf="@+id/registration_password_layout" />
+        app:layout_constraintTop_toBottomOf="@+id/registration_password_confirm_layout"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
