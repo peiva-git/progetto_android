@@ -13,4 +13,5 @@
     <dimen name="registration_password_confirm_layout_width">0dp</dimen>
     <dimen name="registration_button_width">0dp</dimen>
     <item format="float" name="image_button_width_constraint" type="dimen">1.0</item>
+    <item name="trip_content_image_width" type="dimen" format="float">0.5</item>
 </resources>

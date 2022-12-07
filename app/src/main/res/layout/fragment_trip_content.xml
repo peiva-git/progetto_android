@@ -16,7 +16,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintHeight_default="percent"
-        app:layout_constraintHeight_percent="0.4" />
+        app:layout_constraintHeight_percent="@dimen/trip_content_image_width" />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="0dp"
