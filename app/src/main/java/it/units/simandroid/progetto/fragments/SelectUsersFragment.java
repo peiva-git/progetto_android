@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.divider.MaterialDividerItemDecoration;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.Collections;
@@ -45,6 +46,7 @@ public class SelectUsersFragment extends Fragment implements OnUserClickListener
     private Set<String> selectedUserIds;
     private MaterialButton positiveButton;
     private FirebaseAuth authentication;
+    private View activityLayout;
 
     public SelectUsersFragment() {
 
@@ -65,6 +67,7 @@ public class SelectUsersFragment extends Fragment implements OnUserClickListener
         searchField = fragmentView.findViewById(R.id.search_field_text);
         negativeButton = fragmentView.findViewById(R.id.dialog_negative_button);
         positiveButton = fragmentView.findViewById(R.id.dialog_positive_button);
+        activityLayout = requireActivity().findViewById(R.id.activity_layout);
 
         selectUserAdapter = new SelectUserAdapter(getContext(), Collections.emptyList(), selectedUserIds, this);
         recyclerView.setAdapter(selectUserAdapter);
@@ -123,10 +126,16 @@ public class SelectUsersFragment extends Fragment implements OnUserClickListener
                 .addOnCompleteListener(setAuthorizedUsersTask -> {
             if (setAuthorizedUsersTask.isSuccessful()) {
                 Log.d(SELECT_USER_TAG, "Trip " + tripId + " shared successfully with selected users");
+                if (activityLayout != null) {
+                    Snackbar.make(activityLayout, R.string.trip_shared, Snackbar.LENGTH_SHORT).show();
+                }
             } else {
                 Log.w(SELECT_USER_TAG, "Unable to share trip " + tripId + " with selected users", setAuthorizedUsersTask.getException());
+                if (activityLayout != null) {
+                    Snackbar.make(activityLayout, R.string.trip_shared_error, Snackbar.LENGTH_SHORT).show();
+                }
             }
-            NavHostFragment.findNavController(this).navigateUp();
+                    NavHostFragment.findNavController(this).navigateUp();
         }));
         return fragmentView;
     }
