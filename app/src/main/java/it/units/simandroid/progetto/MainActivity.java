@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     private NavigationView navigationView;
     private LinearProgressIndicator progressIndicator;
     private NavigationRailView navigationRailView;
+    private NavController navController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
         progressIndicator = findViewById(R.id.progress_indicator);
         setSupportActionBar(toolbar);
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
-        NavController navController = navHostFragment.getNavController();
+        navController = navHostFragment.getNavController();
         if (navigationDrawer != null) {
             appBarConfiguration = new AppBarConfiguration
                     .Builder(navController.getGraph())
