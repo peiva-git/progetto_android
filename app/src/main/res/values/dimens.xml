@@ -2,7 +2,6 @@
 <resources>
     <dimen name="login_form_margin">10dp</dimen>
     <dimen name="registrationFormMargin">10dp</dimen>
-    <dimen name="trip_card_width">-1dp</dimen>
     <dimen name="trip_name_layout_width">0dp</dimen>
     <dimen name="trip_destination_layout_width">0dp</dimen>
     <dimen name="trip_description_layout_width">0dp</dimen>
@@ -13,4 +12,5 @@
     <dimen name="registration_password_layout_width">0dp</dimen>
     <dimen name="registration_password_confirm_layout_width">0dp</dimen>
     <dimen name="registration_button_width">0dp</dimen>
+    <item format="float" name="image_button_width_constraint" type="dimen">1.0</item>
 </resources>

@@ -9,13 +9,15 @@
     tools:context=".fragments.NewTripFragment">
 
     <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         android:fillViewport="true"
         android:id="@+id/scroll_view_layout"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/inner_layout"
@@ -24,7 +26,7 @@
 
             <ImageButton
                 android:id="@+id/trip_images_button"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:contentDescription="@string/new_images_button_description"
                 android:scaleType="fitCenter"
@@ -32,6 +34,7 @@
                 app:layout_constraintBottom_toTopOf="@+id/trip_dates"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHeight_default="percent"
+                app:layout_constraintWidth_percent="@dimen/image_button_width_constraint"
                 app:layout_constraintHeight_percent="0.5"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -98,7 +101,7 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/trip_description_layout"
-                android:layout_width="@dimen/trip_description_layout_width"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:autofillHints="none"
@@ -106,8 +109,8 @@
                 app:counterEnabled="true"
                 app:counterMaxLength="@integer/max_description_text_length"
                 app:errorEnabled="true"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/trip_destination_layout"
+                app:layout_constraintStart_toStartOf="@+id/trip_name_layout"
                 app:layout_constraintTop_toBottomOf="@+id/trip_destination_layout">
 
                 <com.google.android.material.textfield.TextInputEditText
