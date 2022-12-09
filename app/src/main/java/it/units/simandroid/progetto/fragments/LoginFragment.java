@@ -1,10 +1,5 @@
 package it.units.simandroid.progetto.fragments;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.navigation.fragment.NavHostFragment;
-
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -13,21 +8,23 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.android.gms.tasks.Continuation;
-import com.google.android.gms.tasks.Task;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
+
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import it.units.simandroid.progetto.fragments.directions.LoginFragmentDirections;
 import it.units.simandroid.progetto.R;
+import it.units.simandroid.progetto.fragments.directions.LoginFragmentDirections;
 
 public class LoginFragment extends Fragment {
 

@@ -5,7 +5,6 @@ import static it.units.simandroid.progetto.fragments.TripContentFragment.DELETE_
 import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.Uri;
@@ -29,7 +28,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
@@ -110,6 +108,13 @@ public class TripsFragment extends Fragment implements OnTripClickListener, OnFa
         newTripButton = fragmentView.findViewById(R.id.new_trip_button);
         progressIndicator = requireActivity().findViewById(R.id.progress_indicator);
         toolbar = requireActivity().findViewById(R.id.toolbar);
+
+        FirebaseUser currentUser = authentication.getCurrentUser();
+        if (currentUser == null) {
+            NavHostFragment.findNavController(this)
+                    .navigate(TripsFragmentDirections.actionTripsFragmentToLoginFragment());
+            return null;
+        }
 
         boolean isSizeAtLeastLarge = getResources().getConfiguration().isLayoutSizeAtLeast(Configuration.SCREENLAYOUT_SIZE_LARGE);
         if (isSizeAtLeastLarge) {
@@ -284,16 +289,6 @@ public class TripsFragment extends Fragment implements OnTripClickListener, OnFa
             tripAdapter.setAdapterTrips(trips);
             progressIndicator.hide();
         });
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        FirebaseUser currentUser = authentication.getCurrentUser();
-        if (currentUser == null) {
-            NavHostFragment.findNavController(this)
-                    .navigate(TripsFragmentDirections.actionTripsFragmentToLoginFragment());
-        }
     }
 
     @Override
