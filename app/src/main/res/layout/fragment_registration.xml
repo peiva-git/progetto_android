@@ -27,7 +27,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/user_name"
-            android:inputType="textPersonName"
+            android:inputType="textPersonName|textCapWords"
             android:maxLength="@integer/max_name_text_length"/>
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -50,7 +50,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/user_surname"
-            android:inputType="textPersonName"
+            android:inputType="textPersonName|textCapWords"
             android:maxLength="@integer/max_surname_text_length"/>
     </com.google.android.material.textfield.TextInputLayout>
 
