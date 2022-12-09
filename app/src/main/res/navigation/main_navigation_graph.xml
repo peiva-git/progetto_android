@@ -60,6 +60,8 @@
         <action
             android:id="@+id/action_loginFragment_to_tripsFragment"
             app:destination="@id/tripsFragment"
+            app:popUpTo="@id/navigation_graph"
+            app:popUpToInclusive="true"
             app:enterAnim="@anim/nav_default_enter_anim"
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
@@ -73,6 +75,8 @@
         <action
             android:id="@+id/action_registrationFragment_to_tripsFragment"
             app:destination="@id/tripsFragment"
+            app:popUpTo="@id/navigation_graph"
+            app:popUpToInclusive="true"
             app:enterAnim="@anim/nav_default_enter_anim"
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
@@ -120,6 +124,8 @@
     <action
         android:id="@+id/action_global_loginFragment"
         app:destination="@id/loginFragment"
+        app:popUpTo="@id/navigation_graph"
+        app:popUpToInclusive="true"
         app:enterAnim="@anim/nav_default_enter_anim"
         app:exitAnim="@anim/nav_default_exit_anim"
         app:popEnterAnim="@anim/nav_default_pop_enter_anim"

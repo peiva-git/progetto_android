@@ -25,6 +25,8 @@ import androidx.core.content.ContextCompat;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.ActionOnlyNavDirections;
+import androidx.navigation.NavDirections;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.DefaultItemAnimator;
@@ -112,7 +114,7 @@ public class TripsFragment extends Fragment implements OnTripClickListener, OnFa
         FirebaseUser currentUser = authentication.getCurrentUser();
         if (currentUser == null) {
             NavHostFragment.findNavController(this)
-                    .navigate(TripsFragmentDirections.actionTripsFragmentToLoginFragment());
+                    .navigate(new ActionOnlyNavDirections(R.id.action_global_loginFragment));
             return null;
         }
 

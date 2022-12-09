@@ -8,6 +8,7 @@ import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.navigation.ActionOnlyNavDirections;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
@@ -194,9 +195,9 @@ public class MainActivity extends AppCompatActivity {
         if (item.getItemId() == R.id.logout) {
             FirebaseAuth authentication = FirebaseAuth.getInstance();
             authentication.signOut();
-            navController.navigate(R.id.action_global_loginFragment);
+            navController.navigate(new ActionOnlyNavDirections(R.id.action_global_loginFragment));
         } else if (item.getTitle().equals(getString(R.string.settings))) {
-            navController.navigate(R.id.action_global_settings);
+            navController.navigate(new ActionOnlyNavDirections(R.id.action_global_settings));
         }
         return NavigationUI.onNavDestinationSelected(item, navController)
                 || super.onOptionsItemSelected(item);

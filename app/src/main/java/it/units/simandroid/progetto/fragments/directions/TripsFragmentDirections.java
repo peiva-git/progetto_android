@@ -18,12 +18,6 @@ public class TripsFragmentDirections {
     }
 
     @NonNull
-    @Contract(" -> new")
-    public static NavDirections actionTripsFragmentToLoginFragment() {
-        return new ActionOnlyNavDirections(R.id.action_global_loginFragment);
-    }
-
-    @NonNull
     @Contract(value = " -> new", pure = true)
     public static ViewTripDetailsAction actionViewTripDetails() {
         return new ViewTripDetailsAction();
