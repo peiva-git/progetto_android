@@ -6,12 +6,12 @@ import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.AsyncListDiffer;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.card.MaterialCardView;
@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 import it.units.simandroid.progetto.R;
 import it.units.simandroid.progetto.Trip;
@@ -29,15 +30,35 @@ import it.units.simandroid.progetto.Trip;
 public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ItemViewHolder> {
 
     private final Context context;
-    private List<Trip> trips;
     private final OnTripClickListener clickListener;
     private final SparseBooleanArray selectedTrips;
     private boolean isSharedModeOn = false;
     private final OnFavoriteStateChangedListener favoriteChangedListener;
 
-    public TripAdapter(Context context, List<Trip> trips, OnTripClickListener clickListener, OnFavoriteStateChangedListener favoriteChangedListener) {
+    private static final DiffUtil.ItemCallback<Trip> DIFF_CALLBACK = new DiffUtil.ItemCallback<Trip>() {
+        @Override
+        public boolean areItemsTheSame(@NonNull Trip oldTrip, @NonNull Trip newTrip) {
+            return oldTrip.equals(newTrip);
+        }
+
+        @Override
+        public boolean areContentsTheSame(@NonNull Trip oldTrip, @NonNull Trip newTrip) {
+            return Objects.equals(oldTrip.getImagesUris(), newTrip.getImagesUris())
+                    && oldTrip.getId().equals(newTrip.getId())
+                    && oldTrip.getName().equals(newTrip.getName())
+                    && oldTrip.getDestination().equals(newTrip.getDestination())
+                    && oldTrip.getDescription().equals(newTrip.getDescription())
+                    && oldTrip.getStartDate().equals(newTrip.getStartDate())
+                    && oldTrip.getEndDate().equals(newTrip.getEndDate())
+                    && oldTrip.isFavorite() == newTrip.isFavorite()
+                    && oldTrip.getOwnerId().equals(newTrip.getOwnerId())
+                    && Objects.equals(oldTrip.getAuthorizedUsers(), newTrip.getAuthorizedUsers());
+        }
+    };
+    private final AsyncListDiffer<Trip> differ = new AsyncListDiffer<>(this, DIFF_CALLBACK);
+
+    public TripAdapter(Context context, OnTripClickListener clickListener, OnFavoriteStateChangedListener favoriteChangedListener) {
         this.context = context;
-        this.trips = new ArrayList<>(trips);
         this.clickListener = clickListener;
         this.favoriteChangedListener = favoriteChangedListener;
         selectedTrips = new SparseBooleanArray();
@@ -52,20 +73,19 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ItemViewHolder
     }
 
     public List<Trip> getAdapterTrips() {
-        return trips;
+        return differ.getCurrentList();
     }
 
-    public void setAdapterTrips(List<Trip> trips) {
-        this.trips = new ArrayList<>(trips);
-        notifyDataSetChanged();
+    public void submitList(List<Trip> trips) {
+        differ.submitList(new ArrayList<>(trips));
     }
 
     public List<Integer> getSelectedTripsPositions() {
-        List<Integer> items = new ArrayList<>(selectedTrips.size());
+        List<Integer> selectedPositions = new ArrayList<>(selectedTrips.size());
         for (int i = 0; i < selectedTrips.size(); i++) {
-            items.add(selectedTrips.keyAt(i));
+            selectedPositions.add(selectedTrips.keyAt(i));
         }
-        return items;
+        return selectedPositions;
     }
     public boolean isTripAtPositionSelected(int position) {
         return getSelectedTripsPositions().contains(position);
@@ -92,44 +112,18 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ItemViewHolder
         }
     }
 
-    public void removeTripByPosition(int position) {
-        trips.remove(position);
-        notifyItemRemoved(position);
-    }
-
     public void removeTripsByPositions(List<Integer> positions) {
-        // reverse sort
-        Collections.sort(positions, (lhs, rhs) -> rhs - lhs);
-        while (!positions.isEmpty()) {
-            if (positions.size() == 1) {
-                removeTripByPosition(positions.get(0));
-                positions.remove(0);
-            } else {
-                int count = 1;
-                while (positions.size() > count && positions.get(count).equals(positions.get(count - 1) - 1)) {
-                    ++count;
-                }
-                if (count == 1) {
-                    removeTripByPosition(positions.get(0));
-                } else {
-                    removeRange(positions.get(count - 1), count);
-                }
-                if (count > 0) {
-                    positions.subList(0, count).clear();
-                }
-            }
+        List<Trip> newTripsList = new ArrayList<>(differ.getCurrentList());
+        // need to sort list first to prevent changes in position values (need to start from largest)
+        Collections.sort(positions, Collections.reverseOrder());
+        for (int positionToDelete : positions) {
+            newTripsList.remove(positionToDelete);
         }
-    }
-
-    private void removeRange(int positionStart, int itemCount) {
-        for (int i = 0; i < itemCount; ++i) {
-            trips.remove(positionStart);
-        }
-        notifyItemRangeRemoved(positionStart, itemCount);
+        submitList(newTripsList);
     }
 
     public Trip getAdapterTrip(int position) {
-        return trips.get(position);
+        return  differ.getCurrentList().get(position);
     }
 
     @NonNull
@@ -141,7 +135,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ItemViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
-        Trip trip = trips.get(position);
+        final Trip trip = differ.getCurrentList().get(position);
         String from = context.getResources().getString(R.string.from);
         String until = context.getResources().getString(R.string.until);
         // need to set everything, otherwise old data is going to stay there when the holder is recycled
@@ -168,7 +162,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ItemViewHolder
 
     @Override
     public int getItemCount() {
-        return trips.size();
+        return differ.getCurrentList().size();
     }
 
     public static class ItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener, CompoundButton.OnCheckedChangeListener {

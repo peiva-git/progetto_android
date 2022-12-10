@@ -26,11 +26,9 @@ import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.ActionOnlyNavDirections;
-import androidx.navigation.NavDirections;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
@@ -131,7 +129,7 @@ public class TripsFragment extends Fragment implements OnTripClickListener, OnFa
                 getResources().getInteger(R.integer.grid_layout_spans),
                 StaggeredGridLayoutManager.VERTICAL);
         tripsRecyclerView.setLayoutManager(layoutManager);
-        tripAdapter = new TripAdapter(getContext(), Collections.emptyList(), this, this);
+        tripAdapter = new TripAdapter(getContext(), this, this);
         tripAdapter.setSharedModeOn(TripsFragmentArgs.fromBundle(requireArguments()).isSharedTripsModeActive());
         tripsRecyclerView.setAdapter(tripAdapter);
         tripsRecyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -226,7 +224,7 @@ public class TripsFragment extends Fragment implements OnTripClickListener, OnFa
             }
         }
         Tasks.whenAllComplete(imagesDownloadTasks).addOnCompleteListener(task -> {
-            tripAdapter.setAdapterTrips(trips);
+            tripAdapter.submitList(trips);
             progressIndicator.hide();
         });
     }
@@ -284,7 +282,7 @@ public class TripsFragment extends Fragment implements OnTripClickListener, OnFa
             }
         }
         Tasks.whenAllComplete(imagesDownloadTasks).addOnCompleteListener(task -> {
-            tripAdapter.setAdapterTrips(trips);
+            tripAdapter.submitList(trips);
             progressIndicator.hide();
         });
     }
