@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <item name="image_button_width_constraint" type="dimen" format="float">0.5</item>
-    <item name="trip_content_image_width" type="dimen" format="float">0.7</item>
 </resources>

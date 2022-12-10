@@ -1,109 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/trip_content_layout"
+    android:id="@+id/trip_content_scrollview"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".fragments.TripContentFragment">
 
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/trip_image_pager"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/trip_content_scrollview"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintHeight_default="percent"
-        app:layout_constraintHeight_percent="@dimen/trip_content_image_width" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/trip_content_constraint_layout">
 
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:id="@+id/trip_content_scrollview"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/trip_image_pager"
-        app:layout_constraintBottom_toBottomOf="parent">
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/trip_image_pager"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@+id/content_trip_name"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_default="percent"
+            app:layout_constraintHeight_percent="@dimen/trip_content_image_height"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/content_trip_name"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:id="@+id/scrolling_trip_content_layout">
+            android:layout_marginTop="16dp"
+            android:paddingHorizontal="16dp"
+            android:textAppearance="?attr/textAppearanceTitleLarge"
+            app:layout_constraintEnd_toStartOf="@+id/content_favorite_trip"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/trip_image_pager"
+            app:layout_constraintBottom_toTopOf="@+id/content_trip_destination"/>
 
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/content_trip_name"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:paddingHorizontal="16dp"
-                android:layout_marginTop="16dp"
-                android:textAppearance="?attr/textAppearanceTitleLarge"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/content_favorite_trip"
-                app:layout_constraintStart_toStartOf="parent" />
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/content_favorite_trip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:button="@drawable/sl_baseline_favorite_24"
+            app:layout_constraintBaseline_toBaselineOf="@+id/content_trip_name"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/content_trip_name" />
 
-            <com.google.android.material.checkbox.MaterialCheckBox
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/content_favorite_trip"
-                android:button="@drawable/sl_baseline_favorite_24"
-                android:layout_margin="16dp"
-                app:layout_constraintStart_toEndOf="@+id/content_trip_name"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBaseline_toBaselineOf="@+id/content_trip_name"/>
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/content_trip_destination"
+            android:layout_width="wrap_content"
+            android:layout_height="20sp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="24dp"
+            android:drawablePadding="2dp"
+            android:textAppearance="?attr/textAppearanceBodyMedium"
+            android:textColor="?android:attr/textColorSecondary"
+            app:drawableStartCompat="@drawable/ic_baseline_location_on_24"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/content_trip_name"
+            app:layout_constraintBottom_toTopOf="@+id/content_trip_start_date"/>
 
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/content_trip_destination"
-                android:layout_width="wrap_content"
-                android:layout_height="20sp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="24dp"
-                android:textAppearance="?attr/textAppearanceBodyMedium"
-                android:textColor="?android:attr/textColorSecondary"
-                android:drawablePadding="2dp"
-                app:drawableStartCompat="@drawable/ic_baseline_location_on_24"
-                app:layout_constraintTop_toBottomOf="@+id/content_trip_name"
-                app:layout_constraintStart_toStartOf="parent" />
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/content_trip_start_date"
+            android:layout_width="wrap_content"
+            android:layout_height="20sp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:drawablePadding="2dp"
+            android:textAppearance="?attr/textAppearanceBodyMedium"
+            android:textColor="?android:attr/textColorSecondary"
+            app:drawableStartCompat="@drawable/ic_baseline_calendar_today_24"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/content_trip_destination"
+            app:layout_constraintBottom_toTopOf="@+id/content_trip_end_date"/>
 
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/content_trip_start_date"
-                android:layout_width="wrap_content"
-                android:layout_height="20sp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:textAppearance="?attr/textAppearanceBodyMedium"
-                android:textColor="?android:attr/textColorSecondary"
-                android:drawablePadding="2dp"
-                app:drawableStartCompat="@drawable/ic_baseline_calendar_today_24"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/content_trip_destination" />
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/content_trip_end_date"
+            android:layout_width="wrap_content"
+            android:layout_height="20sp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:drawablePadding="2dp"
+            android:textAppearance="?attr/textAppearanceBodyMedium"
+            android:textColor="?android:attr/textColorSecondary"
+            app:drawableStartCompat="@drawable/ic_baseline_calendar_today_24"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/content_trip_start_date"
+            app:layout_constraintBottom_toTopOf="@+id/content_trip_description"/>
 
-            <com.google.android.material.textview.MaterialTextView
-                android:layout_width="wrap_content"
-                android:layout_height="20sp"
-                android:id="@+id/content_trip_end_date"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:textAppearance="?attr/textAppearanceBodyMedium"
-                android:textColor="?android:attr/textColorSecondary"
-                android:drawablePadding="2dp"
-                app:drawableStartCompat="@drawable/ic_baseline_calendar_today_24"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/content_trip_start_date" />
-
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/content_trip_description"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:paddingHorizontal="16dp"
-                android:textAppearance="?attr/textAppearanceBodyMedium"
-                android:textColor="?android:attr/textColorSecondary"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/content_trip_end_date" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.core.widget.NestedScrollView>
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/content_trip_description"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:paddingHorizontal="16dp"
+            android:paddingBottom="16dp"
+            android:textAppearance="?attr/textAppearanceBodyMedium"
+            android:textColor="?android:attr/textColorSecondary"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/content_trip_end_date"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>
