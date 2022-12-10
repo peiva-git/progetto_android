@@ -112,16 +112,6 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ItemViewHolder
         }
     }
 
-    public void removeTripsByPositions(List<Integer> positions) {
-        List<Trip> newTripsList = new ArrayList<>(differ.getCurrentList());
-        // need to sort list first to prevent changes in position values (need to start from largest)
-        Collections.sort(positions, Collections.reverseOrder());
-        for (int positionToDelete : positions) {
-            newTripsList.remove(positionToDelete);
-        }
-        submitList(newTripsList);
-    }
-
     public Trip getAdapterTrip(int position) {
         return  differ.getCurrentList().get(position);
     }

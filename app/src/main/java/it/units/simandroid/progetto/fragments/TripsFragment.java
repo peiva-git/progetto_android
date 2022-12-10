@@ -341,26 +341,6 @@ public class TripsFragment extends Fragment implements OnTripClickListener, OnFa
                 .addOnFailureListener(exception -> Log.w(TRIPS_TAG, "Unable to set trip " + tripId + " as favorite", exception));
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        // remove deleted trips from database as well when the fragment is no longer visible
-        if (trips != null) {
-            for (Trip trip : trips) {
-                if (!tripAdapter.getAdapterTrips().contains(trip)) {
-                    viewModel.deleteTrip(trip.getId())
-                            .addOnSuccessListener(task -> Log.d(DELETE_TRIP_TAG, "Trip " + trip.getId() + " removed from database"))
-                            .addOnFailureListener(exception -> Log.w(DELETE_TRIP_TAG, exception));
-                    Tasks.whenAllComplete(viewModel.deleteTripImages(trip))
-                            .addOnCompleteListener(task -> Log.d(DELETE_TRIP_TAG, "Images removed for trip " + trip.getId()));
-                    deleteLocallyStoredImages(trip);
-                }
-            }
-        } else {
-            Log.d(DELETE_TRIP_TAG, "No trips currently loaded");
-        }
-    }
-
     private void deleteLocallyStoredImages(Trip trip) {
         if (trip.getImagesUris() != null) {
             File tripDirectory = requireContext().getDir(trip.getId(), Context.MODE_PRIVATE);
@@ -396,7 +376,15 @@ public class TripsFragment extends Fragment implements OnTripClickListener, OnFa
         public boolean onActionItemClicked(ActionMode mode, MenuItem menuItem) {
             if (menuItem.getItemId() == R.id.delete_trip) {
                 // remove trips from view only
-                tripAdapter.removeTripsByPositions(tripAdapter.getSelectedTripsPositions());
+                for (int selectedPosition : tripAdapter.getSelectedTripsPositions()) {
+                    Trip toRemove = tripAdapter.getAdapterTrip(selectedPosition);
+                    viewModel.deleteTrip(toRemove.getId())
+                            .addOnSuccessListener(task -> Log.d(DELETE_TRIP_TAG, "Trip " + toRemove.getId() + " removed from database"))
+                            .addOnFailureListener(exception -> Log.w(DELETE_TRIP_TAG, exception));
+                    Tasks.whenAllComplete(viewModel.deleteTripImages(toRemove))
+                            .addOnCompleteListener(task -> Log.d(DELETE_TRIP_TAG, "Images removed for trip " + toRemove.getId()));
+                    deleteLocallyStoredImages(toRemove);
+                }
                 mode.finish();
                 Snackbar.make(TripsFragment.this.requireView(), R.string.trips_deleted, Snackbar.LENGTH_SHORT).show();
                 return true;
