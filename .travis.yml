@@ -34,6 +34,3 @@ before_cache:
 cache:
   directories:
     - $HOME/.android/build-cache
-
-script:
-  - sdkmanager --list
