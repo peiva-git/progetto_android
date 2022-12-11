@@ -1,12 +1,7 @@
-sudo: required
 language: android
 jdk: oraclejdk11
 dist: trusty
 android:
-  licenses:
-    - 'android-sdk-preview-license-.+'
-    - 'android-sdk-license-.+'
-    - 'google-gdk-license-.+'
   components:
     - tools
     - platform-tools
@@ -15,6 +10,11 @@ android:
     - extra-google-google_play_services
     - extra-google-m2repository
     - extra-android-m2repository
+  licenses:
+    - 'android-sdk-preview-license-.+'
+    - 'android-sdk-license-.+'
+    - 'google-gdk-license-.+'
 before_install:
-  - chmod +x gradlew
-  - yes | sdkmanager "platforms;android-30"
+   - touch $HOME/.android/repositories.cfg
+   - yes | sdkmanager "build-tools;30.0.3"
+   - yes | sdkmanager "platforms;android-33"
