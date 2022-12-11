@@ -5,8 +5,6 @@ android:
   components:
     - tools
     - platform-tools
-    - build-tools-30.0.3
-    - android-33
     - extra-google-google_play_services
     - extra-google-m2repository
     - extra-android-m2repository
@@ -15,6 +13,6 @@ android:
     - 'android-sdk-license-.+'
     - 'google-gdk-license-.+'
 before_install:
-   - touch $HOME/.android/repositories.cfg
-   - yes | sdkmanager "build-tools;30.0.3"
-   - yes | sdkmanager "platforms;android-33"
+  - touch $HOME/.android/repositories.cfg
+  - yes | sdkmanager "platforms;android-33"
+  - yes | sdkmanager "build-tools;30.0.3"
