@@ -6,12 +6,12 @@ plugins {
 }
 
 android {
-    compileSdk 27
+    compileSdk 33
 
     defaultConfig {
         applicationId "it.units.simandroid.progetto"
         minSdk 21
-        targetSdk 27
+        targetSdk 33
         versionCode 1
         versionName "1.0"
 
