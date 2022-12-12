@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.divider.MaterialDividerItemDecoration;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.HashSet;
@@ -123,10 +124,11 @@ public class SelectUsersFragment extends Fragment implements OnUserClickListener
                 .addOnCompleteListener(setAuthorizedUsersTask -> {
             if (setAuthorizedUsersTask.isSuccessful()) {
                 Log.d(SELECT_USER_TAG, "Trip " + tripId + " shared successfully with selected users");
+                Snackbar.make(requireView(), R.string.trip_shared, Snackbar.LENGTH_SHORT).show();
             } else {
                 Log.w(SELECT_USER_TAG, "Unable to share trip " + tripId + " with selected users", setAuthorizedUsersTask.getException());
+                Snackbar.make(requireView(), R.string.trip_shared_error, Snackbar.LENGTH_SHORT).show();
             }
-                    NavHostFragment.findNavController(this).navigateUp();
         }));
         return fragmentView;
     }
