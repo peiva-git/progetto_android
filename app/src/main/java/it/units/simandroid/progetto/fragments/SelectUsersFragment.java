@@ -22,7 +22,6 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.divider.MaterialDividerItemDecoration;
 import com.google.firebase.auth.FirebaseAuth;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -66,7 +65,8 @@ public class SelectUsersFragment extends Fragment implements OnUserClickListener
         negativeButton = fragmentView.findViewById(R.id.dialog_negative_button);
         positiveButton = fragmentView.findViewById(R.id.dialog_positive_button);
 
-        selectUserAdapter = new SelectUserAdapter(getContext(), Collections.emptyList(), selectedUserIds, this);
+        selectUserAdapter = new SelectUserAdapter(getContext(), this);
+        selectUserAdapter.setSelectedUserIds(selectedUserIds);
         recyclerView.setAdapter(selectUserAdapter);
         MaterialDividerItemDecoration divider = new MaterialDividerItemDecoration(recyclerView.getContext(), LinearLayoutManager.VERTICAL);
         recyclerView.addItemDecoration(divider);
