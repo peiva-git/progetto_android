@@ -17,6 +17,6 @@ Input validation is tested using the Espresso framework.
 
 ## Possible future developments
 New features that could be added in the future include:
--Fragment displaying user data
--Ability to delete/modify created users
--Ability to modify added trips
+- Fragment displaying user data
+- Ability to delete/modify created users
+- Ability to modify added trips
