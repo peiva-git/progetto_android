@@ -1,14 +1,16 @@
 package it.units.simandroid.progetto.fragments;
 
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
+import static androidx.test.espresso.action.ViewActions.typeText;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static it.units.simandroid.progetto.fragments.NewTripFragmentValidationTests.*;
 
 import android.os.Bundle;
 
 import androidx.fragment.app.testing.FragmentScenario;
-import androidx.test.espresso.Espresso;
-import androidx.test.espresso.action.ViewActions;
-import androidx.test.espresso.assertion.ViewAssertions;
-import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.filters.LargeTest;
 
 import org.junit.After;
@@ -46,70 +48,70 @@ public class RegistrationFragmentValidationTests {
 
     @Test
     public void checkErrorsWhenSubmittingEmptyForm() {
-        Espresso.onView(ViewMatchers.withId(R.id.registration_button))
-                .perform(ViewActions.click());
-        Espresso.onView(ViewMatchers.withId(R.id.user_name_layout))
-                .check(ViewAssertions.matches(hasTextInputLayoutErrorText(fieldRequiredError)));
-        Espresso.onView(ViewMatchers.withId(R.id.user_surname_layout))
-                .check(ViewAssertions.matches(hasTextInputLayoutErrorText(fieldRequiredError)));
-        Espresso.onView(ViewMatchers.withId(R.id.registration_email_layout))
-                .check(ViewAssertions.matches(hasTextInputLayoutErrorText(fieldRequiredError)));
-        Espresso.onView(ViewMatchers.withId(R.id.registration_password_layout))
-                .check(ViewAssertions.matches(hasTextInputLayoutErrorText(fieldRequiredError)));
+        onView(withId(R.id.registration_button))
+                .perform(click());
+        onView(withId(R.id.user_name_layout))
+                .check(matches(hasTextInputLayoutErrorText(fieldRequiredError)));
+        onView(withId(R.id.user_surname_layout))
+                .check(matches(hasTextInputLayoutErrorText(fieldRequiredError)));
+        onView(withId(R.id.registration_email_layout))
+                .check(matches(hasTextInputLayoutErrorText(fieldRequiredError)));
+        onView(withId(R.id.registration_password_layout))
+                .check(matches(hasTextInputLayoutErrorText(fieldRequiredError)));
     }
 
     @Test
     public void checkErrorsWhenEmailsAreDifferent() {
-        Espresso.onView(ViewMatchers.withId(R.id.registration_email))
-                .perform(ViewActions.typeText(CORRECT_FORMAT_EMAIL))
-                .perform(ViewActions.closeSoftKeyboard());
-        Espresso.onView(ViewMatchers.withId(R.id.registration_button))
-                .perform(ViewActions.click());
-        Espresso.onView(ViewMatchers.withId(R.id.registration_email_layout))
-                .check(ViewAssertions.matches(hasTextInputLayoutErrorText(emailsMismatchError)));
-        Espresso.onView(ViewMatchers.withId(R.id.registration_email_confirm_layout))
-                .check(ViewAssertions.matches(hasTextInputLayoutErrorText(emailsMismatchError)));
+        onView(withId(R.id.registration_email))
+                .perform(typeText(CORRECT_FORMAT_EMAIL))
+                .perform(closeSoftKeyboard());
+        onView(withId(R.id.registration_button))
+                .perform(click());
+        onView(withId(R.id.registration_email_layout))
+                .check(matches(hasTextInputLayoutErrorText(emailsMismatchError)));
+        onView(withId(R.id.registration_email_confirm_layout))
+                .check(matches(hasTextInputLayoutErrorText(emailsMismatchError)));
     }
 
     @Test
     public void checkErrorsWhenPasswordsAreDifferent() {
-        Espresso.onView(ViewMatchers.withId(R.id.registration_password))
-                .perform(ViewActions.typeText(CORRECT_PASSWORD))
-                .perform(ViewActions.closeSoftKeyboard());
-        Espresso.onView(ViewMatchers.withId(R.id.registration_button))
-                .perform(ViewActions.click());
-        Espresso.onView(ViewMatchers.withId(R.id.registration_password_layout))
-                .check(ViewAssertions.matches(hasTextInputLayoutErrorText(passwordsMismatchError)));
-        Espresso.onView(ViewMatchers.withId(R.id.registration_password_confirm_layout))
-                .check(ViewAssertions.matches(hasTextInputLayoutErrorText(passwordsMismatchError)));
+        onView(withId(R.id.registration_password))
+                .perform(typeText(CORRECT_PASSWORD))
+                .perform(closeSoftKeyboard());
+        onView(withId(R.id.registration_button))
+                .perform(click());
+        onView(withId(R.id.registration_password_layout))
+                .check(matches(hasTextInputLayoutErrorText(passwordsMismatchError)));
+        onView(withId(R.id.registration_password_confirm_layout))
+                .check(matches(hasTextInputLayoutErrorText(passwordsMismatchError)));
     }
 
     @Test
     public void checkEmailFormatError() {
-        Espresso.onView(ViewMatchers.withId(R.id.registration_email))
-                .perform(ViewActions.typeText(WRONG_FORMAT_EMAIL))
-                .perform(ViewActions.closeSoftKeyboard());
-        Espresso.onView(ViewMatchers.withId(R.id.registration_email_confirm))
-                .perform(ViewActions.typeText(WRONG_FORMAT_EMAIL))
-                .perform(ViewActions.closeSoftKeyboard());
-        Espresso.onView(ViewMatchers.withId(R.id.registration_button))
-                .perform(ViewActions.click());
-        Espresso.onView(ViewMatchers.withId(R.id.registration_email_layout))
-                .check(ViewAssertions.matches(hasTextInputLayoutErrorText(emailFormatError)));
+        onView(withId(R.id.registration_email))
+                .perform(typeText(WRONG_FORMAT_EMAIL))
+                .perform(closeSoftKeyboard());
+        onView(withId(R.id.registration_email_confirm))
+                .perform(typeText(WRONG_FORMAT_EMAIL))
+                .perform(closeSoftKeyboard());
+        onView(withId(R.id.registration_button))
+                .perform(click());
+        onView(withId(R.id.registration_email_layout))
+                .check(matches(hasTextInputLayoutErrorText(emailFormatError)));
     }
 
     @Test
     public void checkPasswordStrengthError() {
-        Espresso.onView(ViewMatchers.withId(R.id.registration_password))
-                .perform(ViewActions.typeText(SHORT_PASSWORD))
-                .perform(ViewActions.closeSoftKeyboard());
-        Espresso.onView(ViewMatchers.withId(R.id.registration_password_confirm))
-                .perform(ViewActions.typeText(SHORT_PASSWORD))
-                .perform(ViewActions.closeSoftKeyboard());
-        Espresso.onView(ViewMatchers.withId(R.id.registration_button))
-                .perform(ViewActions.click());
-        Espresso.onView(ViewMatchers.withId(R.id.registration_password_layout))
-                .check(ViewAssertions.matches(hasTextInputLayoutErrorText(passwordLengthError)));
+        onView(withId(R.id.registration_password))
+                .perform(typeText(SHORT_PASSWORD))
+                .perform(closeSoftKeyboard());
+        onView(withId(R.id.registration_password_confirm))
+                .perform(typeText(SHORT_PASSWORD))
+                .perform(closeSoftKeyboard());
+        onView(withId(R.id.registration_button))
+                .perform(click());
+        onView(withId(R.id.registration_password_layout))
+                .check(matches(hasTextInputLayoutErrorText(passwordLengthError)));
     }
 
     @After

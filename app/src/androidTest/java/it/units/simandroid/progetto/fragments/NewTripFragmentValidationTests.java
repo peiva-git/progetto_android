@@ -1,14 +1,21 @@
 package it.units.simandroid.progetto.fragments;
 
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
+import static androidx.test.espresso.action.ViewActions.typeText;
+import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.RootMatchers.isDialog;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
+
 import android.os.Bundle;
 import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.testing.FragmentScenario;
-import androidx.test.espresso.Espresso;
-import androidx.test.espresso.action.ViewActions;
-import androidx.test.espresso.assertion.ViewAssertions;
-import androidx.test.espresso.matcher.RootMatchers;
 import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.filters.LargeTest;
 
@@ -57,23 +64,23 @@ public class NewTripFragmentValidationTests {
 
     @Test
     public void checkIfAlertDialogAndErrorMessagesAreDisplayed() {
-        Espresso.onView(ViewMatchers.withId(R.id.save_new_trip_button))
-                .perform(ViewActions.click());
+        onView(withId(R.id.save_new_trip_button))
+                .perform(click());
         // no dates picked, check if the alert dialog and error messages are displayed
-        Espresso.onView(ViewMatchers.withText(R.string.got_it))
-                .inRoot(RootMatchers.isDialog())
-                .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
-                .perform(ViewActions.click());
+        onView(withText(R.string.got_it))
+                .inRoot(isDialog())
+                .check(matches(isDisplayed()))
+                .perform(click());
         checkNewTripFormErrorMessages();
     }
 
     @Test
     public void checkIfPickDatesDialogIsDisplayed() {
-        Espresso.onView(ViewMatchers.withId(R.id.trip_dates))
-                .perform(ViewActions.click());
-        Espresso.onView(ViewMatchers.withText(R.string.date_picker_title))
-                .inRoot(RootMatchers.isDialog())
-                .check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
+        onView(withId(R.id.trip_dates))
+                .perform(click());
+        onView(withText(R.string.date_picker_title))
+                .inRoot(isDialog())
+                .check(matches(isDisplayed()));
     }
 
     @Test
@@ -84,8 +91,8 @@ public class NewTripFragmentValidationTests {
         String formattedStartDate = DateFormat.getDateInstance().format(new Date(startDate.getTimeInMillis()));
         String formattedEndDate = DateFormat.getDateInstance().format(new Date(endDate.getTimeInMillis()));
         String expectedLabel = String.format("%s: %s - %s: %s", fromString, formattedStartDate, untilString, formattedEndDate);
-        Espresso.onView(ViewMatchers.withId(R.id.trip_dates))
-                .check(ViewAssertions.matches(ViewMatchers.withText(expectedLabel)));
+        onView(withId(R.id.trip_dates))
+                .check(matches(withText(expectedLabel)));
     }
 
     @Test
@@ -93,8 +100,8 @@ public class NewTripFragmentValidationTests {
         Calendar startDate = Calendar.getInstance();
         Calendar endDate = Calendar.getInstance();
         pickTripDates(startDate, endDate);
-        Espresso.onView(ViewMatchers.withId(R.id.save_new_trip_button))
-                .perform(ViewActions.click());
+        onView(withId(R.id.save_new_trip_button))
+                .perform(click());
         checkNewTripFormErrorMessages();
     }
 
@@ -103,23 +110,23 @@ public class NewTripFragmentValidationTests {
         Calendar startDate = Calendar.getInstance();
         Calendar endDate = Calendar.getInstance();
         pickTripDates(startDate, endDate);
-        Espresso.onView(ViewMatchers.withId(R.id.trip_name))
-                .perform(ViewActions.typeText(TRIP_NAME))
-                .perform(ViewActions.closeSoftKeyboard());
-        Espresso.onView(ViewMatchers.withId(R.id.trip_destination))
-                .perform(ViewActions.typeText(TRIP_DESTINATION))
-                .perform(ViewActions.closeSoftKeyboard());
-        Espresso.onView(ViewMatchers.withId(R.id.trip_description))
-                .perform(ViewActions.typeText(TRIP_DESCRIPTION))
-                .perform(ViewActions.closeSoftKeyboard());
-        Espresso.onView(ViewMatchers.withId(R.id.save_new_trip_button))
-                .perform(ViewActions.click());
-        Espresso.onView(hasTextInputLayoutErrorText(expectedErrorText))
-                .check(ViewAssertions.doesNotExist());
-        Espresso.onView(ViewMatchers.withText(R.string.picked_images_dialog_no))
-                .inRoot(RootMatchers.isDialog())
-                .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
-                .perform(ViewActions.click());
+        onView(withId(R.id.trip_name))
+                .perform(typeText(TRIP_NAME))
+                .perform(closeSoftKeyboard());
+        onView(withId(R.id.trip_destination))
+                .perform(typeText(TRIP_DESTINATION))
+                .perform(closeSoftKeyboard());
+        onView(withId(R.id.trip_description))
+                .perform(typeText(TRIP_DESCRIPTION))
+                .perform(closeSoftKeyboard());
+        onView(withId(R.id.save_new_trip_button))
+                .perform(click());
+        onView(hasTextInputLayoutErrorText(expectedErrorText))
+                .check(doesNotExist());
+        onView(withText(R.string.picked_images_dialog_no))
+                .inRoot(isDialog())
+                .check(matches(isDisplayed()))
+                .perform(click());
     }
 
     @After
@@ -159,22 +166,22 @@ public class NewTripFragmentValidationTests {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("EEE, MMM d", Locale.ENGLISH);
         String startDateDescription = simpleDateFormat.format(new Date(startDate.getTimeInMillis()));
         String endDateDescription = simpleDateFormat.format(new Date(endDate.getTimeInMillis()));
-        Espresso.onView(ViewMatchers.withId(R.id.trip_dates))
-                .perform(ViewActions.click());
-        Espresso.onView(ViewMatchers.withContentDescription(startDateDescription))
-                .perform(ViewActions.click());
-        Espresso.onView(ViewMatchers.withContentDescription(endDateDescription))
-                .perform(ViewActions.click());
-        Espresso.onView(ViewMatchers.withText(SAVE_DATES))
-                .perform(ViewActions.click());
+        onView(withId(R.id.trip_dates))
+                .perform(click());
+        onView(ViewMatchers.withContentDescription(startDateDescription))
+                .perform(click());
+        onView(ViewMatchers.withContentDescription(endDateDescription))
+                .perform(click());
+        onView(withText(SAVE_DATES))
+                .perform(click());
     }
 
     private void checkNewTripFormErrorMessages() {
-        Espresso.onView(ViewMatchers.withId(R.id.trip_name_layout))
-                .check(ViewAssertions.matches(hasTextInputLayoutErrorText(expectedErrorText)));
-        Espresso.onView(ViewMatchers.withId(R.id.trip_destination_layout))
-                .check(ViewAssertions.matches(hasTextInputLayoutErrorText(expectedErrorText)));
-        Espresso.onView(ViewMatchers.withId(R.id.trip_description_layout))
-                .check(ViewAssertions.matches(hasTextInputLayoutErrorText(expectedErrorText)));
+        onView(withId(R.id.trip_name_layout))
+                .check(matches(hasTextInputLayoutErrorText(expectedErrorText)));
+        onView(withId(R.id.trip_destination_layout))
+                .check(matches(hasTextInputLayoutErrorText(expectedErrorText)));
+        onView(withId(R.id.trip_description_layout))
+                .check(matches(hasTextInputLayoutErrorText(expectedErrorText)));
     }
 }
