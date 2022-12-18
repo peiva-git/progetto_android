@@ -29,6 +29,8 @@ public class RegistrationFragmentValidationTests {
     private String fieldRequiredError;
     private String emailsMismatchError;
     private String passwordsMismatchError;
+    private String emailFormatError;
+    private String passwordLengthError;
 
     @Before
     public void init() {
@@ -37,6 +39,8 @@ public class RegistrationFragmentValidationTests {
             fieldRequiredError = registrationFragment.getString(R.string.field_required);
             emailsMismatchError = registrationFragment.getString(R.string.email_mismatch);
             passwordsMismatchError = registrationFragment.getString(R.string.password_mismatch);
+            emailFormatError = registrationFragment.getString(R.string.email_bad_format);
+            passwordLengthError = registrationFragment.getString(R.string.password_weak);
         });
     }
 
@@ -78,6 +82,20 @@ public class RegistrationFragmentValidationTests {
                 .check(ViewAssertions.matches(hasTextInputLayoutErrorText(passwordsMismatchError)));
         Espresso.onView(ViewMatchers.withId(R.id.registration_password_confirm_layout))
                 .check(ViewAssertions.matches(hasTextInputLayoutErrorText(passwordsMismatchError)));
+    }
+
+    @Test
+    public void checkEmailFormatError() {
+        Espresso.onView(ViewMatchers.withId(R.id.registration_email))
+                .perform(ViewActions.typeText(WRONG_FORMAT_EMAIL))
+                .perform(ViewActions.closeSoftKeyboard());
+        Espresso.onView(ViewMatchers.withId(R.id.registration_email_confirm))
+                .perform(ViewActions.typeText(WRONG_FORMAT_EMAIL))
+                .perform(ViewActions.closeSoftKeyboard());
+        Espresso.onView(ViewMatchers.withId(R.id.registration_button))
+                .perform(ViewActions.click());
+        Espresso.onView(ViewMatchers.withId(R.id.registration_email_layout))
+                .check(ViewAssertions.matches(hasTextInputLayoutErrorText(emailFormatError)));
     }
 
     @After
