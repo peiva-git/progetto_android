@@ -16,10 +16,10 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-import org.hamcrest.Matchers;
 import org.hamcrest.TypeSafeMatcher;
 import org.jetbrains.annotations.Contract;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.text.DateFormat;
@@ -45,15 +45,18 @@ public class NewTripValidationTest {
     private String fromString;
     private String untilString;
 
-    @Test
-    public void checkNewTripFragmentValidation() {
+    @Before
+    public void init() {
         scenario = FragmentScenario.launchInContainer(NewTripFragment.class, Bundle.EMPTY, R.style.Theme_ProgettoSIMAndroid);
         scenario.onFragment(newTripFragment -> {
             expectedErrorText = newTripFragment.getResources().getString(R.string.field_required);
             fromString = newTripFragment.getResources().getString(R.string.from);
             untilString = newTripFragment.getResources().getString(R.string.until);
         });
+    }
 
+    @Test
+    public void checkNewTripFragmentValidation() {
         Espresso.onView(ViewMatchers.withId(R.id.save_new_trip_button))
                 .perform(ViewActions.click());
 
