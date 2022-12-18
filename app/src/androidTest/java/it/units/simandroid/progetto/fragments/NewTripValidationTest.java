@@ -56,50 +56,53 @@ public class NewTripValidationTest {
     }
 
     @Test
-    public void checkNewTripFragmentValidation() {
+    public void checkIfAlertDialogAndErrorMessagesAreDisplayed() {
         Espresso.onView(ViewMatchers.withId(R.id.save_new_trip_button))
                 .perform(ViewActions.click());
-
         // no dates picked, check if the alert dialog and error messages are displayed
         Espresso.onView(ViewMatchers.withText(R.string.got_it))
                 .inRoot(RootMatchers.isDialog())
                 .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
                 .perform(ViewActions.click());
         checkNewTripFormErrorMessages();
+    }
 
-        // pick dates, check if the dialog is displayed
+    @Test
+    public void checkIfPickDatesDialogIsDisplayed() {
         Espresso.onView(ViewMatchers.withId(R.id.trip_dates))
                 .perform(ViewActions.click());
         Espresso.onView(ViewMatchers.withText(R.string.date_picker_title))
                 .inRoot(RootMatchers.isDialog())
                 .check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
-        
-        // pick dates and check if the button label is updated
+    }
+
+    @Test
+    public void pickDatesAndCheckIfButtonLabelIsUpdated() {
         Calendar startDate = Calendar.getInstance();
         Calendar endDate = Calendar.getInstance();
-        startDate.set(Calendar.DAY_OF_MONTH, START_DATE_DAY_OF_MONTH);
-        endDate.set(Calendar.DAY_OF_MONTH, END_DATE_DAY_OF_MONTH);
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("EEE, MMM d", Locale.ENGLISH);
-        String startDateDescription = simpleDateFormat.format(new Date(startDate.getTimeInMillis()));
-        String endDateDescription = simpleDateFormat.format(new Date(endDate.getTimeInMillis()));
-        Espresso.onView(ViewMatchers.withContentDescription(startDateDescription))
-                .perform(ViewActions.click());
-        Espresso.onView(ViewMatchers.withContentDescription(endDateDescription))
-                .perform(ViewActions.click());
-        Espresso.onView(ViewMatchers.withText(SAVE_DATES))
-                .perform(ViewActions.click());
+        pickTripDates(startDate, endDate);
         String formattedStartDate = DateFormat.getDateInstance().format(new Date(startDate.getTimeInMillis()));
         String formattedEndDate = DateFormat.getDateInstance().format(new Date(endDate.getTimeInMillis()));
         String expectedLabel = String.format("%s: %s - %s: %s", fromString, formattedStartDate, untilString, formattedEndDate);
         Espresso.onView(ViewMatchers.withId(R.id.trip_dates))
                 .check(ViewAssertions.matches(ViewMatchers.withText(expectedLabel)));
+    }
 
-        // dates now picked, check if the error messages are displayed
+    @Test
+    public void checkIfErrorMessagesAreDisplayedWhileDatesArePicked() {
+        Calendar startDate = Calendar.getInstance();
+        Calendar endDate = Calendar.getInstance();
+        pickTripDates(startDate, endDate);
         Espresso.onView(ViewMatchers.withId(R.id.save_new_trip_button))
                 .perform(ViewActions.click());
         checkNewTripFormErrorMessages();
+    }
 
-        // dates now picked, insert text into fields and check if no images alert dialog is displayed
+    @Test
+    public void checkIfNoImagesAlertDialogIsDisplayedWhileDatesArePicked() {
+        Calendar startDate = Calendar.getInstance();
+        Calendar endDate = Calendar.getInstance();
+        pickTripDates(startDate, endDate);
         Espresso.onView(ViewMatchers.withId(R.id.trip_name))
                 .perform(ViewActions.typeText(TRIP_NAME))
                 .perform(ViewActions.closeSoftKeyboard());
@@ -117,15 +120,6 @@ public class NewTripValidationTest {
                 .inRoot(RootMatchers.isDialog())
                 .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
                 .perform(ViewActions.click());
-    }
-
-    private void checkNewTripFormErrorMessages() {
-        Espresso.onView(ViewMatchers.withId(R.id.trip_name_layout))
-                .check(ViewAssertions.matches(hasTextInputLayoutErrorText(expectedErrorText)));
-        Espresso.onView(ViewMatchers.withId(R.id.trip_destination_layout))
-                .check(ViewAssertions.matches(hasTextInputLayoutErrorText(expectedErrorText)));
-        Espresso.onView(ViewMatchers.withId(R.id.trip_description_layout))
-                .check(ViewAssertions.matches(hasTextInputLayoutErrorText(expectedErrorText)));
     }
 
     @After
@@ -157,5 +151,30 @@ public class NewTripValidationTest {
             public void describeTo(Description description) {
             }
         };
+    }
+
+    private void pickTripDates(Calendar startDate, Calendar endDate) {
+        startDate.set(Calendar.DAY_OF_MONTH, START_DATE_DAY_OF_MONTH);
+        endDate.set(Calendar.DAY_OF_MONTH, END_DATE_DAY_OF_MONTH);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("EEE, MMM d", Locale.ENGLISH);
+        String startDateDescription = simpleDateFormat.format(new Date(startDate.getTimeInMillis()));
+        String endDateDescription = simpleDateFormat.format(new Date(endDate.getTimeInMillis()));
+        Espresso.onView(ViewMatchers.withId(R.id.trip_dates))
+                .perform(ViewActions.click());
+        Espresso.onView(ViewMatchers.withContentDescription(startDateDescription))
+                .perform(ViewActions.click());
+        Espresso.onView(ViewMatchers.withContentDescription(endDateDescription))
+                .perform(ViewActions.click());
+        Espresso.onView(ViewMatchers.withText(SAVE_DATES))
+                .perform(ViewActions.click());
+    }
+
+    private void checkNewTripFormErrorMessages() {
+        Espresso.onView(ViewMatchers.withId(R.id.trip_name_layout))
+                .check(ViewAssertions.matches(hasTextInputLayoutErrorText(expectedErrorText)));
+        Espresso.onView(ViewMatchers.withId(R.id.trip_destination_layout))
+                .check(ViewAssertions.matches(hasTextInputLayoutErrorText(expectedErrorText)));
+        Espresso.onView(ViewMatchers.withId(R.id.trip_description_layout))
+                .check(ViewAssertions.matches(hasTextInputLayoutErrorText(expectedErrorText)));
     }
 }
