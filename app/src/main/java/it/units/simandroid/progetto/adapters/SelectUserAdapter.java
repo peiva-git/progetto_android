@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.textview.MaterialTextView;
+import com.google.firebase.database.GenericTypeIndicator;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -110,7 +111,11 @@ public class SelectUserAdapter extends RecyclerView.Adapter<SelectUserAdapter.It
 
             @Override
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-                List<User> filteringResult = (List<User>) filterResults.values;
+                List<?> values = (List<?>) filterResults.values;
+                List<User> filteringResult = new ArrayList<>(values.size());
+                for (Object user : values) {
+                    filteringResult.add((User) user);
+                }
                 differAllUsers.submitList(filteringResult);
             }
         };
