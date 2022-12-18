@@ -9,12 +9,15 @@ import android.widget.Filter;
 import android.widget.Filterable;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.AsyncListDiffer;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.textview.MaterialTextView;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -23,28 +26,44 @@ import it.units.simandroid.progetto.User;
 
 public class SelectUserAdapter extends RecyclerView.Adapter<SelectUserAdapter.ItemViewHolder> implements Filterable {
 
-    private Context context;
+    private final Context context;
     private List<User> allUsers;
-    private List<User> filteredUsers;
-    private final Set<String> authorizedUserIds;
+    private Set<String> authorizedUserIds;
     private final OnUserClickListener listener;
 
-    public SelectUserAdapter(Context context, List<User> allUsers, Set<String> authorizedUserIds, OnUserClickListener listener) {
+    private static final DiffUtil.ItemCallback<User> DIFF_CALLBACK = new DiffUtil.ItemCallback<User>() {
+        @Override
+        public boolean areItemsTheSame(@NonNull User oldUser, @NonNull User newUser) {
+            return oldUser.equals(newUser);
+        }
+
+        @Override
+        public boolean areContentsTheSame(@NonNull User oldUser, @NonNull User newUser) {
+            return oldUser.getId().equals(newUser.getId())
+                    && oldUser.getEmail().equals(newUser.getEmail())
+                    && oldUser.getName().equals(newUser.getName())
+                    && oldUser.getSurname().equals(newUser.getSurname());
+        }
+    };
+    private final AsyncListDiffer<User> differAllUsers = new AsyncListDiffer<>(this, DIFF_CALLBACK);
+
+    public SelectUserAdapter(Context context, OnUserClickListener listener) {
         this.context = context;
-        this.allUsers = allUsers;
-        this.filteredUsers = this.allUsers;
-        this.authorizedUserIds = authorizedUserIds;
         this.listener = listener;
+        authorizedUserIds = new HashSet<>();
     }
 
     public void setAvailableUsers(List<User> users) {
         this.allUsers = users;
-        this.filteredUsers = users;
-        notifyDataSetChanged();
+        differAllUsers.submitList(users);
+    }
+
+    public void setSelectedUserIds(Set<String> selectedUserIds) {
+        authorizedUserIds = selectedUserIds;
     }
 
     public List<User> getVisibleUsers() {
-        return filteredUsers;
+        return differAllUsers.getCurrentList();
     }
 
     @NonNull
@@ -56,7 +75,7 @@ public class SelectUserAdapter extends RecyclerView.Adapter<SelectUserAdapter.It
 
     @Override
     public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
-        User user = filteredUsers.get(position);
+        User user = differAllUsers.getCurrentList().get(position);
         holder.userEmail.setText(user.getEmail());
         holder.userNameSurname.setText(String.format("%s %s", user.getName(), user.getSurname()));
         holder.userSelected.setChecked(authorizedUserIds.contains(user.getId()));
@@ -64,7 +83,7 @@ public class SelectUserAdapter extends RecyclerView.Adapter<SelectUserAdapter.It
 
     @Override
     public int getItemCount() {
-        return filteredUsers.size();
+        return differAllUsers.getCurrentList().size();
     }
 
     @Override
@@ -72,11 +91,11 @@ public class SelectUserAdapter extends RecyclerView.Adapter<SelectUserAdapter.It
         return new Filter() {
             @Override
             protected FilterResults performFiltering(CharSequence constraint) {
+                List<User> filteredUsers = new ArrayList<>();
                 if (constraint == null || constraint.length() == 0) {
-                    filteredUsers = allUsers;
+                    filteredUsers.addAll(allUsers);
                 } else {
                     String filterPattern = constraint.toString().toLowerCase().trim();
-                    filteredUsers = new ArrayList<>();
                     for (User user : allUsers) {
                         String userNameAndSurname = user.getName().toLowerCase() + user.getSurname().toLowerCase();
                         if (userNameAndSurname.contains(filterPattern)) {
@@ -92,7 +111,7 @@ public class SelectUserAdapter extends RecyclerView.Adapter<SelectUserAdapter.It
             @Override
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
                 List<User> filteringResult = (List<User>) filterResults.values;
-                notifyDataSetChanged();
+                differAllUsers.submitList(filteringResult);
             }
         };
     }

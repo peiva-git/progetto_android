@@ -20,9 +20,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.divider.MaterialDividerItemDecoration;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -66,7 +66,8 @@ public class SelectUsersFragment extends Fragment implements OnUserClickListener
         negativeButton = fragmentView.findViewById(R.id.dialog_negative_button);
         positiveButton = fragmentView.findViewById(R.id.dialog_positive_button);
 
-        selectUserAdapter = new SelectUserAdapter(getContext(), Collections.emptyList(), selectedUserIds, this);
+        selectUserAdapter = new SelectUserAdapter(getContext(), this);
+        selectUserAdapter.setSelectedUserIds(selectedUserIds);
         recyclerView.setAdapter(selectUserAdapter);
         MaterialDividerItemDecoration divider = new MaterialDividerItemDecoration(recyclerView.getContext(), LinearLayoutManager.VERTICAL);
         recyclerView.addItemDecoration(divider);
@@ -123,10 +124,11 @@ public class SelectUsersFragment extends Fragment implements OnUserClickListener
                 .addOnCompleteListener(setAuthorizedUsersTask -> {
             if (setAuthorizedUsersTask.isSuccessful()) {
                 Log.d(SELECT_USER_TAG, "Trip " + tripId + " shared successfully with selected users");
+                Snackbar.make(requireView(), R.string.trip_shared, Snackbar.LENGTH_SHORT).show();
             } else {
                 Log.w(SELECT_USER_TAG, "Unable to share trip " + tripId + " with selected users", setAuthorizedUsersTask.getException());
+                Snackbar.make(requireView(), R.string.trip_shared_error, Snackbar.LENGTH_SHORT).show();
             }
-                    NavHostFragment.findNavController(this).navigateUp();
         }));
         return fragmentView;
     }
