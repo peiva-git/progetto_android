@@ -31,7 +31,7 @@ import java.util.Locale;
 import it.units.simandroid.progetto.R;
 
 @LargeTest
-public class NewTripValidationTest {
+public class NewTripFragmentValidationTests {
 
     public static final int START_DATE_DAY_OF_MONTH = 25;
     public static final int END_DATE_DAY_OF_MONTH = 26;
@@ -49,9 +49,9 @@ public class NewTripValidationTest {
     public void init() {
         scenario = FragmentScenario.launchInContainer(NewTripFragment.class, Bundle.EMPTY, R.style.Theme_ProgettoSIMAndroid);
         scenario.onFragment(newTripFragment -> {
-            expectedErrorText = newTripFragment.getResources().getString(R.string.field_required);
-            fromString = newTripFragment.getResources().getString(R.string.from);
-            untilString = newTripFragment.getResources().getString(R.string.until);
+            expectedErrorText = newTripFragment.getString(R.string.field_required);
+            fromString = newTripFragment.getString(R.string.from);
+            untilString = newTripFragment.getString(R.string.until);
         });
     }
 
