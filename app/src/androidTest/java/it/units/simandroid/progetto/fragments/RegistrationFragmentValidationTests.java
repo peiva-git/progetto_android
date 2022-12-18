@@ -98,6 +98,20 @@ public class RegistrationFragmentValidationTests {
                 .check(ViewAssertions.matches(hasTextInputLayoutErrorText(emailFormatError)));
     }
 
+    @Test
+    public void checkPasswordStrengthError() {
+        Espresso.onView(ViewMatchers.withId(R.id.registration_password))
+                .perform(ViewActions.typeText(SHORT_PASSWORD))
+                .perform(ViewActions.closeSoftKeyboard());
+        Espresso.onView(ViewMatchers.withId(R.id.registration_password_confirm))
+                .perform(ViewActions.typeText(SHORT_PASSWORD))
+                .perform(ViewActions.closeSoftKeyboard());
+        Espresso.onView(ViewMatchers.withId(R.id.registration_button))
+                .perform(ViewActions.click());
+        Espresso.onView(ViewMatchers.withId(R.id.registration_password_layout))
+                .check(ViewAssertions.matches(hasTextInputLayoutErrorText(passwordLengthError)));
+    }
+
     @After
     public void cleanup() {
         if (scenario != null) {
