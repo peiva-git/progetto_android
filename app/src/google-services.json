@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "420687875792",
+    "firebase_url": "https://progetto-android-653cd-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "progetto-android-653cd",
+    "storage_bucket": "progetto-android-653cd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:420687875792:android:e2ba29af18dfbb29bd18d5",
+        "android_client_info": {
+          "package_name": "it.units.simandroid.progetto"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "420687875792-p3e27shkag58bp1iv842bqn0p7vr1boi.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "it.units.simandroid.progetto",
+            "certificate_hash": "2cb3c2345e7951b9f434ff46767fbdf531589f21"
+          }
+        },
+        {
+          "client_id": "420687875792-ug9biqdhqqsn93qe39ntu0kef0imek23.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCFrVhhEf-GhdEHTY0jfzhgNvyEu6t6BgU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "420687875792-ug9biqdhqqsn93qe39ntu0kef0imek23.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
