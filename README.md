@@ -1,5 +1,5 @@
 # University project - My Trip Planner
-[![Build Status](https://app.travis-ci.com/peiva-git/progetto_android.svg?branch=master)](https://app.travis-ci.com/peiva-git/progetto_android)
+[![CircleCI](https://dl.circleci.com/status-badge/img/gh/peiva-git/progetto_android/tree/master.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/peiva-git/progetto_android/tree/master)
 
 Exam project for the Android course at the University of Trieste. 
 Built with Android Studio, using Gradle, Java, Firebase and Travis CI. 
